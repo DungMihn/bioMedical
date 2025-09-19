@@ -40,10 +40,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 //		   "select username,password,enabled from user where username=?")
 //		  .authoritiesByUsernameQuery(
 //		   "select username, authority from user where username=?")
-                          .usersByUsernameQuery("select username,password,enabled from users where username=?")
-.authoritiesByUsernameQuery("select username, authority from users where username=?")
-
-		  .passwordEncoder(passwordEncoder()) ;
+    .usersByUsernameQuery("select username, password_hash, enabled from Users where username=?")
+    .authoritiesByUsernameQuery("select username, role from Users where username=?")
+    .passwordEncoder(passwordEncoder())
+    .rolePrefix(""); // ⚡ Bỏ prefix ROLE_
+//		  .passwordEncoder(passwordEncoder()) ;
 		 } 
 	
 	@Bean
@@ -57,29 +58,51 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.authorizeRequests()
-			.antMatchers("/admin/**").hasRole("ADMIN")
-			.antMatchers("/user/**").hasRole("USER")
-			.antMatchers("/register").permitAll()
-			.antMatchers("/confirm").permitAll()
-			.antMatchers("/login/**").permitAll()
-			.antMatchers("/css/**").permitAll()
-			.antMatchers("/js/**").permitAll()
-			.antMatchers("/static/**").permitAll()
-			.antMatchers("/vendor/**").permitAll()
-			.antMatchers("/resources/**").permitAll()
-			.anyRequest().authenticated()
-			.and()
-			.formLogin()
-			.loginPage("/showMyLoginPage")
-			.loginProcessingUrl("/authenticateTheUser")
-			//.defaultSuccessUrl("/register")
-			.permitAll()
-			.successHandler(successHandler)
-		.and()
-		.logout().permitAll()
-		.and()
-		.exceptionHandling().accessDeniedPage("/register");
+//		http.authorizeRequests()
+//			.antMatchers("/admin/**").hasRole("ADMIN")
+//                        .antMatchers("/doctor/**").hasRole("DOCTOR")
+//			.antMatchers("/user/**").hasRole("PATIENT")
+//			.antMatchers("/register").permitAll()
+//			.antMatchers("/confirm").permitAll()
+//			.antMatchers("/login/**").permitAll()
+//			.antMatchers("/css/**").permitAll()
+//			.antMatchers("/js/**").permitAll()
+//			.antMatchers("/static/**").permitAll()
+//			.antMatchers("/vendor/**").permitAll()
+//			.antMatchers("/resources/**").permitAll()
+//			.anyRequest().authenticated()
+//			.and()
+//			.formLogin()
+//			.loginPage("/showMyLoginPage")
+//			.loginProcessingUrl("/authenticateTheUser")
+//			//.defaultSuccessUrl("/register")
+//			.permitAll()
+//			.successHandler(successHandler)
+//		.and()
+//		.logout().permitAll()
+//		.and()
+//		.exceptionHandling().accessDeniedPage("/register");
+
+http.authorizeRequests()
+    .antMatchers("/admin/**").hasAuthority("ADMIN")
+    .antMatchers("/doctor/**").hasAuthority("DOCTOR")
+    .antMatchers("/user/**").hasAuthority("PATIENT")
+    .antMatchers("/register").permitAll()
+    .antMatchers("/confirm").permitAll()
+    .antMatchers("/login/**").permitAll()
+    .antMatchers("/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**").permitAll()
+    .anyRequest().authenticated()
+    .and()
+    .formLogin()
+        .loginPage("/showMyLoginPage")
+        .loginProcessingUrl("/authenticateTheUser")
+        .permitAll()
+        .successHandler(successHandler)
+    .and()
+    .logout().permitAll()
+    .and()
+    .exceptionHandling().accessDeniedPage("/register");
+
 		 
 	}
 
