@@ -1,5 +1,6 @@
 package com.spring.bioMedical.Controller;
 
+import com.spring.bioMedical.dto.DoctorForm;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,8 @@ import com.spring.bioMedical.entity.Users;
 import com.spring.bioMedical.entity.Appointment;
 import com.spring.bioMedical.service.UsersService;
 import com.spring.bioMedical.service.AppointmentServiceImplementation;
+import com.spring.bioMedical.service.ClinicService;
+import com.spring.bioMedical.service.SpecialtyService;
 
 @Controller
 @RequestMapping("/admin")
@@ -28,7 +31,7 @@ public class AdminController {
 
     @Autowired
     public AdminController(UsersService usersService,
-                           AppointmentServiceImplementation appointmentServiceImplementation) {
+            AppointmentServiceImplementation appointmentServiceImplementation) {
         this.usersService = usersService;
         this.appointmentServiceImplementation = appointmentServiceImplementation;
     }
@@ -43,30 +46,35 @@ public class AdminController {
     @RequestMapping("/doctor-details")
     public String doctorDetails(Model model) {
         List<Users> list = usersService.findByRole("DOCTOR");
-        model.addAttribute("user", list);
+        model.addAttribute("users", list);
         return "admin/doctor";
     }
 
     @RequestMapping("/admin-details")
     public String adminDetails(Model model) {
         List<Users> list = usersService.findByRole("ADMIN");
-        model.addAttribute("user", list);
+        model.addAttribute("users", list);
         return "admin/admin";
     }
 
+    @Autowired
+    private ClinicService clinicService;
+
+    @Autowired
+    private SpecialtyService specialtyService;
+
     @GetMapping("/add-doctor")
-    public String showFormForAddDoctor(Model model) {
-        Users user = new Users();
-        user.setRole("DOCTOR");
-        model.addAttribute("doctor", user);
+    public String showAddDoctorForm(Model model) {
+        model.addAttribute("doctorForm", new DoctorForm());
+        model.addAttribute("clinics", clinicService.findAll()); // OK
+        model.addAttribute("specialties", specialtyService.getAllSpecialties()); // sửa tên method
         return "admin/addDoctor";
     }
 
     @PostMapping("/save-doctor")
-    public String saveDoctor(@ModelAttribute("doctor") Users user) {
+    public String saveDoctor(@ModelAttribute("users") Users user) {
         user.setRole("DOCTOR");
         user.setEnabled(true);
-        user.setPasswordHash("default"); // TODO: mã hóa password
         usersService.save(user);
         return "redirect:/admin/doctor-details";
     }
@@ -83,7 +91,6 @@ public class AdminController {
     public String saveAdmin(@ModelAttribute("admin") Users user) {
         user.setRole("ADMIN");
         user.setEnabled(true);
-        user.setPasswordHash("default"); // TODO: mã hóa password
         usersService.save(user);
         return "redirect:/admin/admin-details";
     }

@@ -143,54 +143,50 @@
 	
 	<div>
 	
-	<form  th:action="@{/admin/update}"
-						 th:object="${profile}" method="POST">
-	<table>
-	<tr>
-	
-	</tr>
-	
-	<input type="hidden" th:field="*{id}" >
-	
-	<input type="hidden" th:field="*{password}" >
-	
-	<input type="hidden" th:field="*{enabled}" >
-	
-	<input type="hidden" th:field="*{role}" >
-	
-	<input type="hidden" th:field="*{confirmationToken}" >
-	
-	<tr>
-	<td><br><dt class="col-sm-3">First Name:</dt></td>
-	<td><br><input type="text" th:field="*{firstName}"  class="form-control" required="" placeholder="First Name"></td>
-	</tr>
-	
-	
-	<tr>
-	
-	<td><br><br><dt class="col-sm-3">Last Name:</dt></td>
-	<td><br><input type="text" th:field="*{lastName}" required="" class="form-control" placeholder="Last Name"></td>
-	</tr>
-	
-	<tr>
-	
-	<td><br><br><dt class="col-sm-3">Email:</dt></td>
-	<td><br><input th:field="*{email}" class="form-control"  required="" placeholder="Email" readonly/><br></td>
-	</tr>
-	<tr>
-	
-	<td><br><br><dt class="col-sm-3">Gender:</dt></td>
-	<td><br><input th:field="*{gender}" class="form-control"   required="" placeholder="Gender"/><br></td>
-	</tr>
-	
-	
-	<tr>
-	<td colspan="2" align="center"><input class="btn btn-primary btn-lg" type="submit" value="Send"></td>
-	
-	</tr>
-	
-	</table>
-	</form>
+	<form th:action="@{/admin/update}" th:object="${profile}" method="POST">
+    <!-- Hidden fields -->
+    <input type="hidden" th:field="*{userId}" />
+    <input type="hidden" th:field="*{passwordHash}" />
+    <input type="hidden" th:field="*{enabled}" />
+    <input type="hidden" th:field="*{role}" />
+
+    <table class="table table-borderless">
+        <tr>
+            <td><dt>Full Name:</dt></td>
+            <td>
+                <input type="text" th:field="*{fullName}" class="form-control" required placeholder="Full Name"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td><dt>Email:</dt></td>
+            <td>
+                <input type="email" th:field="*{email}" class="form-control" required readonly/>
+            </td>
+        </tr>
+
+        <tr>
+            <td><dt>Gender:</dt></td>
+            <td>
+                <input type="text" th:field="*{gender}" class="form-control" required placeholder="Gender"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td><dt>Date of Birth:</dt></td>
+            <td>
+                <input type="date" th:field="*{dateOfBirth}" class="form-control"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <input class="btn btn-primary btn-lg" type="submit" value="Update"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
 </div>
 
      

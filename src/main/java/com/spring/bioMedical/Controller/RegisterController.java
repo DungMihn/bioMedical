@@ -20,6 +20,7 @@ import com.nulabinc.zxcvbn.Zxcvbn;
 import com.spring.bioMedical.entity.Users;
 import com.spring.bioMedical.service.EmailService;
 import com.spring.bioMedical.service.UsersService;
+import java.time.LocalDateTime;
 
 @Controller
 public class RegisterController {
@@ -61,8 +62,8 @@ public class RegisterController {
             user.setRole("ROLE_USER");
             user.setPasswordHash(user.getPasswordHash());
             user.setUsername(user.getUsername());
-            user.setCreatedAt(new java.util.Date());
-            user.setUpdatedAt(new java.util.Date());
+            user.setCreatedAt(LocalDateTime.now());
+            user.setUpdatedAt(LocalDateTime.now());
 
             // Tạo token xác nhận
             user.setEmail(user.getEmail());
