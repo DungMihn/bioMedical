@@ -14,6 +14,7 @@ import com.spring.bioMedical.entity.Users;
 import com.spring.bioMedical.entity.Appointment;
 import com.spring.bioMedical.service.UsersService;
 import com.spring.bioMedical.service.AppointmentServiceImplementation;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/user")
@@ -29,17 +30,37 @@ public class UserController {
         this.usersService = usersService;
     }
 
-    @GetMapping("/index")
-    public String index(Model model) {
-        Users currentUser = usersService.findByUsername(getCurrentUsername());
-
-        Appointment app = new Appointment();
-        app.setName(currentUser.getFullName());
-        app.setEmail(currentUser.getEmail());
-
-        model.addAttribute("app", app);
-        return "user/index";
+//    @GetMapping("/index")
+//    public String index(Model model) {
+//        Users currentUser = usersService.findByUsername(getCurrentUsername());
+//
+//        Appointment app = new Appointment();
+//        app.setName(currentUser.getFullName());
+//        app.setEmail(currentUser.getEmail());
+//
+//        model.addAttribute("app", app);
+//        return "user/index";
+//    }
+    
+@GetMapping("/index")
+public String index(Model model, @RequestParam(value="logout", required=false) String logout) {
+    String username = getCurrentUsername();
+    Users currentUser = null;
+    if (username != null && !"anonymousUser".equals(username)) {
+        currentUser = usersService.findByUsername(username);
     }
+
+    model.addAttribute("currentUser", currentUser);
+    model.addAttribute("app", new Appointment());
+
+    if (logout != null) {
+        model.addAttribute("logoutMsg", "You have logged out successfully!");
+    }
+
+    return "user/index";
+}
+
+
 
     @PostMapping("/save-app")
     public String saveAppointment(@ModelAttribute("app") Appointment app) {
@@ -70,6 +91,8 @@ public class UserController {
         model.addAttribute("app", new Appointment());
         return "user/doctor";
     }
+   
+
 
     private String getCurrentUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

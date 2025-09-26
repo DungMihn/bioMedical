@@ -1,133 +1,112 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
-	<title>Login</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="login/vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="login/vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="login/vendor/select2/select2.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="login/css/util.css">
-	<link rel="stylesheet" type="text/css" href="login/css/main.css">
-<!--===============================================================================================-->
+    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="login/vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="login/vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="login/vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="login/css/util.css">
+    <link rel="stylesheet" type="text/css" href="login/css/main.css">
+
+    <style>
+        .btn-show-pass {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+        }
+        .wrap-input100 {
+            position: relative;
+        }
+        .wrap-login100 { max-width: 450px; }
+    </style>
 </head>
 <body>
-	
-	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100 p-l-50 p-r-50 p-t-77 p-b-30">
-	<form class="login100-form validate-form"  th:action="@{/authenticateTheUser}"  method="POST">
-					
-					<span class="login100-form-title p-b-55">
-						User,Doctor & Admin Login
-					</span>
 
-					<div class="wrap-input100 validate-input m-b-16" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" name="username"
-       					     placeholder="Username or Email">
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<span class="lnr lnr-envelope"></span>
-						</span>
-					</div>
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-l-50 p-r-50 p-t-77 p-b-30">
+            <form class="login100-form validate-form" th:action="@{/authenticateTheUser}" method="POST">
 
-					<div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
-						<input class="input100" type="password" name="password"
-            placeholder="Password" >
-						
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<span class="lnr lnr-lock"></span>
-						</span>
-					</div>
-					
-					<div class="container-login100-form-btn p-t-25">
-						<button class="login100-form-btn">
-							Login
-						</button>
-					</div>
-					 
-					 
-					  <div th:if="${param.error != null}" class="text-center w-full p-t-42 p-b-22" >
-							<span class="alart">
-							Wrong password / username
-						</span>
-						</div>
-						
-						<div th:if="${param.logout != null}" class="text-center w-full p-t-42 p-b-22" >
-							<span class="alart">
-							You have loggout successfully
-						</span>
-						</div>
-	</form>
-	
-	
-	
-	<!--				<div class="text-center w-full p-t-42 p-b-22">
-						<span class="txt1">
-							Or login with
-						</span>
-					</div>
+                <span class="login100-form-title p-b-55">
+                    User, Doctor & Admin Login
+                </span>
 
-					<a href="#" class="btn-face m-b-10">
-						<i class="fa fa-facebook-official"></i>
-						Facebook
-					</a>
-					
-					
-				
-					
-			
- 
-					<a href="#" class="btn-google m-b-10">
-						<img src="images/icons/icon-google.png" alt="GOOGLE">
-						Google
-					</a>
- -->
- 
- <div class="text-center w-full p-t-115">
-					
-					</div>
- 
-					<div class="text-center w-full p-t-115">
-						<span class="txt1">
-							Not a member?
-						</span>
+                <!-- Username -->
+                <div class="wrap-input100 validate-input m-b-16">
+                    <input class="input100" type="text" name="username" placeholder="Username or Email">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-envelope"></span></span>
+                </div>
 
-						<a class="txt1 bo1 hov1" th:href="@{/register}">
-							Sign up now							
-						</a>
-					</div>
-			
-			</div>
-		</div>
-	</div>
-	
-	
+                <!-- Password -->
+                <div class="wrap-input100 validate-input m-b-16">
+                    <input class="input100" type="password" name="password" placeholder="Password" id="loginPassword">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-lock"></span></span>
+                    <span class="btn-show-pass"><i class="fa fa-eye"></i></span>
+                </div>
 
-	
-<!--===============================================================================================-->	
-	<script src="login/vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-	<script src="login/vendor/bootstrap/js/popper.js"></script>
-	<script src="login/vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="login/vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="login/js/main.js"></script>
+                <!-- Login button -->
+                <div class="container-login100-form-btn p-t-25">
+                    <button class="login100-form-btn">Login</button>
+                </div>
+
+                <!-- Forgot password link -->
+                <!-- Forgot password link -->
+                <div class="text-center w-full p-t-20">
+                    <a class="txt1 bo1 hov1" th:href="@{/forgot-password}">
+                        Forgot Password?
+                    </a>
+                </div>
+
+
+                <!-- Error / Logout -->
+                <div th:if="${param.error != null}" class="text-center w-full p-t-42 p-b-22">
+                    <span class="alert text-danger">Wrong username / password</span>
+                </div>
+                <div th:if="${param.logout != null}" class="text-center w-full p-t-42 p-b-22">
+                    <span class="alert text-success">You have logged out successfully</span>
+                </div>
+            </form>
+
+            <div class="text-center w-full p-t-115">
+                <span class="txt1">Not a member?</span>
+                <a class="txt1 bo1 hov1" th:href="@{/register}">Sign up now</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="login/vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="login/vendor/bootstrap/js/popper.js"></script>
+<script src="login/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="login/vendor/select2/select2.min.js"></script>
+<script src="login/js/main.js"></script>
+
+<script>
+$(".btn-show-pass").on("click", function(){
+    let input = $(this).siblings("input");
+    if(input.attr("type") === "password"){
+        input.attr("type", "text");
+        $(this).find("i").removeClass("fa-eye").addClass("fa-eye-slash");
+    } else {
+        input.attr("type", "password");
+        $(this).find("i").removeClass("fa-eye-slash").addClass("fa-eye");
+    }
+});
+</script>
 
 </body>
 </html>

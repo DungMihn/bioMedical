@@ -57,40 +57,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
-//		http.authorizeRequests()
-//			.antMatchers("/admin/**").hasRole("ADMIN")
-//                        .antMatchers("/doctor/**").hasRole("DOCTOR")
-//			.antMatchers("/user/**").hasRole("PATIENT")
-//			.antMatchers("/register").permitAll()
-//			.antMatchers("/confirm").permitAll()
-//			.antMatchers("/login/**").permitAll()
-//			.antMatchers("/css/**").permitAll()
-//			.antMatchers("/js/**").permitAll()
-//			.antMatchers("/static/**").permitAll()
-//			.antMatchers("/vendor/**").permitAll()
-//			.antMatchers("/resources/**").permitAll()
-//			.anyRequest().authenticated()
-//			.and()
-//			.formLogin()
-//			.loginPage("/showMyLoginPage")
-//			.loginProcessingUrl("/authenticateTheUser")
-//			//.defaultSuccessUrl("/register")
-//			.permitAll()
-//			.successHandler(successHandler)
-//		.and()
-//		.logout().permitAll()
-//		.and()
-//		.exceptionHandling().accessDeniedPage("/register");
-
+            
 http.authorizeRequests()
     .antMatchers("/admin/**").hasAuthority("ADMIN")
     .antMatchers("/doctor/**").hasAuthority("DOCTOR")
-    .antMatchers("/user/**").hasAuthority("PATIENT")
+//    .antMatchers("/user/**").hasAuthority("PATIENT")
+    .antMatchers("/user/**").permitAll()   // ⚡ CHO PHÉP PUBLIC
+    .antMatchers("/test-mail/**").permitAll()   // ⚡ CHO PHÉP PUBLIC
+    .antMatchers("/register/**").permitAll()    // ⚡ Cho cả GET + POST
+    .antMatchers("/verify-otp/**").permitAll()  // ⚡ Cho cả GET + POST
+                .antMatchers("/forgot-password/**").permitAll()     // ⚡ Thêm
+        .antMatchers("/resend-forgot-otp/**").permitAll()   // ⚡ Thêm
+        .antMatchers("/verify-forgot-otp/**").permitAll()   // ⚡ Thêm
+        .antMatchers("/reset-password/**").permitAll()      // ⚡ Thêm
+        .antMatchers("/resend-otp/**").permitAll()
     .antMatchers("/register").permitAll()
     .antMatchers("/confirm").permitAll()
     .antMatchers("/login/**").permitAll()
     .antMatchers("/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**").permitAll()
+        .antMatchers("/images/**").permitAll()
+        .antMatchers("/**/*.png", "/**/*.jpg", "/**/*.jpeg", "/**/*.gif").permitAll()
     .anyRequest().authenticated()
     .and()
     .formLogin()
@@ -99,9 +85,16 @@ http.authorizeRequests()
         .permitAll()
         .successHandler(successHandler)
     .and()
-    .logout().permitAll()
+//    .logout().permitAll()
+.logout()
+    .logoutUrl("/logout")
+    .logoutSuccessHandler((request, response, authentication) -> {
+        response.sendRedirect("/user/index");
+    })
+    .permitAll()
+
     .and()
-    .exceptionHandling().accessDeniedPage("/register");
+    .exceptionHandling().accessDeniedPage("/access-denied");
 
 		 
 	}

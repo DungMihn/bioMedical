@@ -14,6 +14,8 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     // Tìm user theo email
     Users findByEmail(String email);
 
-    // Tìm user theo role (ADMIN, DOCTOR, PATIENT, GUEST)
+    // Tìm user theo role (ADMIN, DOCTOR, PATIENT)
     List<Users> findByRole(String role);
+    
+    Users findByOtpCode(String otpCode);
 }

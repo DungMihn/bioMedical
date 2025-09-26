@@ -35,4 +35,7 @@ public class UsersService {
     public List<Users> findAll() {
         return usersRepository.findAll();
     }
+     public Users findByOtpCode(String otpCode) {
+        return usersRepository.findByOtpCode(otpCode);
+    }
 }

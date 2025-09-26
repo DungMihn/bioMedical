@@ -1,102 +1,85 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.spring.bioMedical.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.persistence.*;
+import javax.validation.constraints.*;
 
-/**
- *
- * @author macbookprom1
- */
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Entity
 @Table(name = "Users")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
-    @NamedQuery(name = "Users.findByUserId", query = "SELECT u FROM Users u WHERE u.userId = :userId"),
-    @NamedQuery(name = "Users.findByUsername", query = "SELECT u FROM Users u WHERE u.username = :username"),
-    @NamedQuery(name = "Users.findByPasswordHash", query = "SELECT u FROM Users u WHERE u.passwordHash = :passwordHash"),
-    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
-    @NamedQuery(name = "Users.findByPhone", query = "SELECT u FROM Users u WHERE u.phone = :phone"),
-    @NamedQuery(name = "Users.findByFullName", query = "SELECT u FROM Users u WHERE u.fullName = :fullName"),
-    @NamedQuery(name = "Users.findByGender", query = "SELECT u FROM Users u WHERE u.gender = :gender"),
-    @NamedQuery(name = "Users.findByDateOfBirth", query = "SELECT u FROM Users u WHERE u.dateOfBirth = :dateOfBirth"),
-    @NamedQuery(name = "Users.findByRole", query = "SELECT u FROM Users u WHERE u.role = :role"),
-    @NamedQuery(name = "Users.findByEnabled", query = "SELECT u FROM Users u WHERE u.enabled = :enabled"),
-    @NamedQuery(name = "Users.findByCreatedAt", query = "SELECT u FROM Users u WHERE u.createdAt = :createdAt"),
-    @NamedQuery(name = "Users.findByUpdatedAt", query = "SELECT u FROM Users u WHERE u.updatedAt = :updatedAt")})
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    // ----- Primary key -----
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
     @Column(name = "user_id")
     private Long userId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "username")
+
+    // ----- Basic fields -----
+    @NotBlank(message = "Username is required")
+    @Size(max = 100, message = "Username must be less than 100 characters")
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "password_hash")
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, max = 255, message = "Password must be between 6 and 255 characters")
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
+
+    @NotBlank(message = "Full name is required")
+    @Size(max = 255, message = "Full name must be less than 255 characters")
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     @Size(max = 255)
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
-    // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
-    @Size(max = 50)
+
+    @Pattern(regexp = "^(\\+?\\d{9,15})$", message = "Invalid phone number")
     @Column(name = "phone")
     private String phone;
-    @Size(max = 255)
-    @Column(name = "full_name")
-    private String fullName;
-    @Size(max = 20)
+
+    @NotBlank(message = "Gender is required")
     @Column(name = "gender")
     private String gender;
+
+    @NotNull(message = "Date of birth is required")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "date_of_birth")
-    @Temporal(TemporalType.DATE)
-    private Date dateOfBirth;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "role")
-    private String role;
+    private LocalDate dateOfBirth;
+
+    @Column(name = "role", nullable = false)
+    private String role = "PATIENT"; // default role
+
     @Column(name = "enabled")
-    private Boolean enabled;
+    private Boolean enabled = false;
+
+    // ----- OTP -----
+    @Column(name = "otp_code")
+    private String otpCode;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "otp_expiry")
+    private Date otpExpiry;
+
+    // ----- Audit fields -----
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")
+    private Date createdAt = new Date();
+
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
     @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Date updatedAt = new Date();
 
-    public Users() {
-    }
-
-    public Users(Long userId) {
-        this.userId = userId;
-    }
+    // ----- Constructors -----
+    public Users() {}
 
     public Users(Long userId, String username, String passwordHash, String role) {
         this.userId = userId;
@@ -105,125 +88,46 @@ public class Users implements Serializable {
         this.role = role;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
+    // ----- Getters & Setters -----
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
-    public String getPhone() {
-        return phone;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    public Boolean getEnabled() { return enabled; }
+    public void setEnabled(Boolean enabled) { this.enabled = enabled; }
 
-    public String getFullName() {
-        return fullName;
-    }
+    public String getOtpCode() { return otpCode; }
+    public void setOtpCode(String otpCode) { this.otpCode = otpCode; }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+    public Date getOtpExpiry() { return otpExpiry; }
+    public void setOtpExpiry(Date otpExpiry) { this.otpExpiry = otpExpiry; }
 
-    public String getGender() {
-        return gender;
-    }
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (userId != null ? userId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Users)) {
-            return false;
-        }
-        Users other = (Users) object;
-        if ((this.userId == null && other.userId != null) || (this.userId != null && !this.userId.equals(other.userId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "com.spring.bioMedical.entity.Users[ userId=" + userId + " ]";
-    }
-    
+    public Date getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
 }

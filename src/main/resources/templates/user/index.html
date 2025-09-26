@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="../css/icomoon.css">
     <link rel="stylesheet" href="../css/style.css">
   </head>
+    
   <body>
     
   <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
@@ -38,27 +39,47 @@
 
       <div class="collapse navbar-collapse" id="ftco-nav">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item active"><a th:href="@{/user/index}" class="nav-link">Home</a></li>
-          <li class="nav-item"><a th:href="@{/user/about}"  class="nav-link">About</a></li>
-          <li class="nav-item"><a th:href="@{/user/departments}"  class="nav-link">Departments</a></li>
-          <li class="nav-item"><a th:href="@{/user/doctor}"  class="nav-link">Doctors</a></li>
-          <li class="nav-item"><a th:href="@{/user/blog}"  class="nav-link">Blog</a></li>
-          <li class="nav-item"><a th:href="@{/user/contact}"  class="nav-link">Contact</a></li>
-          <li class="nav-item cta"><a  class="nav-link" data-toggle="modal" data-target="#modalAppointment"><span>Make an Appointment</span></a></li>
-       
+
+  <li class="nav-item active"><a th:href="@{/user/index}" class="nav-link">Home</a></li>
+  <li class="nav-item"><a th:href="@{/user/about}" class="nav-link">About</a></li>
+  <li class="nav-item"><a th:href="@{/user/departments}" class="nav-link">Departments</a></li>
+  <li class="nav-item"><a th:href="@{/user/doctor}" class="nav-link">Doctors</a></li>
+  <li class="nav-item"><a th:href="@{/user/blog}" class="nav-link">Blog</a></li>
+  <li class="nav-item"><a th:href="@{/user/contact}" class="nav-link">Contact</a></li>
+  <li class="nav-item cta"><a  class="nav-link" data-toggle="modal" data-target="#modalAppointment"><span>Make an Appointment</span></a></li>
+  <!-- Nếu chưa login -->
+<li class="nav-item" th:if="${currentUser == null}">
+  <a class="nav-link btn btn-primary text-white ml-2" th:href="@{/showMyLoginPage}">Login</a>
+</li>
+  
+    <!-- Nếu đã login -->
+  <li class="nav-item dropdown" th:if="${currentUser != null}">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarUser" role="button" data-toggle="dropdown">
+      <i class="fas fa-user"></i>
+      <span th:text="${currentUser.fullName}">User</span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+      <span class="dropdown-item-text">Role: <b th:text="${currentUser.role}"></b></span>
+      <div class="dropdown-divider"></div>
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="dropdown-item">Logout</button>
+ 
       <li class="nav-item ">
          <form  th:action="@{/logout}"  method="POST">
-					
+
 	
-			<button type="submit"  class="btn btn-danger">Logout</button>   
-			</form>
-			</li>
-        </ul>
+			<!--<button type="submit"  class="btn btn-danger">Logout</button>-->   
+      </form>
+    </div>
+  </li>
+
+</ul>
+
       </div>
     </div>
   </nav>
     <!-- END nav -->
-    
+
     <div class="hero-wrap" style="background-image: url('../images/bg_1.jpg'); background-attachment:fixed;">
       <div class="overlay"></div>
       <div class="container">
@@ -653,6 +674,14 @@
         </div>
       </div>
     </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    console.log("=== Page loaded ===");
+    const hero = document.querySelector(".hero-wrap h1");
+    console.log("Hero text:", hero ? hero.innerText : "not found");
+  });
+</script>
 
 
   <script src="../js/jquery.min.js"></script>

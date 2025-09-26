@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Password Reset Success</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
+  <link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="login/css/util.css">
+  <link rel="stylesheet" type="text/css" href="login/css/main.css">
+
+  <style>
+    .wrap-login100 { max-width: 450px; }
+    .modal-content { border-radius: 15px; overflow: hidden; }
+    .progress { height: 6px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+<div class="limiter">
+  <div class="container-login100">
+    <div class="wrap-login100 text-center p-l-50 p-r-50 p-t-50 p-b-30">
+
+      <h3 class="text-success">🎉 Password Reset Successfully!</h3>
+      <p>Your password has been updated.</p>
+      <p>Redirecting to login in <b><span id="countdown">5</span>s</b>...</p>
+
+      <div class="progress">
+        <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="login/vendor/jquery/jquery-3.2.1.min.js"></script>
+<script>
+  let counter = 5;
+  let progress = 100;
+  const interval = setInterval(() => {
+    counter--;
+    progress -= 20;
+    document.getElementById("countdown").innerText = counter;
+    document.getElementById("progressBar").style.width = progress + "%";
+
+    if(counter <= 0){
+      clearInterval(interval);
+      window.location.href = '/showMyLoginPage';
+    }
+  }, 1000);
+</script>
+</body>
+</html>
