@@ -1,0 +1,72 @@
+/* ---- Remedic gradient theme ---- */
+:root{
+  --blue:  #2f89fc;     /* xanh dương Remedic */
+  --green: #01d28e;     /* xanh ngọc Remedic  */
+  --green-dark:#00b67a;
+  --tint: rgba(1,210,142,.12);
+}
+
+/* nền gradient dùng cho navbar/header/footer… */
+.bg-gradient-theme{
+  background: linear-gradient(90deg, var(--blue) 0%, var(--green) 100%) !important;
+}
+
+/* màu chữ trắng trên nền tối */
+.navbar-dark .navbar-brand,
+.navbar-dark .nav-link{ color:#fff !important; }
+
+/* nút chủ đạo dùng gradient */
+.btn-primary{
+  background-image: linear-gradient(90deg, var(--blue), var(--green)) !important;
+  border-color: var(--green) !important;
+}
+.btn-primary:hover{
+  filter: brightness(0.95);
+}
+
+/* nút phụ khi hover giữ tông xám */
+.btn-outline-secondary:hover{
+  color:#fff !important; background:#6c757d !important; border-color:#6c757d !important;
+}
+
+/* focus form */
+.form-control:focus{
+  border-color: var(--green);
+  box-shadow: 0 0 0 .2rem rgba(1,210,142,.25);
+}
+
+/* breadcrumb link */
+.breadcrumb .breadcrumb-item a{ color: var(--green); }
+
+/* sidebar (nền tối + active theo theme) */
+.sidebar{ background:#222831; }
+.sidebar .nav-link{ color:#cfd8dc; }
+.sidebar .nav-link i{ color:#9aa5ab; }
+.sidebar .nav-link:hover{ color:#fff !important; }
+.sidebar .nav-item.active .nav-link{
+  color:#fff !important;
+  background: rgba(255,255,255,.06);
+  border-left: 4px solid var(--green);
+}
+.sidebar .nav-item.active .nav-link i{ color: var(--green) !important; }
+
+/* card nhẹ nhàng */
+.card{ border:0; border-radius:.75rem; box-shadow:0 10px 25px rgba(0,0,0,.06); }
+.card-header{ background:#fff; border-bottom:0; font-weight:600; }
+
+/* DataTables phối màu */
+.table thead th{
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  color:#fff; border-color: transparent;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
+  background: var(--green) !important; border-color: var(--green) !important; color:#fff !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+  background: var(--tint) !important; border-color: var(--green) !important; color:#000 !important;
+}
+.dataTables_wrapper .dataTables_filter input:focus{
+  border-color: var(--green) !important;
+  box-shadow: 0 0 0 .2rem rgba(1,210,142,.25) !important;
+}

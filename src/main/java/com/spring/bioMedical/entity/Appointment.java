@@ -1,130 +1,71 @@
 package com.spring.bioMedical.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
-import org.springframework.data.annotation.Transient;
-
-/**
- * 
- * @author Soumyadip Chowdhury
- * @github soumyadip007
- *
- */
 @Entity
-@Table(name = "app")
+@Table(name = "app") // bảng của bạn hiện đang là 'app'
 public class Appointment {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private int id;
-	
-	@Column(name = "name", nullable = false, unique = true)
-	private String name;
-	
-	@Column(name = "email")
-	private String email;
-	
-	@Column(name = "date")
-	private String date;
-	
-	@Column(name = "time")
-	private String time;
-	
-	
-	@Column(name = "description")
-	private String description;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private int id;
 
-	
-	@Column(name = "regtime")
-	@Transient
-	private String regtime;
+    @Column(name = "name", nullable = false /*, unique = true*/ )
+    private String name;
 
-	
+    @Column(name = "email")
+    private String email;
 
-	public String getRegtime() {
-		return regtime;
-	}
+    @Column(name = "date")
+    private String date;
 
+    @Column(name = "time")
+    private String time;
 
-	public void setRegtime(String regtime) {
-		this.regtime = regtime;
-	}
+    @Column(name = "description")
+    private String description;
 
+    // ⚠️ regtime không lưu DB → dùng javax.persistence.Transient, KHÔNG @Column
+    @Transient
+    private String regtime;
 
-	public int getId() {
-		return id;
-	}
+    // ✅ THÊM: liên kết chi nhánh (Clinic)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "clinic_id") // cột FK trong bảng 'app'
+    private Clinic clinic;
 
+    // --- getters/setters ---
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	public String getName() {
-		return name;
-	}
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getTime() { return time; }
+    public void setTime(String time) { this.time = time; }
 
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getRegtime() { return regtime; }
+    public void setRegtime(String regtime) { this.regtime = regtime; }
 
+    public Clinic getClinic() { return clinic; }
+    public void setClinic(Clinic clinic) { this.clinic = clinic; }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-
-	public String getDate() {
-		return date;
-	}
-
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-
-
-	public String getTime() {
-		return time;
-	}
-
-
-	public void setTime(String time) {
-		this.time = time;
-	}
-
-
-	public String getDescription() {
-		return description;
-	}
-
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-
-	@Override
-	public String toString() {
-		return "Appointment [id=" + id + ", name=" + name + ", email=" + email + ", date=" + date + ", time=" + time
-				+ ", description=" + description + "]";
-	}
-	
-	
-
+    @Override
+    public String toString() {
+        return "Appointment [id=" + id + ", name=" + name + ", email=" + email
+                + ", date=" + date + ", time=" + time + ", description=" + description + "]";
+    }
 }

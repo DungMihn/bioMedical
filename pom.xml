@@ -16,6 +16,8 @@
 	<packaging>war</packaging>
 	<properties>
 		<java.version>1.8</java.version>
+                <maven.compiler.source>${java.version}</maven.compiler.source>
+  <maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
 
 <dependencies>
@@ -76,6 +78,13 @@
                     <artifactId>mssql-jdbc</artifactId>
                     <version>9.4.0.jre8</version>
                 </dependency>
+                
+                <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.32</version>
+        <scope>provided</scope>
+    </dependency>
     <dependency>
         <groupId>org.eclipse.persistence</groupId>
         <artifactId>org.eclipse.persistence.core</artifactId>

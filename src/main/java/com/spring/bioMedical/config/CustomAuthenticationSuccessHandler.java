@@ -21,22 +21,32 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication)
+            throws IOException, ServletException {
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
-        if (roles.contains("ADMIN")) {
-            response.sendRedirect("/admin/user-details");
+        // Ưu tiên ADMIN_SUPER
+        if (roles.contains("ADMIN_SUPER")) {
+            response.sendRedirect("/admin-super/admin-branch-list");
             return;
         }
 
+        // ADMIN_BRANCH
+        if (roles.contains("ADMIN_BRANCH")) {
+            response.sendRedirect("/admin-branch/doctor-details");
+            return;
+        }
+
+        // DOCTOR
         if (roles.contains("DOCTOR")) {
             response.sendRedirect("/doctor/index");
             return;
         }
 
+        // PATIENT
         if (roles.contains("PATIENT")) {
-            response.sendRedirect("/user/index"); // vẫn dùng controller UserController
+            response.sendRedirect("/user/index");
             return;
         }
 

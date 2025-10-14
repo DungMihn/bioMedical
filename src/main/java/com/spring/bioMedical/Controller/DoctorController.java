@@ -1,70 +1,73 @@
 package com.spring.bioMedical.Controller;
 
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.spring.bioMedical.entity.Appointment;
+import com.spring.bioMedical.entity.Doctor;
+import com.spring.bioMedical.entity.Users;
+import com.spring.bioMedical.service.AppointmentServiceImplementation;
+import com.spring.bioMedical.service.DoctorService;
+import com.spring.bioMedical.service.UsersService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.spring.bioMedical.entity.Users;
-import com.spring.bioMedical.entity.Appointment;
-import com.spring.bioMedical.entity.Doctor;
-import com.spring.bioMedical.service.UsersService;
-import com.spring.bioMedical.service.AppointmentServiceImplementation;
-import com.spring.bioMedical.service.DoctorService;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/doctor")
 public class DoctorController {
 
     private final UsersService usersService;
-    private final AppointmentServiceImplementation appointmentServiceImplementation;
-    private final DoctorService doctorService; // 👈 thêm field này
+    private final AppointmentServiceImplementation appointmentService;
+    private final DoctorService doctorService;
 
-    @Autowired
     public DoctorController(UsersService usersService,
-                            AppointmentServiceImplementation appointmentServiceImplementation,
-                            DoctorService doctorService) { // 👈 truyền vào constructor
+                            AppointmentServiceImplementation appointmentService,
+                            DoctorService doctorService) {
         this.usersService = usersService;
-        this.appointmentServiceImplementation = appointmentServiceImplementation;
+        this.appointmentService = appointmentService;
         this.doctorService = doctorService;
     }
 
-   @RequestMapping("/index")
-public String index(Model model) {
-    String username = getCurrentUsername();
-    Users currentUser = usersService.findByUsername(username);
+    @GetMapping("/index")
+    public String index(Model model) {
+        Users me = usersService.findByUsername(currentUsername());
+        // cập nhật last-seen
+        me.setUpdatedAt(LocalDateTime.now());
+        usersService.save(me);
 
-    currentUser.setUpdatedAt(LocalDateTime.now());
-    usersService.save(currentUser);
+        // lấy thông tin bác sĩ (nếu user này là bác sĩ)
+        Doctor doctor = doctorService.getDoctorByUserId(me.getUserId());
 
-    // lấy thông tin Doctor từ user_id
-    Doctor doctor = doctorService.getDoctorByUserId(currentUser.getUserId());
+        // ưu tiên clinic của Doctor, nếu chưa có thì dùng clinic gán cho Users
+        Long clinicId =
+                (doctor != null && doctor.getClinic() != null) ? doctor.getClinic().getClinicId()
+                : (me.getClinic() != null ? me.getClinic().getClinicId() : null);
 
-    List<Appointment> list = appointmentServiceImplementation.findAll();
+        List<Appointment> apps = (clinicId != null)
+                ? appointmentService.findAllByBranch(clinicId)    // ✅ chỉ lịch hẹn của chi nhánh
+                : Collections.emptyList();
 
-    model.addAttribute("name", currentUser.getFullName());
-    model.addAttribute("email", currentUser.getEmail());
-    model.addAttribute("bio", doctor != null ? doctor.getBio() : "");
-    model.addAttribute("clinic", doctor != null ? doctor.getClinic().getName() : "");
-    model.addAttribute("specialty", doctor != null ? doctor.getSpecialty().getName() : "");
-    model.addAttribute("app", list);
+        model.addAttribute("name", me.getFullName());
+        model.addAttribute("email", me.getEmail());
+        model.addAttribute("bio", doctor != null ? doctor.getBio() : "");
+        model.addAttribute("clinic",
+                (doctor != null && doctor.getClinic() != null) ? doctor.getClinic().getName()
+                        : (me.getClinic() != null ? me.getClinic().getName() : ""));
+        model.addAttribute("specialty",
+                (doctor != null && doctor.getSpecialty() != null) ? doctor.getSpecialty().getName() : "");
+        model.addAttribute("app", apps);
 
-    return "doctor/index";
-}
+        return "doctor/index";
+    }
 
-
-    private String getCurrentUsername() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails) {
-            return ((UserDetails) principal).getUsername();
-        } else {
-            return principal.toString();
-        }
+    /* helpers */
+    private String currentUsername() {
+        Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return (p instanceof UserDetails) ? ((UserDetails) p).getUsername() : String.valueOf(p);
     }
 }

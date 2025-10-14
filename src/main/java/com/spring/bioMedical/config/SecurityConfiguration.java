@@ -5,141 +5,100 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 
-/**
- * 
- * @author Soumyadip Chowdhury
- * @github soumyadip007
- *
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private DataSource securityDataSource;
-	
-	@Autowired
-	private CustomAuthenticationSuccessHandler successHandler;
-	
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    @Autowired
+    private DataSource securityDataSource;
 
-		// use jdbc authentication ... oh yeah!!!
-		  auth.jdbcAuthentication().dataSource(securityDataSource)
-//		  .usersByUsernameQuery(
-//		   "select username,password,enabled from user where username=?")
-//		  .authoritiesByUsernameQuery(
-//		   "select username, authority from user where username=?")
-    .usersByUsernameQuery("select username, password_hash, enabled from Users where username=?")
-    .authoritiesByUsernameQuery("select username, role from Users where username=?")
-    .passwordEncoder(passwordEncoder())
-    .rolePrefix(""); // ⚡ Bỏ prefix ROLE_
-//		  .passwordEncoder(passwordEncoder()) ;
-		 } 
-	
-	@Bean
-	public PasswordEncoder passwordEncoder(){
-	    return new PasswordEnconderTest();
-	}
+    @Autowired
+    private CustomAuthenticationSuccessHandler successHandler;
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // JDBC auth dùng đúng bảng Users của bạn
+        auth.jdbcAuthentication()
+            .dataSource(securityDataSource)
+            .usersByUsernameQuery("select username, password_hash, enabled from Users where username=?")
+            .authoritiesByUsernameQuery("select username, role from Users where username=?")
+            .passwordEncoder(passwordEncoder())
+            // KHÔNG thêm tiền tố ROLE_ vì DB đã lưu đúng chuỗi quyền (ADMIN_SUPER, ADMIN_BRANCH, ...)
+            .rolePrefix("");
+    }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // GIỮ encoder demo của bạn (plain text). Lưu ý: KHÔNG an toàn cho production.
+        return new PasswordEnconderTest();
+    }
 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
+                // Tuyến mới theo vai trò admin
+                .antMatchers("/admin-super/**").hasAuthority("ADMIN_SUPER")
+                .antMatchers("/admin-branch/**").hasAnyAuthority("ADMIN_SUPER","ADMIN_BRANCH")
 
-//		http.authorizeRequests()
-//			.antMatchers("/admin/**").hasRole("ADMIN")
-//                        .antMatchers("/doctor/**").hasRole("DOCTOR")
-//			.antMatchers("/user/**").hasRole("PATIENT")
-//			.antMatchers("/register").permitAll()
-//			.antMatchers("/confirm").permitAll()
-//			.antMatchers("/login/**").permitAll()
-//			.antMatchers("/css/**").permitAll()
-//			.antMatchers("/js/**").permitAll()
-//			.antMatchers("/static/**").permitAll()
-//			.antMatchers("/vendor/**").permitAll()
-//			.antMatchers("/resources/**").permitAll()
-//			.anyRequest().authenticated()
-//			.and()
-//			.formLogin()
-//			.loginPage("/showMyLoginPage")
-//			.loginProcessingUrl("/authenticateTheUser")
-//			//.defaultSuccessUrl("/register")
-//			.permitAll()
-//			.successHandler(successHandler)
-//		.and()
-//		.logout().permitAll()
-//		.and()
-//		.exceptionHandling().accessDeniedPage("/register");
+                // Tuyến cũ vẫn giữ (nếu bạn còn dùng)
+                .antMatchers("/doctor/**").hasAuthority("DOCTOR")
+                .antMatchers("/user/**").hasAuthority("PATIENT")
 
-http.authorizeRequests()
-    .antMatchers("/admin/**").hasAuthority("ADMIN")
-    .antMatchers("/doctor/**").hasAuthority("DOCTOR")
-    .antMatchers("/user/**").hasAuthority("PATIENT")
-    .antMatchers("/register").permitAll()
-    .antMatchers("/confirm").permitAll()
-    .antMatchers("/login/**").permitAll()
-    .antMatchers("/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**").permitAll()
-    .anyRequest().authenticated()
-    .and()
-    .formLogin()
-        .loginPage("/showMyLoginPage")
-        .loginProcessingUrl("/authenticateTheUser")
-        .permitAll()
-        .successHandler(successHandler)
-    .and()
-    .logout().permitAll()
-    .and()
-    .exceptionHandling().accessDeniedPage("/register");
+                // Public
+                .antMatchers("/register", "/confirm", "/login/**",
+                             "/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**")
+                .permitAll()
 
-		 
-	}
+                // các request còn lại cần đăng nhập
+                .anyRequest().authenticated()
+            .and()
+            .formLogin()
+                .loginPage("/showMyLoginPage")
+                .loginProcessingUrl("/authenticateTheUser")
+                .successHandler(successHandler) // dùng custom handler để điều hướng theo role
+                .permitAll()
+            .and()
+            .logout().permitAll()
+            .and()
+            .exceptionHandling().accessDeniedPage("/register");
 
+        // Nếu bạn đang gặp vấn đề với CSRF ở form login tùy framework front-end, có thể cân nhắc:
+        // http.csrf().disable();
+    }
 
-	
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-	
-		web.ignoring().antMatchers("/resources/**","/login/**","/static/**","/Script/**","/Style/**","/Icon/**",
-				"/js/**","/vendor/**","/bootstrap/**","/Image/**");
-		
-		//logoutSuccessUrl("/customLogout")
-	}
-	
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(
+            "/resources/**","/login/**","/static/**","/Script/**","/Style/**","/Icon/**",
+            "/js/**","/vendor/**","/bootstrap/**","/Image/**"
+        );
+    }
 
-	@Bean
-	public UserDetailsManager userDetailsManager() {
-		
-		JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
-		
-		jdbcUserDetailsManager.setDataSource(securityDataSource);
-		
-		return jdbcUserDetailsManager; 
-	}
-		
-	
-	
+    @Bean
+    public UserDetailsManager userDetailsManager() {
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
+        jdbcUserDetailsManager.setDataSource(securityDataSource);
+        return jdbcUserDetailsManager;
+    }
 }
 
+// Encoder demo (plain text) – KHÔNG dùng cho môi trường thật
 class PasswordEnconderTest implements PasswordEncoder {
     @Override
-    public String encode(CharSequence charSequence) {
-        return charSequence.toString();
-    }
-
+    public String encode(CharSequence raw) { return raw.toString(); }
     @Override
-    public boolean matches(CharSequence charSequence, String s) {
-        return charSequence.toString().equals(s);
-    }
+    public boolean matches(CharSequence raw, String encoded) { return raw.toString().equals(encoded); }
 }
