@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Chi tiết Hồ sơ Bệnh án - Hệ thống Quản lý Bệnh viện</title>
+
+        <!-- Bootstrap 5 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+        <style>
+            :root {
+                --primary: #2c6fbb;
+                --secondary: #6c757d;
+                --success: #198754;
+                --info: #0dcaf0;
+                --warning: #ffc107;
+                --danger: #dc3545;
+                --light: #f8f9fa;
+                --dark: #212529;
+            }
+
+            body {
+                font-family: 'Montserrat', sans-serif;
+                background-color: #f5f7fa;
+                color: #333;
+            }
+
+            .medical-record-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .header-card {
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                border: none;
+                margin-bottom: 20px;
+            }
+
+            .detail-card {
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+                border: none;
+                margin-bottom: 20px;
+            }
+
+            .detail-card .card-header {
+                background: linear-gradient(90deg, var(--primary) 0%, #1a4f87 100%);
+                color: white;
+                border-radius: 10px 10px 0 0 !important;
+                font-weight: 600;
+            }
+
+            .info-label {
+                font-weight: 600;
+                color: var(--dark);
+                margin-bottom: 5px;
+            }
+
+            .info-value {
+                color: var(--secondary);
+                margin-bottom: 15px;
+            }
+
+            .prescription-item {
+                border-left: 4px solid var(--primary);
+                padding-left: 15px;
+                margin-bottom: 15px;
+                background-color: #f8f9fa;
+                padding: 15px;
+                border-radius: 5px;
+            }
+
+            .action-buttons .btn {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+
+            .back-button {
+                margin-bottom: 20px;
+            }
+
+            .patient-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background-color: var(--primary);
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                font-weight: bold;
+                margin-right: 20px;
+            }
+
+            .status-badge {
+                font-size: 0.8rem;
+                padding: 5px 10px;
+            }
+
+            @media (max-width: 768px) {
+                .patient-info {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .patient-avatar {
+                    margin-right: 0;
+                    margin-bottom: 15px;
+                }
+                
+                .action-buttons .btn {
+                    margin-right: 0;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/doctor/index}">
+                    <i class="fas fa-hospital me-2"></i>Hệ thống Quản lý Bệnh viện
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/doctor/index}">
+                                <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/doctor/appointments}">
+                                <i class="fas fa-calendar-check me-1"></i> Lịch hẹn
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/doctor/medical-records}">
+                                <i class="fas fa-file-medical me-1"></i> Hồ sơ bệnh án
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/logout}">
+                                <i class="fas fa-sign-out-alt me-1"></i> Đăng xuất
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="medical-record-container">
+            <!-- Back Button -->
+            <div class="back-button">
+                <a th:href="@{/doctor/medical-records}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách hồ sơ
+                </a>
+            </div>
+
+            <!-- Patient Header -->
+            <div class="card header-card">
+                <div class="card-body">
+                    <div class="d-flex align-items-center patient-info">
+                        <div class="patient-avatar">
+                            <span th:text="${#strings.substring(patient.fullName, 0, 1)} ?: 'P'"></span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h3 th:text="${patient.fullName} ?: 'Bệnh nhân ẩn danh'">Tên bệnh nhân</h3>
+                                    <p class="text-muted mb-1" th:if="${patient.phone}">
+                                        <i class="fas fa-phone me-2"></i>
+                                        <span th:text="${patient.phone}">Số điện thoại</span>
+                                    </p>
+                                    <p class="text-muted mb-1" th:if="${patient.email}">
+                                        <i class="fas fa-envelope me-2"></i>
+                                        <span th:text="${patient.email}">Email</span>
+                                    </p>
+                                    <p class="text-muted" th:if="${patient.dateOfBirth}">
+                                        <i class="fas fa-birthday-cake me-2"></i>
+                                        <span th:text="${#dates.format(patient.dateOfBirth, 'dd/MM/yyyy')}">Ngày sinh</span>
+                                    </p>
+                                </div>
+                                <div class="text-end">
+                                    <span th:class="${'status-badge badge ' + 
+                                          (appointment.status == 'COMPLETED' ? 'bg-success' : 
+                                          appointment.status == 'CONFIRMED' ? 'bg-primary' : 
+                                          appointment.status == 'PENDING' ? 'bg-warning' : 
+                                          appointment.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}"
+                                          th:text="${appointment.status}">
+                                    </span>
+                                    <div class="mt-2">
+                                        <small class="text-muted" th:text="${#dates.format(medicalRecord.createdAt, 'dd/MM/yyyy HH:mm')}"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Record Details -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Diagnosis & Treatment -->
+                    <div class="card detail-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Thông tin chẩn đoán và điều trị</span>
+                            <a th:href="@{'/doctor/medical-record/edit/' + ${medicalRecord.recordId}}" 
+                               class="btn btn-sm btn-outline-light">
+                                <i class="fas fa-edit me-1"></i>Chỉnh sửa
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="info-label">Triệu chứng</div>
+                                    <div class="info-value" th:text="${medicalRecord.symptoms} ?: 'Chưa có thông tin'">Triệu chứng</div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="info-label">Chẩn đoán</div>
+                                    <div class="info-value" th:text="${medicalRecord.diagnosis} ?: 'Chưa có thông tin'">Chẩn đoán</div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <div class="info-label">Phương pháp điều trị</div>
+                                    <div class="info-value" th:text="${medicalRecord.treatment} ?: 'Chưa có thông tin'">Điều trị</div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="info-label">Ghi chú thêm</div>
+                                    <div class="info-value" th:text="${medicalRecord.notes} ?: 'Không có ghi chú'">Ghi chú</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prescriptions -->
+                    <div class="card detail-card" th:if="${prescriptions != null and not prescriptions.empty}">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>Đơn thuốc</span>
+                            <button class="btn btn-sm btn-outline-primary" onclick="addNewPrescription()">
+                                <i class="fas fa-plus me-1"></i>Thêm thuốc
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div th:each="prescription, iter : ${prescriptions}" class="prescription-item">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="mb-2">
+                                        <span th:text="${iter.count}">1</span>. 
+                                        <span th:text="${prescription.medicationName}">Tên thuốc</span>
+                                    </h5>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-warning me-1" 
+                                                onclick="editPrescription(${prescription.prescriptionId})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                onclick="deletePrescription(${prescription.prescriptionId})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="info-label">Liều dùng</div>
+                                        <div class="info-value" th:text="${prescription.dosage} ?: 'Không xác định'">Liều dùng</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-label">Tần suất</div>
+                                        <div class="info-value" th:text="${prescription.frequency} ?: 'Không xác định'">Tần suất</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="info-label">Thời gian</div>
+                                        <div class="info-value" th:text="${prescription.duration} ?: 'Không xác định'">Thời gian</div>
+                                    </div>
+                                </div>
+                                <div class="mt-2" th:if="${prescription.notes}">
+                                    <div class="info-label">Ghi chú</div>
+                                    <div class="info-value" th:text="${prescription.notes}">Ghi chú thuốc</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Quick Actions -->
+                    <div class="card detail-card">
+                        <div class="card-header">
+                            <i class="fas fa-bolt me-2"></i>Thao tác nhanh
+                        </div>
+                        <div class="card-body action-buttons">
+                            <a th:href="@{'/doctor/medical-record/edit/' + ${medicalRecord.recordId}}" 
+                               class="btn btn-warning">
+                                <i class="fas fa-edit me-2"></i>Chỉnh sửa hồ sơ
+                            </a>
+                            
+                            <a th:href="@{'/doctor/medical-record/' + ${medicalRecord.recordId} + '/print'}" 
+                               target="_blank" class="btn btn-success">
+                                <i class="fas fa-print me-2"></i>Xem & In PDF
+                            </a>
+                            
+                            <a th:href="@{'/doctor/medical-record/' + ${medicalRecord.recordId} + '/download'}" 
+                               class="btn btn-primary">
+                                <i class="fas fa-download me-2"></i>Tải PDF
+                            </a>
+
+                            <button class="btn btn-info" onclick="addNewPrescription()">
+                                <i class="fas fa-pills me-2"></i>Thêm đơn thuốc
+                            </button>
+
+                            <a th:href="@{'/doctor/appointment/' + ${appointment.appointmentId}}" 
+                               class="btn btn-secondary">
+                                <i class="fas fa-calendar me-2"></i>Xem lịch hẹn
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Appointment Information -->
+                    <div class="card detail-card">
+                        <div class="card-header">
+                            <i class="fas fa-calendar-alt me-2"></i>Thông tin lịch hẹn
+                        </div>
+                        <div class="card-body">
+                            <div class="info-label">Mã lịch hẹn</div>
+                            <div class="info-value" th:text="${appointment.appointmentId}">ID</div>
+
+                            <div class="info-label">Ngày hẹn</div>
+                            <div class="info-value" th:text="${appointment.appointmentDate} ?: 'Không xác định'">Ngày</div>
+
+                            <div class="info-label">Giờ hẹn</div>
+                            <div class="info-value" th:text="${appointment.appointmentTime} ?: 'Không xác định'">Giờ</div>
+
+                            <div class="info-label" th:if="${appointment.notes}">Ghi chú lịch hẹn</div>
+                            <div class="info-value" th:if="${appointment.notes}" th:text="${appointment.notes}">Ghi chú</div>
+                        </div>
+                    </div>
+
+                    <!-- Doctor Information -->
+                    <div class="card detail-card" th:if="${doctor != null}">
+                        <div class="card-header">
+                            <i class="fas fa-user-md me-2"></i>Thông tin bác sĩ
+                        </div>
+                        <div class="card-body">
+                            <div class="info-label">Bác sĩ điều trị</div>
+                            <div class="info-value" th:text="${doctor.user.fullName} ?: 'Không xác định'">Tên bác sĩ</div>
+
+                            <div class="info-label">Chuyên khoa</div>
+                            <div class="info-value" th:text="${doctor.specialty.name} ?: 'Không xác định'">Chuyên khoa</div>
+
+                            <div class="info-label">Cơ sở khám</div>
+                            <div class="info-value" th:text="${doctor.clinic.name} ?: 'Không xác định'">Cơ sở</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Modal -->
+        <div class="modal fade" id="loadingModal" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Đang tạo PDF...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prescription Modal -->
+        <div class="modal fade" id="prescriptionModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="prescriptionModalTitle">Thêm thuốc mới</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="prescriptionForm">
+                            <input type="hidden" id="prescriptionId" name="prescriptionId">
+                            <input type="hidden" name="recordId" th:value="${medicalRecord.recordId}">
+                            
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="medicationName" class="form-label">Tên thuốc <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="medicationName" name="medicationName" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="dosage" class="form-label">Liều dùng</label>
+                                        <input type="text" class="form-control" id="dosage" name="dosage" placeholder="VD: 500mg">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="frequency" class="form-label">Tần suất</label>
+                                        <input type="text" class="form-control" id="frequency" name="frequency" placeholder="VD: 3 lần/ngày">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="duration" class="form-label">Thời gian</label>
+                                        <input type="text" class="form-control" id="duration" name="duration" placeholder="VD: 7 ngày">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Ghi chú</label>
+                                        <input type="text" class="form-control" id="notes" name="notes" placeholder="Ghi chú sử dụng">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary" onclick="savePrescription()">Lưu thuốc</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap & jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+        <script>
+            // Hiển thị loading khi click nút in
+            document.querySelector('a[target="_blank"]').addEventListener('click', function () {
+                var loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+                loadingModal.show();
+
+                setTimeout(function () {
+                    loadingModal.hide();
+                }, 3000);
+            });
+
+            // Quản lý đơn thuốc
+            function addNewPrescription() {
+                document.getElementById('prescriptionModalTitle').textContent = 'Thêm thuốc mới';
+                document.getElementById('prescriptionId').value = '';
+                document.getElementById('prescriptionForm').reset();
+                
+                var modal = new bootstrap.Modal(document.getElementById('prescriptionModal'));
+                modal.show();
+            }
+
+            function editPrescription(prescriptionId) {
+                // Gọi API để lấy thông tin thuốc
+                fetch('/doctor/prescription/' + prescriptionId)
+                    .then(response => response.json())
+                    .then(prescription => {
+                        document.getElementById('prescriptionModalTitle').textContent = 'Chỉnh sửa thuốc';
+                        document.getElementById('prescriptionId').value = prescription.prescriptionId;
+                        document.getElementById('medicationName').value = prescription.medicationName || '';
+                        document.getElementById('dosage').value = prescription.dosage || '';
+                        document.getElementById('frequency').value = prescription.frequency || '';
+                        document.getElementById('duration').value = prescription.duration || '';
+                        document.getElementById('notes').value = prescription.notes || '';
+                        
+                        var modal = new bootstrap.Modal(document.getElementById('prescriptionModal'));
+                        modal.show();
+                    })
+                    .catch(error => {
+                        alert('Lỗi khi tải thông tin thuốc: ' + error);
+                    });
+            }
+
+            function savePrescription() {
+                const formData = new FormData(document.getElementById('prescriptionForm'));
+                const prescriptionId = document.getElementById('prescriptionId').value;
+                
+                const url = prescriptionId ? '/doctor/prescription/update' : '/doctor/prescription/create';
+                const method = prescriptionId ? 'PUT' : 'POST';
+                
+                fetch(url, {
+                    method: method,
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // Reload trang để cập nhật danh sách
+                    } else {
+                        alert('Lỗi khi lưu thuốc');
+                    }
+                })
+                .catch(error => {
+                    alert('Lỗi kết nối: ' + error);
+                });
+            }
+
+            function deletePrescription(prescriptionId) {
+                if (confirm('Bạn có chắc muốn xóa thuốc này?')) {
+                    fetch('/doctor/prescription/delete/' + prescriptionId, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload(); // Reload trang để cập nhật danh sách
+                        } else {
+                            alert('Lỗi khi xóa thuốc');
+                        }
+                    })
+                    .catch(error => {
+                        alert('Lỗi kết nối: ' + error);
+                    });
+                }
+            }
+        </script>
+    </body>
+</html>

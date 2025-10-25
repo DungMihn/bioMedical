@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Appointment Details</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            .appointment-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 2rem 0;
+                margin-bottom: 2rem;
+            }
+            .status-badge {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+            }
+            .action-btn {
+                margin-right: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            .patient-info-card {
+                border-left: 4px solid #667eea;
+            }
+            .appointment-info-card {
+                border-left: 4px solid #28a745;
+            }
+            .timeline {
+                border-left: 3px solid #667eea;
+                margin-left: 1rem;
+                padding-left: 2rem;
+            }
+            .timeline-item {
+                position: relative;
+                margin-bottom: 2rem;
+            }
+            .timeline-item:before {
+                content: '';
+                position: absolute;
+                left: -2.4rem;
+                top: 0.5rem;
+                width: 1rem;
+                height: 1rem;
+                background: #667eea;
+                border-radius: 50%;
+            }
+            .loading-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            }
+            .loading-spinner {
+                background: white;
+                padding: 2rem;
+                border-radius: 10px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Đang xử lý...</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/doctor/index}">
+                    <i class="fas fa-hospital"></i> Doctor Portal
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" th:href="@{/doctor/index}">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                    <a class="nav-link" th:href="@{/doctor/appointments}">
+                        <i class="fas fa-calendar"></i> Appointments
+                    </a>
+                    <a class="nav-link" th:href="@{/logout}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Header -->
+        <div class="appointment-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-5 fw-bold">
+                            <i class="fas fa-calendar-check"></i> Chi tiết Lịch hẹn
+                        </h1>
+                        <p class="lead">Quản lý và xem thông tin lịch hẹn</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <span th:class="${'status-badge badge ' + 
+                              (appointment.status == 'CONFIRMED' ? 'bg-success' : 
+                              appointment.status == 'PENDING' ? 'bg-warning' : 
+                              appointment.status == 'CANCELLED' ? 'bg-danger' : 
+                              appointment.status == 'COMPLETED' ? 'bg-info' : 'bg-secondary')}"
+                              th:text="${appointment.status}">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <div class="row">
+                <!-- Left Column - Patient Information -->
+                <div class="col-md-4">
+                    <div class="card patient-info-card mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-user-injured"></i> Thông tin Bệnh nhân
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                     style="width: 80px; height: 80px;">
+                                    <i class="fas fa-user fa-2x text-white"></i>
+                                </div>
+                            </div>
+
+                            <div th:if="${patient}">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th><i class="fas fa-signature"></i> Họ tên:</th>
+                                        <td th:text="${patient.fullName} ?: 'N/A'">N/A</td>
+                                    </tr>
+                                    <tr>
+                                        <th><i class="fas fa-envelope"></i> Email:</th>
+                                        <td th:text="${patient.email} ?: 'N/A'">N/A</td>
+                                    </tr>
+                                    <tr>
+                                        <th><i class="fas fa-phone"></i> Điện thoại:</th>
+                                        <td th:text="${patient.phone} ?: 'N/A'">N/A</td>
+                                    </tr>
+                                    <tr th:if="${patient.gender}">
+                                        <th><i class="fas fa-venus-mars"></i> Giới tính:</th>
+                                        <td th:text="${patient.gender}">N/A</td>
+                                    </tr>
+                                    <tr th:if="${patient.dateOfBirth}">
+                                        <th><i class="fas fa-birthday-cake"></i> Ngày sinh:</th>
+                                        <td th:text="${#dates.format(patient.dateOfBirth, 'dd/MM/yyyy')}">N/A</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div th:unless="${patient}" class="text-center text-muted">
+                                <i class="fas fa-exclamation-circle fa-2x mb-2"></i>
+                                <p>Không có thông tin bệnh nhân</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-white">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-bolt"></i> Thao tác nhanh
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a th:href="@{/doctor/medical-record/create?appointmentId={id}(id=${appointment.appointmentId})}" 
+                                   class="btn btn-warning action-btn" 
+                                   th:classappend="${appointment.status != 'COMPLETED'} ? 'disabled' : ''">
+                                    <i class="fas fa-file-medical"></i> Tạo Hồ sơ Bệnh án
+                                </a>
+                                <a th:href="@{'tel:' + ${patient.phone}}" 
+                                   class="btn btn-outline-primary action-btn"
+                                   th:if="${patient != null and patient.phone != null}">
+                                    <i class="fas fa-phone"></i> Gọi Bệnh nhân
+                                </a>
+                                <a th:href="@{'mailto:' + ${patient.email}}" 
+                                   class="btn btn-outline-info action-btn"
+                                   th:if="${patient != null and patient.email != null}">
+                                    <i class="fas fa-envelope"></i> Email Bệnh nhân
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Appointment Details -->
+                <div class="col-md-8">
+                    <div class="card appointment-info-card mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-calendar-alt"></i> Chi tiết Lịch hẹn
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="fw-bold text-muted">Mã lịch hẹn:</label>
+                                        <p class="fs-5" th:text="${appointment.appointmentId}">N/A</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold text-muted">Ngày:</label>
+                                        <p class="fs-6" th:text="${appointment.appointmentDate} ?: 'N/A'">N/A</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold text-muted">Giờ:</label>
+                                        <p class="fs-6" th:text="${appointment.appointmentTime} ?: 'N/A'">N/A</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="fw-bold text-muted">Trạng thái:</label>
+                                        <p>
+                                            <span th:class="${'badge ' + 
+                                                  (appointment.status == 'CONFIRMED' ? 'bg-success' : 
+                                                  appointment.status == 'PENDING' ? 'bg-warning' : 
+                                                  appointment.status == 'CANCELLED' ? 'bg-danger' : 
+                                                  appointment.status == 'COMPLETED' ? 'bg-info' : 'bg-secondary')}"
+                                                  th:text="${appointment.status}">
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="fw-bold text-muted">Ngày tạo:</label>
+                                        <p class="fs-6" th:text="${#dates.format(appointment.createdAt, 'dd/MM/yyyy HH:mm')}">N/A</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes Section -->
+                            <div class="mb-3" th:if="${appointment.notes}">
+                                <label class="fw-bold text-muted">Ghi chú:</label>
+                                <div class="border rounded p-3 bg-light">
+                                    <p class="mb-0" th:text="${appointment.notes}"></p>
+                                </div>
+                            </div>
+
+                            <!-- Status Actions -->
+                            <div class="border-top pt-3 mt-3">
+                                <h6 class="text-muted mb-3">Quản lý Lịch hẹn:</h6>
+                                <div class="d-flex flex-wrap">
+                                    <button th:if="${appointment.status == 'PENDING'}" 
+                                            class="btn btn-success action-btn"
+                                            th:onclick="'confirmAppointment(' + ${appointment.appointmentId} + ')'">
+                                        <i class="fas fa-check"></i> Xác nhận
+                                    </button>
+                                    <button th:if="${appointment.status == 'PENDING' or appointment.status == 'CONFIRMED'}" 
+                                            class="btn btn-danger action-btn"
+                                            th:onclick="'cancelAppointment(' + ${appointment.appointmentId} + ')'">
+                                        <i class="fas fa-times"></i> Hủy
+                                    </button>
+                                    <button th:if="${appointment.status == 'CONFIRMED'}" 
+                                            class="btn btn-primary action-btn"
+                                            th:onclick="'completeAppointment(' + ${appointment.appointmentId} + ')'">
+                                        <i class="fas fa-check-circle"></i> Hoàn thành
+                                    </button>
+                                    <button th:if="${appointment.status == 'COMPLETED'}" 
+                                            class="btn btn-info action-btn"
+                                            onclick="rescheduleAppointment()">
+                                        <i class="fas fa-calendar-plus"></i> Đặt lại
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appointment Timeline -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-white">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-history"></i> Lịch sử Lịch hẹn
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <h6 class="text-primary">Lịch hẹn được tạo</h6>
+                                    <p class="text-muted small mb-1" th:text="${#dates.format(appointment.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
+                                    <p class="mb-0">Lịch hẹn được tạo bởi hệ thống</p>
+                                </div>
+
+                                <div class="timeline-item" th:if="${appointment.status != 'PENDING'}">
+                                    <h6 th:class="${appointment.status == 'CONFIRMED' ? 'text-success' : 
+                                                  appointment.status == 'CANCELLED' ? 'text-danger' : 'text-info'}">
+                                        Trạng thái được cập nhật
+                                    </h6>
+                                    <p class="text-muted small mb-1">Gần đây</p>
+                                    <p class="mb-0">Trạng thái thay đổi thành: 
+                                        <span th:class="${'badge ' + 
+                                              (appointment.status == 'CONFIRMED' ? 'bg-success' : 
+                                              appointment.status == 'CANCELLED' ? 'bg-danger' : 'bg-info')}"
+                                              th:text="${appointment.status}">
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a th:href="@{/doctor/appointments}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Quay lại Danh sách
+                        </a>
+                        <a th:href="@{/doctor/index}" class="btn btn-outline-primary">
+                            <i class="fas fa-home"></i> Về Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Custom JavaScript -->
+        <script>
+            // Hiển thị loading
+            function showLoading() {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            }
+
+            // Ẩn loading
+            function hideLoading() {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+
+            // Xác nhận lịch hẹn
+            function confirmAppointment(appointmentId) {
+                if (confirm('Bạn có chắc muốn xác nhận lịch hẹn này?')) {
+                    showLoading();
+                    
+                    fetch('/doctor/appointment/' + appointmentId + '/confirm', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        if (data.status === 'SUCCESS') {
+                            alert('Đã xác nhận lịch hẹn thành công');
+                            location.reload();
+                        } else {
+                            alert('Lỗi: ' + (data.message || 'Không thể xác nhận lịch hẹn'));
+                        }
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        alert('Lỗi kết nối: ' + error);
+                        console.error('Error:', error);
+                    });
+                }
+            }
+
+            // Hủy lịch hẹn
+            function cancelAppointment(appointmentId) {
+                if (confirm('Bạn có chắc muốn hủy lịch hẹn này?')) {
+                    showLoading();
+                    
+                    fetch('/doctor/appointment/' + appointmentId + '/cancel', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        if (data.status === 'SUCCESS') {
+                            alert('Đã hủy lịch hẹn thành công');
+                            location.reload();
+                        } else {
+                            alert('Lỗi: ' + (data.message || 'Không thể hủy lịch hẹn'));
+                        }
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        alert('Lỗi kết nối: ' + error);
+                        console.error('Error:', error);
+                    });
+                }
+            }
+
+            // Hoàn thành lịch hẹn
+            function completeAppointment(appointmentId) {
+                if (confirm('Bạn có chắc muốn đánh dấu lịch hẹn đã hoàn thành?')) {
+                    showLoading();
+                    
+                    fetch('/doctor/appointment/' + appointmentId + '/complete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        if (data.status === 'SUCCESS') {
+                            alert('Đã đánh dấu lịch hẹn hoàn thành');
+                            location.reload();
+                        } else {
+                            alert('Lỗi: ' + (data.message || 'Không thể hoàn thành lịch hẹn'));
+                        }
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        alert('Lỗi kết nối: ' + error);
+                        console.error('Error:', error);
+                    });
+                }
+            }
+
+            // Đặt lại lịch hẹn
+            function rescheduleAppointment() {
+                alert('Chức năng đặt lại lịch hẹn sẽ sớm có!');
+            }
+
+            // Xử lý lỗi toàn cục
+            window.addEventListener('error', function(e) {
+                console.error('Global error:', e.error);
+                hideLoading();
+            });
+
+            // Vô hiệu hóa nút khi đang xử lý
+            document.addEventListener('DOMContentLoaded', function() {
+                const buttons = document.querySelectorAll('.action-btn');
+                
+                buttons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        if (this.classList.contains('disabled')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            alert('Thao tác này không khả dụng cho lịch hẹn đã hoàn thành');
+                            return false;
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

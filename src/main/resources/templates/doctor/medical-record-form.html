@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Medical Record</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/doctor/dashboard}">Doctor Dashboard</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" th:href="@{/doctor/dashboard}">Dashboard</a>
+                <a class="nav-link" th:href="@{/doctor/appointments}">Appointments</a>
+                <a class="nav-link active" th:href="@{/doctor/medical-records}">Medical Records</a>
+                <a class="nav-link" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Create Medical Record</h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Patient Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Name:</strong> <span th:text="${patient.fullName}"></span></p>
+                                <p><strong>Email:</strong> <span th:text="${patient.email}"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Phone:</strong> <span th:text="${patient.phone}"></span></p>
+                                <p><strong>Appointment Date:</strong> <span th:text="${appointment.appointmentDate}"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form th:action="@{/doctor/medical-record/save}" method="post" class="mt-4">
+                    <input type="hidden" name="appointmentId" th:value="${appointment.appointmentId}">
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Medical Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="symptoms" class="form-label">Symptoms</label>
+                                <textarea class="form-control" id="symptoms" name="symptoms" rows="3" 
+                                          placeholder="Describe patient's symptoms"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="diagnosis" class="form-label">Diagnosis</label>
+                                <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3" 
+                                          placeholder="Enter diagnosis"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="treatment" class="form-label">Treatment</label>
+                                <textarea class="form-control" id="treatment" name="treatment" rows="3" 
+                                          placeholder="Describe treatment plan"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Additional Notes</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="2" 
+                                          placeholder="Any additional notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Prescription</h5>
+                            <button type="button" class="btn btn-sm btn-success" onclick="addMedication()">
+                                <i class="fas fa-plus"></i> Add Medication
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="medications-container">
+                                <div class="medication-item border p-3 mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Medication Name</label>
+                                            <input type="text" class="form-control" name="medicationNames" 
+                                                   placeholder="Enter medication name" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Dosage</label>
+                                            <input type="text" class="form-control" name="dosages" 
+                                                   placeholder="e.g., 500mg">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Frequency</label>
+                                            <input type="text" class="form-control" name="frequencies" 
+                                                   placeholder="e.g., 3 times daily">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Duration</label>
+                                            <input type="text" class="form-control" name="durations" 
+                                                   placeholder="e.g., 7 days">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Notes</label>
+                                            <input type="text" class="form-control" name="notes" 
+                                                   placeholder="Additional notes">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeMedication(this)">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save"></i> Save Medical Record
+                        </button>
+                        <a th:href="@{/doctor/medical-records}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function addMedication() {
+        const container = document.getElementById('medications-container');
+        const newItem = container.firstElementChild.cloneNode(true);
+        
+        // Clear input values
+        newItem.querySelectorAll('input').forEach(input => input.value = '');
+        
+        container.appendChild(newItem);
+    }
+    
+    function removeMedication(button) {
+        const container = document.getElementById('medications-container');
+        if (container.children.length > 1) {
+            button.parentElement.remove();
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/doctor/dashboard}">Doctor Dashboard</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" th:href="@{/doctor/appointments}">Appointments</a>
+                <a class="nav-link" th:href="@{/doctor/medical-records}">Medical Records</a>
+                <a class="nav-link" th:href="@{/logout}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Welcome, Dr. <span th:text="${name} ?: 'Doctor'"></span></h2>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Today's Appointments</h5>
+                        <h2 class="card-text" th:text="${todayAppointments != null ? todayAppointments.size() : 0}">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending Appointments</h5>
+                        <h2 class="card-text" th:text="${pendingAppointments != null ? pendingAppointments.size() : 0}">0</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Specialty</h5>
+                        <h4 class="card-text" th:text="${doctor?.specialtyId ?: 'General'}">Specialty</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Today's Appointments</h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${todayAppointments == null or #lists.isEmpty(todayAppointments)}" class="text-center">
+                            <p>No appointments today</p>
+                        </div>
+                        <div th:unless="${todayAppointments == null or #lists.isEmpty(todayAppointments)}">
+                            <div th:each="appointment : ${todayAppointments}" class="mb-2 p-2 border rounded">
+                                <strong th:text="${appointment.patientName} ?: 'Unknown Patient'"></strong><br>
+                                <small th:text="${appointment.appointmentTime} ?: 'No time'"></small>
+                                <span th:class="${'badge float-end ' + 
+                                    (appointment.status == 'CONFIRMED' ? 'bg-success' : 
+                                     appointment.status == 'PENDING' ? 'bg-warning' : 'bg-secondary')}"
+                                    th:text="${appointment.status} ?: 'UNKNOWN'">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <a th:href="@{/doctor/appointments}" class="btn btn-primary btn-block mb-2">
+                            <i class="fas fa-calendar"></i> View All Appointments
+                        </a>
+                        <a th:href="@{/doctor/medical-records}" class="btn btn-info btn-block mb-2">
+                            <i class="fas fa-file-medical"></i> Medical Records
+                        </a>
+                        <a th:href="@{/doctor/profile}" class="btn btn-secondary btn-block">
+                            <i class="fas fa-user-md"></i> My Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
