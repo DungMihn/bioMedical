@@ -56,4 +56,12 @@ public class UsersService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
         u.setClinic(clinic); // dirty checking
     }
+    
+    public boolean usernameTaken(String username) {
+        return username != null && usersRepository.existsByUsername(username.trim());
+    }
+
+    public boolean emailTaken(String email) {
+        return email != null && usersRepository.existsByEmail(email.trim());
+    }
 }

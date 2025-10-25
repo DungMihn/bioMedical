@@ -37,22 +37,31 @@
 
 <div id="wrapper">
   <ul class="sidebar navbar-nav">
-    <li class="nav-item active">
-      <a class="nav-link" th:href="@{/admin-super/admin-branch-list}">
-        <i class="fas fa-fw fa-users-cog"></i><span> Admin Branch List</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" th:href="@{/admin-super/add-admin-branch}">
-        <i class="fas fa-fw fa-user-plus"></i><span> Add Admin Branch</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" th:href="@{/admin-super/profile}">
-        <i class="fas fa-fw fa-id-badge"></i><span> Profile</span>
-      </a>
-    </li>
-  </ul>
+  <li class="nav-item" th:classappend="${activePage}=='statistics' ? ' active'">
+    <a class="nav-link" th:href="@{/admin-super/statistics}">
+      <i class="fas fa-fw fa-chart-line"></i><span> Statistics</span>
+    </a>
+  </li>
+
+  <li class="nav-item" th:classappend="${activePage}=='branch-list' ? ' active'">
+    <a class="nav-link" th:href="@{/admin-super/admin-branch-list}">
+      <i class="fas fa-fw fa-users-cog"></i><span> Admin Branch List</span>
+    </a>
+  </li>
+
+  <li class="nav-item" th:classappend="${activePage}=='add-branch' ? ' active'">
+    <a class="nav-link" th:href="@{/admin-super/add-admin-branch}">
+      <i class="fas fa-fw fa-user-plus"></i><span> Add Admin Branch</span>
+    </a>
+  </li>
+
+  <li class="nav-item" th:classappend="${activePage}=='profile' ? ' active'">
+    <a class="nav-link" th:href="@{/admin-super/profile}">
+      <i class="fas fa-fw fa-id-badge"></i><span> Profile</span>
+    </a>
+  </li>
+</ul>
+
 
   <div id="content-wrapper">
     <div class="container-fluid">

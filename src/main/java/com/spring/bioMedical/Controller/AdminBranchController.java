@@ -15,7 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/admin-branch")
@@ -41,6 +44,7 @@ public class AdminBranchController {
   public String doctors(Model model) {
     Long clinicId = currentClinicId();
     model.addAttribute("users", usersService.findDoctorsByClinic(clinicId));
+    model.addAttribute("activePage", "doctor-details");
     return "admin_branch/doctor";
   }
 
@@ -53,24 +57,51 @@ public class AdminBranchController {
     List<Clinic> clinics;
     if (clinicId != null) {
       Clinic c = clinicService.findById(clinicId);
-      clinics = Collections.singletonList(c); // Java 8 (thay cho List.of)
+      clinics = Collections.singletonList(c); // Java 8
     } else {
       clinics = clinicService.findAll();
     }
 
     model.addAttribute("clinics", clinics);
     model.addAttribute("specialties", specialtyService.getAllSpecialties());
+    model.addAttribute("activePage", "add-doctor");
+
     return "admin_branch/addDoctor";
   }
 
   /* ========== ADD DOCTOR (SUBMIT) ========== */
   @PostMapping("/save-doctor")
-  public String saveDoctor(@ModelAttribute("doctorForm") DoctorForm form) {
-    // map DoctorForm -> Users
+  public String saveDoctor(@Valid @ModelAttribute("doctorForm") DoctorForm form,
+                           org.springframework.validation.BindingResult binding,
+                           Model model) {
+
+    // Kiểm tra trùng username/email
+    if (!binding.hasFieldErrors("username") && usernameTaken(form.getUsername())) {
+      binding.rejectValue("username", "exists", "Username đã tồn tại");
+    }
+    if (!binding.hasFieldErrors("email") && emailTaken(form.getEmail())) {
+      binding.rejectValue("email", "exists", "Email đã được sử dụng");
+    }
+
+    if (binding.hasErrors()) {
+      Long clinicId = currentClinicId();
+      List<Clinic> clinics;
+      if (clinicId != null) {
+        Clinic c = clinicService.findById(clinicId);
+        clinics = java.util.Collections.singletonList(c);
+      } else {
+        clinics = clinicService.findAll();
+      }
+      model.addAttribute("clinics", clinics);
+      model.addAttribute("specialties", specialtyService.getAllSpecialties());
+      return "admin_branch/addDoctor";
+    }
+
+    // Map form -> Users
     Users user = new Users();
-    user.setUsername(form.getUsername());
-    user.setPasswordHash(form.getPasswordHash());
-    user.setEmail(form.getEmail());
+    user.setUsername(form.getUsername().trim());
+    user.setPasswordHash(form.getPasswordHash()); // Khuyến nghị mã hoá nếu có PasswordEncoder
+    user.setEmail(form.getEmail() != null ? form.getEmail().trim() : null);
     user.setPhone(form.getPhone());
     user.setFullName(form.getFullName());
     user.setGender(form.getGender());
@@ -78,17 +109,13 @@ public class AdminBranchController {
     user.setRole("DOCTOR");
     user.setEnabled(true);
 
-    // lấy clinic từ form, nếu trống thì dùng clinic của admin-branch hiện tại
     Long cid = (form.getClinicId() != null) ? form.getClinicId() : currentClinicId();
     if (cid != null) {
       Clinic clinic = clinicService.findById(cid);
-      usersService.assignClinic(user, clinic); // chỉ set user.setClinic(clinic)
+      usersService.assignClinic(user, clinic);
     }
 
     usersService.save(user);
-
-    // TODO (nếu cần): tạo bản ghi Doctor, set specialty + bio, link user
-
     return "redirect:/admin-branch/doctor-details";
   }
 
@@ -97,46 +124,62 @@ public class AdminBranchController {
   public String appointments(Model model) {
     Long clinicId = currentClinicId();
     model.addAttribute("app", appointmentService.findAllByBranch(clinicId)); // ✅ chỉ chi nhánh của mình
+    model.addAttribute("activePage", "appointments");
     return "admin_branch/appointment";
   }
-  
+
   @PostMapping("/appointments/save")
-public String saveAppointment(@ModelAttribute("appointment") Appointment app) {
+  public String saveAppointment(@ModelAttribute("appointment") Appointment app) {
     Long clinicId = currentClinicId();
     Clinic clinic = clinicService.findById(clinicId);
     app.setClinic(clinic);                     // ✅ ràng chi nhánh
     appointmentService.save(app);
     return "redirect:/admin-branch/appointments";
-}
+  }
 
   /* ========== PROFILE ========== */
   @GetMapping("/edit-my-profile")
   public String editProfile(Model model) {
     Users me = usersService.findByUsername(currentUsername());
     model.addAttribute("profile", me);
+    model.addAttribute("activePage", "my-profile");
     return "admin_branch/updateMyProfile";
   }
 
   @PostMapping("/update")
-public String updateProfile(@ModelAttribute("profile") Users form) {
-    // Lấy bản ghi gốc
+  public String updateProfile(@ModelAttribute("profile") Users form) {
     Users me = usersService.findById(form.getUserId());
     if (me == null) {
-        // xử lý not found tùy bạn: throw hoặc redirect
-        return "redirect:/admin-branch/doctor-details";
+      return "redirect:/admin-branch/doctor-details";
     }
-
-    // Chỉ cập nhật các trường cho phép
     me.setFullName(form.getFullName());
     me.setGender(form.getGender());
     me.setDateOfBirth(form.getDateOfBirth());
-    // nếu có phone:
-    // me.setPhone(form.getPhone());
-
-    // KHÔNG đụng vào username, role, passwordHash, enabled, clinic
     usersService.save(me);
     return "redirect:/admin-branch/doctor-details";
-}
+  }
+
+  // === AJAX VALIDATION API ===
+  // Trả JSON để form blur-check username/email
+  @GetMapping("/api/check-username")
+  @ResponseBody
+  public Map<String, Object> checkUsername(@RequestParam("u") String u) {
+    boolean ok = (u != null && u.trim().length() > 0 && !usernameTaken(u));
+    Map<String, Object> m = new HashMap<String, Object>();
+    m.put("valid", ok);
+    m.put("message", ok ? "" : "Username đã tồn tại");
+    return m;
+  }
+
+  @GetMapping("/api/check-email")
+  @ResponseBody
+  public Map<String, Object> checkEmail(@RequestParam("e") String e) {
+    boolean ok = (e != null && e.trim().length() > 0 && !emailTaken(e));
+    Map<String, Object> m = new HashMap<String, Object>();
+    m.put("valid", ok);
+    m.put("message", ok ? "" : "Email đã được sử dụng");
+    return m;
+  }
 
   /* ========== HELPERS (CHỈ 1 BỘ, KHÔNG ĐƯỢC TRÙNG) ========== */
   private String currentUsername() {
@@ -150,5 +193,21 @@ public String updateProfile(@ModelAttribute("profile") Users form) {
   private Long currentClinicId() {
     Users me = usersService.findByUsername(currentUsername());
     return (me != null && me.getClinic() != null) ? me.getClinic().getClinicId() : null;
+  }
+
+  // === helpers for AJAX (không cần sửa UsersService hiện tại) ===
+  private boolean usernameTaken(String username) {
+    if (username == null || username.trim().isEmpty()) return false;
+    try {
+      usersService.findByUsername(username.trim());
+      return true; // không ném exception => có user
+    } catch (IllegalArgumentException ex) {
+      return false; // service của bạn ném lỗi khi không tìm thấy
+    }
+  }
+
+  private boolean emailTaken(String email) {
+    if (email == null || email.trim().isEmpty()) return false;
+    return usersService.findByEmail(email.trim()) != null;
   }
 }

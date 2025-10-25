@@ -30,12 +30,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // JDBC auth dùng đúng bảng Users của bạn
         auth.jdbcAuthentication()
-            .dataSource(securityDataSource)
-            .usersByUsernameQuery("select username, password_hash, enabled from Users where username=?")
-            .authoritiesByUsernameQuery("select username, role from Users where username=?")
-            .passwordEncoder(passwordEncoder())
-            // KHÔNG thêm tiền tố ROLE_ vì DB đã lưu đúng chuỗi quyền (ADMIN_SUPER, ADMIN_BRANCH, ...)
-            .rolePrefix("");
+                .dataSource(securityDataSource)
+                .usersByUsernameQuery("select username, password_hash, enabled from Users where username=?")
+                .authoritiesByUsernameQuery("select username, role from Users where username=?")
+                .passwordEncoder(passwordEncoder())
+                // KHÔNG thêm tiền tố ROLE_ vì DB đã lưu đúng chuỗi quyền (ADMIN_SUPER, ADMIN_BRANCH, ...)
+                .rolePrefix("");
     }
 
     @Bean
@@ -44,46 +44,40 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new PasswordEnconderTest();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
+ @Override
+protected void configure(HttpSecurity http) throws Exception {
+    http
+        .authorizeRequests()
+            .antMatchers("/admin-super/**").hasAuthority("ADMIN_SUPER")
+            .antMatchers("/admin-branch/**").hasAnyAuthority("ADMIN_SUPER","ADMIN_BRANCH")
+            .antMatchers("/doctor/**").hasAuthority("DOCTOR")
+            .antMatchers("/user/**").hasAuthority("PATIENT")
+            .antMatchers("/register", "/confirm", "/showMyLoginPage",
+                         "/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**",
+                         "/login/**").permitAll()
+            .anyRequest().authenticated()
+        .and()
+        .formLogin()
+            .loginPage("/showMyLoginPage")
+            .loginProcessingUrl("/authenticateTheUser")
+            .successHandler(successHandler)
+            .permitAll()
+        .and()
+        .logout().permitAll()
+        .and()
+        .exceptionHandling()
+            .accessDeniedHandler((req, res, ex) ->
+                res.sendRedirect(req.getContextPath() + "/access-denied")
+            ); // dùng redirect -> luôn là GET
+}
 
-                // Tuyến mới theo vai trò admin
-                .antMatchers("/admin-super/**").hasAuthority("ADMIN_SUPER")
-                .antMatchers("/admin-branch/**").hasAnyAuthority("ADMIN_SUPER","ADMIN_BRANCH")
 
-                // Tuyến cũ vẫn giữ (nếu bạn còn dùng)
-                .antMatchers("/doctor/**").hasAuthority("DOCTOR")
-                .antMatchers("/user/**").hasAuthority("PATIENT")
-
-                // Public
-                .antMatchers("/register", "/confirm", "/login/**",
-                             "/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**")
-                .permitAll()
-
-                // các request còn lại cần đăng nhập
-                .anyRequest().authenticated()
-            .and()
-            .formLogin()
-                .loginPage("/showMyLoginPage")
-                .loginProcessingUrl("/authenticateTheUser")
-                .successHandler(successHandler) // dùng custom handler để điều hướng theo role
-                .permitAll()
-            .and()
-            .logout().permitAll()
-            .and()
-            .exceptionHandling().accessDeniedPage("/register");
-
-        // Nếu bạn đang gặp vấn đề với CSRF ở form login tùy framework front-end, có thể cân nhắc:
-        // http.csrf().disable();
-    }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
-            "/resources/**","/login/**","/static/**","/Script/**","/Style/**","/Icon/**",
-            "/js/**","/vendor/**","/bootstrap/**","/Image/**"
+                "/resources/**", "/login/**", "/static/**", "/Script/**", "/Style/**", "/Icon/**",
+                "/js/**", "/vendor/**", "/bootstrap/**", "/Image/**"
         );
     }
 
@@ -97,8 +91,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 // Encoder demo (plain text) – KHÔNG dùng cho môi trường thật
 class PasswordEnconderTest implements PasswordEncoder {
+
     @Override
-    public String encode(CharSequence raw) { return raw.toString(); }
+    public String encode(CharSequence raw) {
+        return raw.toString();
+    }
+
     @Override
-    public boolean matches(CharSequence raw, String encoded) { return raw.toString().equals(encoded); }
+    public boolean matches(CharSequence raw, String encoded) {
+        return raw.toString().equals(encoded);
+    }
 }

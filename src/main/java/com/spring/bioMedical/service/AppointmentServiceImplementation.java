@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.spring.bioMedical.entity.Appointment;
 import com.spring.bioMedical.repository.AppointmentRepository;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class AppointmentServiceImplementation  {
@@ -31,6 +32,9 @@ public class AppointmentServiceImplementation  {
     return clinicId == null ? Collections.emptyList()
                             : appointmentRepository.findByClinic_ClinicId(clinicId);
 }
-
+ /** LẤY APPOINTMENT THEO ID */
+    public Optional<Appointment> findById(Long id) {
+        return appointmentRepository.findById(id); // JpaRepository đã có sẵn
+    }
 
 }

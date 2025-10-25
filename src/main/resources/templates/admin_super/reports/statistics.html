@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>Admin Super – Statistics</title>
+
+  <!-- Vendor CSS -->
+  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+  <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+  <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
+
+  <!-- Theme (đặt CUỐI để override) -->
+  <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
+</head>
+<body id="page-top">
+
+<!-- Topbar -->
+<nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
+  <a class="navbar-brand mr-1" href="#">Doctor+ Admin Super</a>
+  <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <ul class="navbar-nav ml-auto ml-md-0">
+    <li class="nav-item dropdown no-arrow">
+      <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+        <i class="fas fa-user-circle fa-fw"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+        <div class="dropdown-divider"></div>
+        <form th:action="@{/logout}" method="post">
+          <button class="dropdown-item" type="submit">Logout</button>
+        </form>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<div id="wrapper">
+  <!-- Sidebar -->
+  <ul class="sidebar navbar-nav">
+    <li class="nav-item" th:classappend="${activePage}=='statistics' ? ' active'">
+      <a class="nav-link" th:href="@{/admin-super/statistics}">
+        <i class="fas fa-fw fa-chart-line"></i><span> Statistics</span>
+      </a>
+    </li>
+    <li class="nav-item" th:classappend="${activePage}=='branch-list' ? ' active'">
+      <a class="nav-link" th:href="@{/admin-super/admin-branch-list}">
+        <i class="fas fa-fw fa-users-cog"></i><span> Admin Branch List</span>
+      </a>
+    </li>
+    <li class="nav-item" th:classappend="${activePage}=='add-branch' ? ' active'">
+      <a class="nav-link" th:href="@{/admin-super/add-admin-branch}">
+        <i class="fas fa-fw fa-user-plus"></i><span> Add Admin Branch</span>
+      </a>
+    </li>
+    <li class="nav-item" th:classappend="${activePage}=='profile' ? ' active'">
+      <a class="nav-link" th:href="@{/admin-super/profile}">
+        <i class="fas fa-fw fa-id-badge"></i><span> Profile</span>
+      </a>
+    </li>
+  </ul>
+
+  <!-- Content -->
+  <div id="content-wrapper">
+    <div class="container-fluid">
+
+      <!-- Breadcrumb -->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item active">Statistics</li>
+      </ol>
+
+      <!-- Filter -->
+      <form class="form-inline mb-3">
+        <input class="form-control mr-2" type="date" name="from" th:value="${from}">
+        <input class="form-control mr-2" type="date" name="to" th:value="${to}">
+        <button class="btn btn-primary btn-sm"><i class="fas fa-sync"></i> Apply</button>
+      </form>
+
+      <!-- KPIs -->
+      <div class="row" th:if="${kpi != null}">
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="h6 text-muted">Revenue</div>
+              <div class="h3" th:text="${#numbers.formatCurrency(kpi.totalRevenue)}">$0</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="h6 text-muted">Invoices (PAID)</div>
+              <div class="h3" th:text="${kpi.paidInvoices}">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="h6 text-muted">Avg / Invoice</div>
+              <div class="h3" th:text="${#numbers.formatCurrency(kpi.avgPerInvoice)}">$0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily chart -->
+      <div class="card mb-3">
+        <div class="card-header"><i class="fas fa-chart-line"></i> Daily revenue</div>
+        <div class="card-body">
+          <canvas id="dailyChart" height="70"></canvas>
+        </div>
+      </div>
+
+      <div class="row">
+  <!-- By clinic -->
+  <div th:class="${byDoctor == null or #lists.isEmpty(byDoctor)} ? 'col-12' : 'col-md-6'">
+    <div class="card mb-3">
+      <div class="card-header">Revenue by Clinic</div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th>Clinic</th><th class="text-right">Revenue</th></tr></thead>
+          <tbody>
+          <tr th:each="r : ${byClinic}">
+            <td th:text="${r.get('name')}">Clinic</td>
+            <td class="text-right" th:text="${#numbers.formatCurrency(r.get('revenue'))}">$0</td>
+          </tr>
+          <tr th:if="${byClinic == null or #lists.isEmpty(byClinic)}">
+            <td colspan="2" class="text-muted text-center">No data</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- By doctor (chỉ render khi có dữ liệu) -->
+  <div class="col-md-6" th:if="${byDoctor != null and !#lists.isEmpty(byDoctor)}">
+    <div class="card mb-3">
+      <div class="card-header">Revenue by Doctor</div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th>Doctor</th><th class="text-right">Revenue</th></tr></thead>
+          <tbody>
+          <tr th:each="r : ${byDoctor}">
+            <td th:text="${r.get('fullName')}">Doctor</td>
+            <td class="text-right" th:text="${#numbers.formatCurrency(r.get('revenue'))}">$0</td>
+          </tr>
+          <tr th:if="${byDoctor == null or #lists.isEmpty(byDoctor)}">
+            <td colspan="2" class="text-muted text-center">No data</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Latest invoices -->
+      <div class="card mb-5" th:if="${latestInvoices != null}">
+        <div class="card-header">Latest Invoices</div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="latestTable" class="table table-bordered">
+              <thead>
+              <tr><th>#</th><th>No</th><th>Date</th><th>Clinic</th><th>Patient</th><th>Total</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+              <tr th:each="i : ${latestInvoices}">
+                <td th:text="${i.invoiceId}">1</td>
+                <td th:text="${i.invoiceNo}">INV</td>
+                <td th:text="${#temporals.format(i.invoiceDate,'dd/MM/yyyy HH:mm')}">--</td>
+                <td th:text="${i.clinic.name}">Clinic</td>
+                <td th:text="${i.patient != null ? i.patient.fullName : i.patientUserId}">Patient</td>
+                <td th:text="${#numbers.formatCurrency(i.totalAmount)}">$0</td>
+                <td th:text="${i.status}">PAID</td>
+              </tr>
+              <tr th:if="${latestInvoices == null or #lists.isEmpty(latestInvoices)}">
+                <td colspan="7" class="text-muted text-center">No data</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="sticky-footer">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <span>Copyright © Doctor+ 2025</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Vendor JS -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+<script th:src="@{/vendor/js/sb-admin.min.js}"></script>
+<script th:src="@{/vendor/js/demo/datatables-demo.js}"></script>
+<script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+
+<!-- Inline Thymeleaf data -->
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  $('#latestTable').DataTable();
+
+  // Nếu dùng Chart.js v2: yAxes; nếu là v3+: đổi scales: { y: { beginAtZero: true } }
+  const labels = /*[[${dailyLabels}]]*/ [];
+  const values = /*[[${dailyValues}]]*/ [];
+
+  const ctx = document.getElementById('dailyChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ label: 'Revenue', data: values }] },
+    options: { responsive: true, scales: { yAxes: [{ ticks: { beginAtZero:true } }] } }
+  });
+  /*]]>*/
+</script>
+</body>
+</html>

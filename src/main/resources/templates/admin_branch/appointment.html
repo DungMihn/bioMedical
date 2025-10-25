@@ -4,15 +4,23 @@
 <head>
   <meta charset="utf-8">
   <title>Admin Branch - Appointments</title>
-  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="../vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
-  <link href="../vendor/css/sb-admin.css" rel="stylesheet">
+
+  <!-- Vendor CSS -->
+  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+  <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+  <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
+
+  <!-- Theme (gradient pink → purple → blue) -->
+  <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
 </head>
 <body id="page-top">
-<nav class="navbar navbar-expand navbar-dark bg-dark static-top">
+
+<!-- Navbar: áp dụng bg-gradient-theme -->
+<nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
   <a class="navbar-brand mr-1" th:href="@{/admin-branch/doctor-details}">Doctor+ Admin Branch</a>
   <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+
   <ul class="navbar-nav ml-auto ml-md-0">
     <li class="nav-item dropdown no-arrow">
       <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
@@ -29,23 +37,29 @@
 </nav>
 
 <div id="wrapper">
+  <!-- Sidebar: giữ style theme từ admin-theme.css, thêm active bằng Thymeleaf -->
   <ul class="sidebar navbar-nav">
-    <li class="nav-item active">
+    <li class="nav-item" th:classappend="${activePage}=='appointments' ? ' active'">
       <a class="nav-link" th:href="@{/admin-branch/appointments}">
         <i class="fas fa-fw fa-calendar"></i><span>Appointments</span>
       </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" th:classappend="${activePage}=='doctor-details' ? ' active'">
       <a class="nav-link" th:href="@{/admin-branch/doctor-details}">
         <i class="fas fa-fw fa-user-md"></i><span>Doctor Details</span>
       </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" th:classappend="${activePage}=='add-doctor' ? ' active'">
       <a class="nav-link" th:href="@{/admin-branch/add-doctor}">
         <i class="fas fa-fw fa-plus"></i><span>Add Doctor</span>
       </a>
     </li>
-    <li class="nav-item">
+    <li class="nav-item" th:classappend="${activePage}=='invoices' ? ' active'">
+      <a class="nav-link" th:href="@{/admin-branch/invoices}">
+        <i class="fas fa-fw fa-file-invoice-dollar"></i><span>Invoices</span>
+      </a>
+    </li>
+    <li class="nav-item" th:classappend="${activePage}=='my-profile' ? ' active'">
       <a class="nav-link" th:href="@{/admin-branch/edit-my-profile}">
         <i class="fas fa-fw fa-user"></i><span>My Profile</span>
       </a>
@@ -54,30 +68,40 @@
 
   <div id="content-wrapper">
     <div class="container-fluid">
+      <!-- Breadcrumb -->
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a th:href="@{/admin-branch/doctor-details}">Dashboard</a></li>
         <li class="breadcrumb-item active">Appointments</li>
       </ol>
 
+      <!-- Card + DataTable -->
       <div class="card mb-3">
-        <div class="card-header"><i class="fas fa-table"></i> Data Table</div>
+        <div class="card-header">
+          <i class="fas fa-table"></i> Appointments
+        </div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
               <thead>
               <tr>
-                <th>Id</th><th>Name</th><th>Email</th><th>Date</th><th>Time</th><th>Description</th><th>Reg. Time</th>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Description</th>
+                <th>Reg. Time</th>
               </tr>
               </thead>
               <tbody>
               <tr th:each="temp : ${app}">
-                <td th:text="${temp.id}"></td>
-                <td th:text="${temp.name}"></td>
-                <td th:text="${temp.email}"></td>
-                <td th:text="${temp.date}"></td>
-                <td th:text="${temp.time}"></td>
-                <td th:text="${temp.description}"></td>
-                <td th:text="${temp.regtime}"></td>
+                <td th:text="${temp.id}">1</td>
+                <td th:text="${temp.name}">John</td>
+                <td th:text="${temp.email}">john@mail.com</td>
+                <td th:text="${temp.date}">2025-01-01</td>
+                <td th:text="${temp.time}">09:00</td>
+                <td th:text="${temp.description}">—</td>
+                <td th:text="${temp.regtime}">—</td>
               </tr>
               </tbody>
             </table>
@@ -86,17 +110,25 @@
         <div class="card-footer small text-muted">Doctor+</div>
       </div>
     </div>
+
+    <footer class="sticky-footer">
+      <div class="container my-auto">
+        <div class="copyright text-center my-auto">
+          <span>Copyright © Doctor+ 2025</span>
+        </div>
+      </div>
+    </footer>
   </div>
 </div>
 
-<script src="../vendor/jquery/jquery.min.js"></script>
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="../vendor/chart.js/Chart.min.js"></script>
-<script src="../vendor/datatables/jquery.dataTables.js"></script>
-<script src="../vendor/datatables/dataTables.bootstrap4.js"></script>
-<script src="../vendor/js/sb-admin.min.js"></script>
-<script src="../vendor/js/demo/datatables-demo.js"></script>
-<script src="../vendor/js/demo/chart-area-demo.js"></script>
+<!-- Vendor JS -->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+<script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+<script th:src="@{/vendor/js/sb-admin.min.js}"></script>
+
+
 </body>
 </html>

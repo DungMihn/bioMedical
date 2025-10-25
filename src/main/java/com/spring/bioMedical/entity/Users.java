@@ -60,11 +60,13 @@ public class Users implements Serializable {
     @Basic(optional = false)
     @Column(name = "user_id")
     private Long userId;
+    
+    
 
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
-    @Column(name = "username")
+    @Column(name = "username", nullable = false, length = 100/*, unique = true*/)
     private String username;
 
     @Basic(optional = false)
@@ -74,7 +76,7 @@ public class Users implements Serializable {
     private String passwordHash;
 
     @Size(max = 255)
-    @Column(name = "email")
+    @Column(name = "email", length = 255/*, unique = true*/)
     private String email;
 
     @Size(max = 50)
@@ -115,6 +117,7 @@ public class Users implements Serializable {
     @ManyToOne(optional = true)
     @JoinColumn(name = "clinic_id")  // cột FK trong bảng Users
     private Clinic clinic;
+    
     
 
     /* ====== Constructors ====== */

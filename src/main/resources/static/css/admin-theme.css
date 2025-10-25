@@ -1,14 +1,19 @@
-/* ---- Remedic gradient theme ---- */
+/* ---- Doctor+ gradient (pink → purple → blue) ---- */
 :root{
-  --blue:  #2f89fc;     /* xanh dương Remedic */
-  --green: #01d28e;     /* xanh ngọc Remedic  */
-  --green-dark:#00b67a;
-  --tint: rgba(1,210,142,.12);
+  /* Màu chủ đạo */
+  --pink:   #e44a9b;
+  --purple: #764ba2;
+  --blue:   #3a7bd5;
+
+  /* Tương thích với các rule cũ (giữ tên biến để không phải sửa HTML) */
+  --green: var(--purple);        /* dùng tím thay cho 'green' cũ */
+  --green-dark:#5a3e93;          /* tím đậm hơn một chút */
+  --tint: rgba(118, 75, 162, .12); /* tím nhạt dùng làm hover/outline */
 }
 
-/* nền gradient dùng cho navbar/header/footer… */
+/* Nền gradient dùng cho navbar/header/footer… */
 .bg-gradient-theme{
-  background: linear-gradient(90deg, var(--blue) 0%, var(--green) 100%) !important;
+  background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 50%, var(--blue) 100%) !important;
 }
 
 /* màu chữ trắng trên nền tối */
@@ -17,8 +22,8 @@
 
 /* nút chủ đạo dùng gradient */
 .btn-primary{
-  background-image: linear-gradient(90deg, var(--blue), var(--green)) !important;
-  border-color: var(--green) !important;
+  background-image: linear-gradient(90deg, var(--pink), var(--blue)) !important;
+  border-color: var(--purple) !important;
 }
 .btn-primary:hover{
   filter: brightness(0.95);
@@ -31,12 +36,12 @@
 
 /* focus form */
 .form-control:focus{
-  border-color: var(--green);
-  box-shadow: 0 0 0 .2rem rgba(1,210,142,.25);
+  border-color: var(--purple);
+  box-shadow: 0 0 0 .2rem rgba(118, 75, 162, .25);
 }
 
 /* breadcrumb link */
-.breadcrumb .breadcrumb-item a{ color: var(--green); }
+.breadcrumb .breadcrumb-item a{ color: var(--purple); }
 
 /* sidebar (nền tối + active theo theme) */
 .sidebar{ background:#222831; }
@@ -46,9 +51,9 @@
 .sidebar .nav-item.active .nav-link{
   color:#fff !important;
   background: rgba(255,255,255,.06);
-  border-left: 4px solid var(--green);
+  border-left: 4px solid var(--purple);
 }
-.sidebar .nav-item.active .nav-link i{ color: var(--green) !important; }
+.sidebar .nav-item.active .nav-link i{ color: var(--purple) !important; }
 
 /* card nhẹ nhàng */
 .card{ border:0; border-radius:.75rem; box-shadow:0 10px 25px rgba(0,0,0,.06); }
@@ -56,17 +61,17 @@
 
 /* DataTables phối màu */
 .table thead th{
-  background: linear-gradient(90deg, var(--blue), var(--green));
+  background: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
   color:#fff; border-color: transparent;
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button.current,
 .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover{
-  background: var(--green) !important; border-color: var(--green) !important; color:#fff !important;
+  background: var(--purple) !important; border-color: var(--purple) !important; color:#fff !important;
 }
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover{
-  background: var(--tint) !important; border-color: var(--green) !important; color:#000 !important;
+  background: var(--tint) !important; border-color: var(--purple) !important; color:#000 !important;
 }
 .dataTables_wrapper .dataTables_filter input:focus{
-  border-color: var(--green) !important;
-  box-shadow: 0 0 0 .2rem rgba(1,210,142,.25) !important;
+  border-color: var(--purple) !important;
+  box-shadow: 0 0 0 .2rem rgba(118, 75, 162, .25) !important;
 }

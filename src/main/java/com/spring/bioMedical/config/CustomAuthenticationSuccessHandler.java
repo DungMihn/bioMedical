@@ -2,20 +2,16 @@ package com.spring.bioMedical.config;
 
 import java.io.IOException;
 import java.util.Set;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component; // dùng Component thay cho Configuration
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-/**
- * Custom handler để redirect sau khi đăng nhập thành công
- */
-@Configuration
+@Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
@@ -24,33 +20,28 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                                         Authentication authentication)
             throws IOException, ServletException {
 
+        String ctx = request.getContextPath();
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
-        // Ưu tiên ADMIN_SUPER
         if (roles.contains("ADMIN_SUPER")) {
-            response.sendRedirect("/admin-super/admin-branch-list");
+            response.sendRedirect(ctx + "/admin-super/admin-branch-list");
             return;
         }
-
-        // ADMIN_BRANCH
         if (roles.contains("ADMIN_BRANCH")) {
-            response.sendRedirect("/admin-branch/doctor-details");
+            // ĐƯỜNG DẪN TỒN TẠI trong AdminBranchInvoiceController
+            response.sendRedirect(ctx + "/admin-branch/doctor-details");
             return;
         }
-
-        // DOCTOR
         if (roles.contains("DOCTOR")) {
-            response.sendRedirect("/doctor/index");
+            // TODO: thay bằng URL có thật của bạn
+            response.sendRedirect(ctx + "/doctor/index");
             return;
         }
-
-        // PATIENT
         if (roles.contains("PATIENT")) {
-            response.sendRedirect("/user/index");
+            // TODO: thay bằng URL có thật của bạn
+            response.sendRedirect(ctx + "/user/index");
             return;
         }
-
-        // fallback nếu role không hợp lệ
-        response.sendRedirect("/showMyLoginPage?error=role");
+        response.sendRedirect(ctx + "/showMyLoginPage?error=role");
     }
 }

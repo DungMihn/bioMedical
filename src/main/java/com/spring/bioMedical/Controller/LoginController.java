@@ -1,7 +1,7 @@
 package com.spring.bioMedical.Controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * 
@@ -12,22 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class LoginController {
 
+    @GetMapping("/showMyLoginPage")
+    public String showLoginPage() {
+        return "login"; // templates/login.html
+    }
 
-	@RequestMapping("/showMyLoginPage")
-	public String showHome()
-	{
-		
-		return "login";
-	}
-
-	
-/*
-	@RequestMapping("/authenticateTheUser")
-	public String shwHome()
-	{
-		
-		return "user/success";
-	}*/
-
-
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "access_denied"; // templates/access_denied.html
+    }
 }

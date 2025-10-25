@@ -39,16 +39,24 @@
 <div id="wrapper">
   <!-- Sidebar -->
   <ul class="sidebar navbar-nav">
+    <li class="nav-item" th:classappend="${activePage}=='statistics' ? ' active'">
+      <a class="nav-link" th:href="@{/admin-super/statistics}">
+        <i class="fas fa-fw fa-chart-line"></i><span> Statistics</span>
+      </a>
+    </li>
+
     <li class="nav-item" th:classappend="${activePage}=='branch-list' ? ' active'">
       <a class="nav-link" th:href="@{/admin-super/admin-branch-list}">
         <i class="fas fa-fw fa-users-cog"></i><span> Admin Branch List</span>
       </a>
     </li>
+
     <li class="nav-item" th:classappend="${activePage}=='add-branch' ? ' active'">
       <a class="nav-link" th:href="@{/admin-super/add-admin-branch}">
         <i class="fas fa-fw fa-user-plus"></i><span> Add Admin Branch</span>
       </a>
     </li>
+
     <li class="nav-item" th:classappend="${activePage}=='profile' ? ' active'">
       <a class="nav-link" th:href="@{/admin-super/profile}">
         <i class="fas fa-fw fa-id-badge"></i><span> Profile</span>
@@ -69,21 +77,28 @@
         </div>
         <div class="card-body">
           <form th:action="@{/admin-super/save-admin-branch}" th:object="${adminBranch}" method="post" class="needs-validation">
+
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label>Username</label>
-                <input th:field="*{username}" class="form-control" required placeholder="Enter username">
+                <input th:field="*{username}" class="form-control" placeholder="Enter username"
+                       th:classappend="${#fields.hasErrors('username')}? ' is-invalid'">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label>Full name</label>
-                <input th:field="*{fullName}" class="form-control" required placeholder="Enter full name">
+                <input th:field="*{fullName}" class="form-control" placeholder="Enter full name"
+                       th:classappend="${#fields.hasErrors('fullName')}? ' is-invalid'">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">Full name error</div>
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label>Email</label>
-                <input th:field="*{email}" type="email" class="form-control" required placeholder="Enter email">
+                <input th:field="*{email}" type="email" class="form-control" placeholder="Enter email"
+                       th:classappend="${#fields.hasErrors('email')}? ' is-invalid'">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label>Phone</label>
@@ -94,13 +109,21 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label>Password</label>
-                <input th:field="*{passwordHash}" type="password" class="form-control" required placeholder="Enter password">
+                <input th:field="*{passwordHash}" type="password" class="form-control" placeholder="Enter password"
+                       th:classappend="${#fields.hasErrors('passwordHash')}? ' is-invalid'">
+                <small class="form-text text-muted">
+                  ≥8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&._-)
+                </small>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordHash')}" th:errors="*{passwordHash}">Password error</div>
               </div>
               <div class="col-md-6 mb-3">
                 <label>Clinic</label>
-                <select name="clinicId" class="form-control">
+                <select th:field="*{clinicId}" class="form-control"
+                        th:classappend="${#fields.hasErrors('clinicId')}? ' is-invalid'">
+                  <option value="">-- Select clinic --</option>
                   <option th:each="c : ${clinics}" th:value="${c.clinicId}" th:text="${c.name}"></option>
                 </select>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('clinicId')}" th:errors="*{clinicId}">Clinic error</div>
               </div>
             </div>
 
@@ -136,5 +159,65 @@
 <script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
 <script th:src="@{/vendor/js/sb-admin.min.js}"></script>
 <script th:src="@{/vendor/js/demo/datatables-demo.js}"></script>
+
+<!-- Validate realtime: username/email + rule client-side -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+function fb(input){var x=input.parentElement.querySelector('.invalid-feedback');if(!x){x=document.createElement('div');x.className='invalid-feedback';input.parentElement.appendChild(x);}return x;}
+function invalid(input,msg){input.classList.add('is-invalid');fb(input).textContent=msg||'Invalid';}
+function clearInvalid(input){input.classList.remove('is-invalid');var x=input.parentElement.querySelector('.invalid-feedback');if(x)x.textContent='';}
+function empty(v){return !v||!v.trim();}
+function debounce(fn,wait){var t;return function(){var c=this,a=arguments;clearTimeout(t);t=setTimeout(function(){fn.apply(c,a);},wait);};}
+
+var PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
+var EMAIL_RE    = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+function vUsername(i){var v=i.value.trim();if(empty(v)){invalid(i,'Username is required');return false;}if(v.length>100){invalid(i,'Username tối đa 100 ký tự');return false;}clearInvalid(i);return true;}
+function vEmail(i){var v=i.value.trim();if(empty(v)){invalid(i,'Email is required');return false;}if(v.length>255){invalid(i,'Email tối đa 255 ký tự');return false;}if(!EMAIL_RE.test(v)){invalid(i,'Email không hợp lệ');return false;}clearInvalid(i);return true;}
+function vPassword(i){var v=i.value;if(empty(v)){invalid(i,'Password is required');return false;}if(!PASSWORD_RE.test(v)){invalid(i,'≥8 ký tự, có hoa, thường, số và ký tự đặc biệt (@$!%*?&._-)');return false;}clearInvalid(i);return true;}
+function vFullName(i){var v=i.value.trim();if(empty(v)){invalid(i,'Full name is required');return false;}if(v.length>255){invalid(i,'Full name tối đa 255 ký tự');return false;}clearInvalid(i);return true;}
+function vClinic(sel){var v=sel.value;if(empty(v)){invalid(sel,'Clinic is required');return false;}clearInvalid(sel);return true;}
+
+function remote(url,param,val){var u=url+'?'+encodeURIComponent(param)+'='+encodeURIComponent(val);return fetch(u,{credentials:'same-origin'}).then(function(r){return r.json();}).then(function(j){return !!j.valid;}).catch(function(){return true;});}
+
+var $u=document.querySelector('[name="username"]');
+var $e=document.querySelector('[name="email"]');
+var $p=document.querySelector('[name="passwordHash"]');
+var $f=document.querySelector('[name="fullName"]');
+var $c=document.querySelector('[name="clinicId"]');
+
+var CHECK_U=/*[[@{/admin-super/api/check-username}]]*/ '/admin-super/api/check-username';
+var CHECK_E=/*[[@{/admin-super/api/check-email}]]*/ '/admin-super/api/check-email';
+
+if($u){
+  var checkUR=debounce(function(){var v=$u.value.trim();if(!vUsername($u))return;remote(CHECK_U,'u',v).then(function(ok){if(!ok)invalid($u,'Username đã tồn tại');else clearInvalid($u);});},300);
+  $u.addEventListener('input',function(){vUsername($u);checkUR();});
+  $u.addEventListener('blur',function(){vUsername($u);checkUR();});
+}
+if($e){
+  var checkER=debounce(function(){var v=$e.value.trim();if(!vEmail($e))return;remote(CHECK_E,'e',v).then(function(ok){if(!ok)invalid($e,'Email đã được sử dụng');else clearInvalid($e);});},300);
+  $e.addEventListener('input',function(){vEmail($e);checkER();});
+  $e.addEventListener('blur',function(){vEmail($e);checkER();});
+}
+if($p){$p.addEventListener('input',function(){vPassword($p);});$p.addEventListener('blur',function(){vPassword($p);});}
+if($f){$f.addEventListener('input',function(){vFullName($f);});$f.addEventListener('blur',function(){vFullName($f);});}
+if($c){$c.addEventListener('change',function(){vClinic($c);});$c.addEventListener('blur',function(){vClinic($c);});}
+
+// Ngăn submit nếu còn lỗi client
+var form=document.querySelector('form[th\\:object], form[action*="save-admin-branch"]')||document.querySelector('form');
+if(form){
+  form.addEventListener('submit',function(e){
+    var ok=true;
+    if($u) ok=vUsername($u)&&ok;
+    if($e) ok=vEmail($e)&&ok;
+    if($p) ok=vPassword($p)&&ok;
+    if($f) ok=vFullName($f)&&ok;
+    if($c) ok=vClinic($c)&&ok;
+    if(!ok) e.preventDefault();
+  });
+}
+/*]]>*/
+</script>
 </body>
 </html>
