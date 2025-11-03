@@ -21,14 +21,5 @@ public class LoginController {
 	}
         
 
-	
-/*
-	@RequestMapping("/authenticateTheUser")
-	public String shwHome()
-	{
-		
-		return "user/success";
-	}*/
-
 
 }

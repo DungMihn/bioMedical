@@ -14,12 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 
-/**
- * 
- * @author Soumyadip Chowdhury
- * @github soumyadip007
- *
- */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -34,17 +29,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 
-		// use jdbc authentication ... oh yeah!!!
 		  auth.jdbcAuthentication().dataSource(securityDataSource)
-//		  .usersByUsernameQuery(
-//		   "select username,password,enabled from user where username=?")
-//		  .authoritiesByUsernameQuery(
-//		   "select username, authority from user where username=?")
     .usersByUsernameQuery("select username, password_hash, enabled from Users where username=?")
     .authoritiesByUsernameQuery("select username, role from Users where username=?")
     .passwordEncoder(passwordEncoder())
-    .rolePrefix(""); // ⚡ Bỏ prefix ROLE_
-//		  .passwordEncoder(passwordEncoder()) ;
+    .rolePrefix(""); 
 		 } 
 	
 	@Bean
@@ -58,18 +47,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
             
-http.authorizeRequests()
+http
+        .csrf().disable()
+        .authorizeRequests()
     .antMatchers("/admin/**").hasAuthority("ADMIN")
     .antMatchers("/doctor/**").hasAuthority("DOCTOR")
-//    .antMatchers("/user/**").hasAuthority("PATIENT")
-    .antMatchers("/user/**").permitAll()   // ⚡ CHO PHÉP PUBLIC
-    .antMatchers("/test-mail/**").permitAll()   // ⚡ CHO PHÉP PUBLIC
-    .antMatchers("/register/**").permitAll()    // ⚡ Cho cả GET + POST
-    .antMatchers("/verify-otp/**").permitAll()  // ⚡ Cho cả GET + POST
-                .antMatchers("/forgot-password/**").permitAll()     // ⚡ Thêm
-        .antMatchers("/resend-forgot-otp/**").permitAll()   // ⚡ Thêm
-        .antMatchers("/verify-forgot-otp/**").permitAll()   // ⚡ Thêm
-        .antMatchers("/reset-password/**").permitAll()      // ⚡ Thêm
+        
+        //  Cho phép đặt lịch không cần đăng nhập
+        .antMatchers("/user/slots-by-clinic/**").permitAll()
+        .antMatchers("/user/save-app").permitAll()
+        .antMatchers("/verify-appointment-otp/**").permitAll()
+        .antMatchers("/resend-otp/**").permitAll()
+    .antMatchers("/user/**").permitAll()    
+    .antMatchers("/test-mail/**").permitAll()    
+            .antMatchers("/layout").permitAll()   
+    .antMatchers("/register/**").permitAll()    
+    .antMatchers("/verify-otp/**").permitAll()  
+                .antMatchers("/forgot-password/**").permitAll()    
+        .antMatchers("/resend-forgot-otp/**").permitAll()   
+        .antMatchers("/verify-forgot-otp/**").permitAll()   
+        .antMatchers("/reset-password/**").permitAll()      
         .antMatchers("/resend-otp/**").permitAll()
     .antMatchers("/register").permitAll()
     .antMatchers("/confirm").permitAll()
@@ -105,9 +102,8 @@ http.authorizeRequests()
 	public void configure(WebSecurity web) throws Exception {
 	
 		web.ignoring().antMatchers("/resources/**","/login/**","/static/**","/Script/**","/Style/**","/Icon/**",
-				"/js/**","/vendor/**","/bootstrap/**","/Image/**");
+				"/js/**","/vendor/**","/bootstrap/**","/image/**");
 		
-		//logoutSuccessUrl("/customLogout")
 	}
 	
 

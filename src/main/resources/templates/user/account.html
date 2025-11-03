@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+            xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+  <meta charset="UTF-8">
+  <title>Account - Remedic</title>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.css">
+
+  <style>
+    /* ===========================
+       👑 Account Page Styling
+       =========================== */
+    body.account-page-body {
+      background: #f5f6fa;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      color: #333;
+    }
+
+    /* Sidebar */
+    .account-page-sidebar {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .account-page-sidebar h5 {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .account-page-sidebar .list-group-item {
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      color: #333;
+      text-align: left;
+    }
+
+    .account-page-sidebar .list-group-item i {
+      width: 22px;
+    }
+
+    .account-page-sidebar .list-group-item:hover {
+      background-color: #e9f3ff;
+      color: #007bff;
+    }
+
+    .account-page-sidebar .list-group-item.active {
+      background-color: #007bff !important;
+      color: #fff !important;
+    }
+
+    /* Logout Button */
+    .account-page-logout {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
+      background: #fff3f3;
+      color: #d9534f;
+      font-weight: 600;
+      padding: 10px 0;
+      border: 1px solid #f1b4b4;
+      transition: all 0.2s;
+    }
+
+    .account-page-logout:hover {
+      background: #d9534f;
+      color: #fff;
+    }
+
+    /* Cards & Filters */
+    .account-page-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .account-page-filter {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .account-page-filter h4 {
+      font-weight: 600;
+      color: #007bff;
+    }
+
+    .account-page-btn-group .btn {
+      border-radius: 25px;
+      font-weight: 500;
+      margin: 3px;
+    }
+
+    /* Profile Form */
+    .account-page-profile {
+      background: #fff;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .account-page-profile input,
+    .account-page-profile select {
+      border-radius: 8px;
+    }
+
+    .account-page-profile .btn-primary {
+      border-radius: 8px;
+      background: linear-gradient(90deg, #007bff, #00bfa5);
+      border: none;
+    }
+
+    .account-page-profile .btn-primary:hover {
+      background: linear-gradient(90deg, #006ae0, #00a58d);
+    }
+
+    /* Modal */
+    .account-page-modal .modal-header {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+  </style>
+</head>
+
+<body class="account-page-body">
+
+ <section layout:fragment="content">
+     <div class="account-wrapper py-3">
+  <div class="container">
+    <div class="row">
+
+      <!-- Sidebar -->
+      <div class="col-md-3 mb-4">
+        <div class="account-page-sidebar text-center">
+          <i class="fas fa-user-circle fa-4x text-secondary mb-2"></i>
+          <h5 th:text="${user.fullName}">User Name</h5>
+          <p class="text-muted mb-4" style="font-size: 14px;">Member Account</p>
+
+          <div class="list-group">
+            <button id="btnHistory" class="list-group-item list-group-item-action active">
+              <i class="fas fa-clock mr-2"></i> Appointment History
+            </button>
+            <button id="btnProfile" class="list-group-item list-group-item-action">
+              <i class="fas fa-id-card mr-2"></i> Personal Information
+            </button>
+          </div>
+
+          <a href="/logout" class="account-page-logout text-center">
+            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+          </a>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="col-md-9">
+
+        <!-- TAB 1: APPOINTMENT HISTORY -->
+        <div id="tabHistory">
+          <div class="account-page-filter d-flex justify-content-between align-items-center flex-wrap">
+            <h4><i class="fas fa-notes-medical mr-2"></i>Appointment History</h4>
+            <div class="d-flex align-items-center mb-2">
+                <label class="mr-2 mb-0">From:</label>
+                <div class="input-group mr-2" style="width: 160px;">
+                  <input type="text" id="fromDate" class="form-control datepicker" placeholder="Select start date">
+                </div>
+
+                <label class="mr-2 mb-0">To:</label>
+                <div class="input-group mr-2" style="width: 160px;">
+                  <input type="text" id="toDate" class="form-control datepicker" placeholder="Select end date">
+                </div>
+
+                <button id="btnFilterDate" class="btn btn-primary text-white">
+                  <i class="fas fa-filter mr-1"></i> Filter
+                </button>
+              </div>
+          </div>
+
+          <div class="account-page-btn-group mb-3">
+            <button type="button" class="btn btn-outline-primary filter-btn active" data-status="ALL">All</button>
+            <button type="button" class="btn btn-outline-warning filter-btn" data-status="PENDING">Pending</button>
+            <button type="button" class="btn btn-outline-info filter-btn" data-status="CONFIRMED">Confirmed</button>
+            <button type="button" class="btn btn-outline-success filter-btn" data-status="COMPLETED">Completed</button>
+            <button type="button" class="btn btn-outline-danger filter-btn" data-status="CANCELLED">Cancelled</button>
+          </div>
+
+          <div id="appointmentList">
+            <div th:if="${#lists.isEmpty(appointments)}" class="alert alert-info">
+              You don't have any appointments yet.
+            </div>
+
+            <div th:each="a : ${appointments}" 
+                 class="account-page-card appointment-item"
+                 th:attr="data-status=${a.status}, data-created=${#dates.format(a.createdAt, 'yyyy-MM-dd')}">
+
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>
+                  <i class="fas fa-hospital mr-2 text-primary"></i>
+                  <span th:text="${a.slotId.clinicId.name}">Clinic Name</span>
+                </h5>
+                <span class="badge px-3 py-2"
+                      th:text="${a.status}"
+                      th:classappend="
+                        ${a.status == 'COMPLETED'} ? ' badge-success' :
+                        (${a.status == 'PENDING'} ? ' badge-warning text-dark' :
+                        (${a.status == 'CONFIRMED'} ? ' badge-info' :
+                        (${a.status == 'CANCELLED'} ? ' badge-danger' : 'badge-secondary')))
+                      ">
+                </span>
+              </div>
+
+              <div class="row">
+                <div class="col-md-8">
+                  <p><b>Doctor:</b> <span th:text="${a.slotId.doctorId.userId.fullName}">Dr. Nguyen Van A</span></p>
+                  <p><b>Date:</b> <span th:text="${#dates.format(a.slotId.slotDate,'dd/MM/yyyy')}"></span></p>
+                  <p><b>Time:</b> <span th:text="${#dates.format(a.slotId.slotTime,'HH:mm')}"></span></p>
+                  <p><b>Notes:</b> <span th:text="${a.notes}">None</span></p>
+                </div>
+                <div class="col-md-4 text-right">
+                  <p><b>Created on:</b> <span th:text="${#dates.format(a.createdAt,'dd/MM/yyyy')}"></span></p>
+                  <p class="text-muted small">(Appointment ID: <span th:text="${a.appointmentId}"></span>)</p>
+                  
+                  <!-- Detail button -->
+                  <a href="#" 
+                     class="btn btn-outline-primary btn-sm mt-2 view-detail"
+                     th:if="${a.status == 'COMPLETED'}"
+                     th:attr="data-id=${a.appointmentId}">
+                     <i class="fas fa-notes-medical mr-1"></i> View Details
+                  </a>
+
+                    <!-- Confirm appointment button -->
+                    <button class="btn btn-outline-success btn-sm mt-2 confirm-appointment"
+                            th:if="${a.status == 'PENDING'}"
+                            th:attr="data-email=${a.userId.email}">
+                      <i class="fas fa-check mr-1"></i> Confirm
+                    </button>
+
+                    <!-- Cancel button -->
+                    <button class="btn btn-outline-danger btn-sm mt-2 cancel-appointment"
+                            th:if="${a.status == 'PENDING'}"
+                            th:attr="data-id=${a.appointmentId}">
+                      <i class="fas fa-times mr-1"></i> Cancel
+                    </button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: PERSONAL INFO -->
+        <div id="tabProfile" style="display:none;">
+          <div class="account-page-profile">
+            <h4 class="text-primary mb-3"><i class="fas fa-user mr-2"></i>Personal Information</h4>
+            <form th:object="${user}" th:action="@{/user/update-profile}" method="post">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input th:field="*{fullName}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input th:field="*{email}" class="form-control" readonly>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input th:field="*{phone}" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select th:field="*{gender}" class="form-control">
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" th:field="*{dateOfBirth}" class="form-control">
+              </div>
+              <div class="text-right">
+                <button type="submit" class="btn btn-primary px-4">
+                  <i class="fas fa-save mr-2"></i> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+ </div>
+    </div>
+  </div>
+</section>
+
+<th:block layout:fragment="global-modal" th:replace="fragments/account-modal :: recordModal"></th:block>
+
+<th:block layout:fragment="extra-scripts" th:replace="fragments/account-scripts :: accountScripts"></th:block>
+
+</body>
+</html>

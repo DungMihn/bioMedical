@@ -1,0 +1,216 @@
+<div th:fragment="header">
+  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark fixed-top" id="ftco-navbar">
+    <div class="container">
+
+      <!-- ✅ LOGO -->
+      <a class="navbar-brand d-flex align-items-center logo-link" th:href="@{/user/index}">
+        <i class="flaticon-pharmacy mr-2 text-primary"></i>
+        <span class="logo-text">RE</span><span class="logo-text">MEDIC</span>
+      </a>
+
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+              aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="oi oi-menu"></span> Menu
+      </button>
+
+      <div class="collapse navbar-collapse" id="ftco-nav">
+        <ul class="navbar-nav ml-auto align-items-center">
+
+          <!-- Nav links -->
+          <li class="nav-item" th:classappend="${#httpServletRequest.requestURI.endsWith('/user/index')} ? 'active'">
+            <a th:href="@{/user/index}" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item" th:classappend="${#httpServletRequest.requestURI.endsWith('/user/about')} ? 'active'">
+            <a th:href="@{/user/about}" class="nav-link">About</a>
+          </li>
+          <li class="nav-item" th:classappend="${#httpServletRequest.requestURI.endsWith('/user/departments')} ? 'active'">
+            <a th:href="@{/user/departments}" class="nav-link">Departments</a>
+          </li>
+          <li class="nav-item" th:classappend="${#httpServletRequest.requestURI.endsWith('/user/doctor')} ? 'active'">
+            <a th:href="@{/user/doctor}" class="nav-link">Doctors</a>
+          </li>
+          <li class="nav-item" th:classappend="${#httpServletRequest.requestURI.endsWith('/user/blog')} ? 'active'">
+            <a th:href="@{/user/blog}" class="nav-link">Blog</a>
+          </li>
+          <li class="nav-item" th:classappend="${#httpServletRequest.requestURI.endsWith('/user/contact')} ? 'active'">
+            <a th:href="@{/user/contact}" class="nav-link">Contact</a>
+          </li>
+
+          <!-- ✅ BOOK APPOINTMENT -->
+          <li class="nav-item cta ml-3">
+            <a class="btn btn-primary rounded-pill px-4 py-2 text-white book-btn"
+               data-toggle="modal" data-target="#modalAppointment">
+              <i class="fas fa-calendar-check mr-1"></i> Book Appointment
+            </a>
+          </li>
+
+          <!-- ✅ LOGIN -->
+          <li class="nav-item ml-3" th:if="${currentUser == null}">
+            <a class="btn btn-outline-light rounded-pill px-4 py-2"
+               th:href="@{/showMyLoginPage}">
+              <i class="fas fa-sign-in-alt mr-1"></i> Login
+            </a>
+          </li>
+
+          <!-- ✅ USER MENU -->
+          <li class="nav-item ml-3 position-relative" th:if="${currentUser != null}">
+            <div class="user-menu-wrapper" id="userMenuWrapper">
+              <!-- Avatar + Name -->
+              <div class="user-trigger d-flex align-items-center" id="userTrigger">
+                <i class="fas fa-user-circle fa-lg mr-2 text-warning"></i>
+                <span th:text="${currentUser.fullName}" class="user-name">User</span>
+                <i class="fas fa-chevron-down ml-1 small"></i>
+                <div class="user-tooltip">Account</div>
+              </div>
+
+              <!-- Dropdown -->
+              <div class="user-dropdown shadow" id="userDropdown">
+                <a class="dropdown-item d-flex align-items-center" th:href="@{/user/account}">
+                  <i class="fas fa-id-card-alt mr-2 text-primary"></i> Account Management
+                </a>
+                <div class="dropdown-divider m-0"></div>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                  <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                  </button>
+                </form>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ✅ MODAL -->
+  <div th:replace="user/modal :: modal"></div>
+
+  <!-- ✅ STYLE -->
+  <style>
+    body { padding-top: 85px; }
+
+    #ftco-navbar {
+      background: rgba(33, 37, 41, 0.95) !important;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: top 0.4s ease-in-out, background 0.3s ease;
+      position: fixed !important;
+      top: 0; width: 100%;
+      z-index: 1030;
+      padding: 1rem 0;
+    }
+
+    .logo-link .logo-text {
+      color: #fff;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 0.5px;
+      transition: color 0.3s ease;
+    }
+    .logo-link:hover .logo-text { color: #ffd700 !important; }
+
+    #ftco-navbar .nav-link {
+      color: rgba(255,255,255,0.9) !important;
+      font-weight: 500;
+      padding: 0.75rem 1.1rem;
+      transition: color 0.3s ease;
+    }
+    #ftco-navbar .nav-link:hover { color: #ffd700 !important; }
+
+    #ftco-navbar .nav-item.active > .nav-link {
+      color: #ffd700 !important;
+      position: relative;
+    }
+    #ftco-navbar .nav-item.active > .nav-link::after {
+      content: ''; position: absolute; bottom: 5px; left: 0;
+      width: 100%; height: 2px; background-color: #ffd700; border-radius: 2px;
+    }
+
+    .book-btn {
+      background-color: #007bff !important;
+      border: none !important;
+      transition: all 0.3s ease;
+    }
+    .book-btn:hover {
+      background-color: #0056d2 !important;
+      color: #ffd700 !important;
+      transform: translateY(-1px);
+    }
+
+    .user-menu-wrapper { position: relative; }
+    .user-trigger {
+      cursor: pointer; position: relative;
+      padding: 8px 12px; border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+    .user-trigger:hover { background: rgba(255,255,255,0.08); }
+    .user-name { font-weight: 500; color: #ffd700; }
+    .user-tooltip {
+      position: absolute; bottom: -28px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85); color: #fff;
+      font-size: 12px; padding: 4px 8px;
+      border-radius: 4px; white-space: nowrap;
+      opacity: 0; visibility: hidden;
+      transition: all 0.2s ease;
+    }
+    .user-trigger:hover .user-tooltip {
+      opacity: 1; visibility: visible; transform: translate(-50%, -4px);
+    }
+
+    .user-dropdown {
+      position: absolute; top: 110%; right: 0; width: 210px;
+      background: #fff; border-radius: 10px;
+      overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      opacity: 0; visibility: hidden; transform: translateY(-10px);
+      transition: all 0.25s ease; z-index: 1050;
+    }
+    .user-dropdown.show {
+      opacity: 1; visibility: visible; transform: translateY(0);
+    }
+    .user-dropdown .dropdown-item {
+      padding: 12px 18px; font-weight: 500; color: #333 !important;
+    }
+    .user-dropdown .dropdown-item:hover {
+      background: #f8f9fa; color: #007bff !important;
+    }
+    .user-dropdown .dropdown-item.text-danger:hover {
+      background: #fff5f5; color: #dc3545 !important;
+    }
+
+    .navbar.hide { top: -90px !important; }
+
+    a, .btn, .nav-link, .dropdown-item { cursor: pointer !important; }
+  </style>
+
+  <!-- ✅ SCRIPT -->
+  <script>
+    let lastScrollTop = 0;
+    const navbar = document.getElementById('ftco-navbar');
+    window.addEventListener('scroll', function() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop && scrollTop > 80) {
+        navbar.classList.add('hide');
+      } else {
+        navbar.classList.remove('hide');
+      }
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const trigger = document.getElementById("userTrigger");
+      const dropdown = document.getElementById("userDropdown");
+      const icon = trigger.querySelector(".fa-chevron-down");
+      trigger.addEventListener("click", (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle("show");
+        icon.style.transform = dropdown.classList.contains("show") ? "rotate(180deg)" : "rotate(0deg)";
+      });
+      document.addEventListener("click", () => {
+        dropdown.classList.remove("show");
+        icon.style.transform = "rotate(0deg)";
+      });
+    });
+  </script>
+</div>

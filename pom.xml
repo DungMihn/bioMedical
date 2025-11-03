@@ -76,6 +76,11 @@
                     <artifactId>mssql-jdbc</artifactId>
                     <version>9.4.0.jre8</version>
                 </dependency>
+                <dependency>
+    <groupId>org.thymeleaf.extras</groupId>
+    <artifactId>thymeleaf-extras-springsecurity5</artifactId>
+</dependency>
+
     <dependency>
         <groupId>org.eclipse.persistence</groupId>
         <artifactId>org.eclipse.persistence.core</artifactId>
@@ -117,6 +122,19 @@
     <version>2.7.12</version>
     <scope>provided</scope>
   </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+      <version>1.18.38</version>
+      <type>jar</type>
+    </dependency>
+    <!-- ✅ Layout Dialect: cho phép tạo layout (header/footer) dùng chung -->
+<dependency>
+    <groupId>nz.net.ultraq.thymeleaf</groupId>
+    <artifactId>thymeleaf-layout-dialect</artifactId>
+    <version>2.5.3</version>
+</dependency>
+
 </dependencies>
 
 

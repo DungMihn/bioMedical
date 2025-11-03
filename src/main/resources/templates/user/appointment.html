@@ -1,0 +1,79 @@
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Đặt lịch khám</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Đặt lịch khám</h2>
+
+     Thông báo 
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <form th:action="@{/user/save-app}" th:object="${appointmentForm}" method="POST">
+
+         Nếu chưa login 
+        <div th:if="${currentUser == null}">
+            <h5>Thông tin cá nhân</h5>
+            <div class="form-group">
+                <label>Họ và tên</label>
+                <input type="text" th:field="*{fullName}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" th:field="*{email}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại</label>
+                <input type="text" th:field="*{phone}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Giới tính</label>
+                <select th:field="*{gender}" class="form-control">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Ngày sinh</label>
+                <input type="date" th:field="*{dateOfBirth}" class="form-control" required>
+            </div>
+        </div>
+
+        <h5>Thông tin lịch khám</h5>
+        <div class="form-group">
+            <label>Chi nhánh</label>
+            <select th:field="*{clinicId}" class="form-control" required>
+                <option th:each="c : ${clinics}" th:value="${c.clinicId}" th:text="${c.name}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Bác sĩ</label>
+            <select th:field="*{doctorId}" class="form-control" required>
+                <option th:each="d : ${doctors}" th:value="${d.doctorId}" th:text="${d.userId.fullName}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Khung giờ trống</label>
+            <select th:field="*{slotId}" class="form-control" required>
+                <option th:each="s : ${availableSlots}" 
+                        th:value="${s.slotId}"
+                        th:text="${#dates.format(s.slotDate, 'dd/MM/yyyy')} + ' ' + ${#dates.format(s.slotTime, 'HH:mm')}"></option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Ghi chú (Triệu chứng, mô tả)</label>
+            <textarea th:field="*{notes}" class="form-control" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Đặt lịch</button>
+    </form>
+</div>
+</body>
+</html>-->

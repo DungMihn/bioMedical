@@ -23,50 +23,49 @@ public class VerifyOtpController {
     private EmailService emailService;
 
     @PostMapping("/verify-otp")
-public ModelAndView verifyOtp(@RequestParam("email") String email,
-                              @RequestParam("otp") String otp) {
-    ModelAndView modelAndView = new ModelAndView();
+    public ModelAndView verifyOtp(@RequestParam("email") String email,
+                                  @RequestParam("otp") String otp) {
+        ModelAndView modelAndView = new ModelAndView();
 
-    Users user = usersService.findByEmail(email);
-    if (user == null) {
-        modelAndView.addObject("errorMessage", "Email không tồn tại.");
-        modelAndView.setViewName("verify-otp");
+        Users user = usersService.findByEmail(email);
+        if (user == null) {
+            modelAndView.addObject("errorMessage", "Email does not exist.");
+            modelAndView.setViewName("verify-otp");
+            return modelAndView;
+        }
+
+        if (otp.equals(user.getOtpCode()) &&
+                user.getOtpExpiry() != null &&
+                user.getOtpExpiry().after(new Date())) {
+
+            // Activate user account
+            user.setEnabled(true);
+            user.setOtpCode(null);
+            user.setOtpExpiry(null);
+            usersService.save(user);
+
+            // Send success email
+            SimpleMailMessage successMail = new SimpleMailMessage();
+            successMail.setTo(user.getEmail());
+            successMail.setSubject("Account Created Successfully");
+            successMail.setText("Hello " + user.getFullName() +
+                    ",\n\nYour account has been successfully activated!\n\n" +
+                    "Username: " + user.getUsername() + "\n" +
+                    "Password: " + user.getPasswordHash() + "\n\nRemedic Team");
+            successMail.setFrom("dungminh2505@gmail.com");
+            emailService.sendEmail(successMail);
+
+            // Send data to view
+            modelAndView.setViewName("verify-otp");
+            modelAndView.addObject("success", true);
+            modelAndView.addObject("email", email);
+
+        } else {
+            modelAndView.addObject("errorMessage", "Invalid or expired OTP code.");
+            modelAndView.addObject("email", email);
+            modelAndView.setViewName("verify-otp");
+        }
+
         return modelAndView;
     }
-
-    if (otp.equals(user.getOtpCode()) &&
-            user.getOtpExpiry() != null &&
-            user.getOtpExpiry().after(new Date())) {
-
-        // Cập nhật user active
-        user.setEnabled(true);
-        user.setOtpCode(null);
-        user.setOtpExpiry(null);
-        usersService.save(user);
-
-        // Gửi mail thông báo thành công
-        SimpleMailMessage successMail = new SimpleMailMessage();
-        successMail.setTo(user.getEmail());
-        successMail.setSubject("Tạo tài khoản thành công");
-        successMail.setText("Xin chào " + user.getFullName() +
-                ",\n\nTài khoản của bạn đã được kích hoạt thành công!\n\n" +
-                "Username: " + user.getUsername() + "\n" +
-                "Password: " + user.getPasswordHash() + "\n\nRemedic Team");
-        successMail.setFrom("dungminh2505@gmail.com");
-        emailService.sendEmail(successMail);
-
-        // Gửi dữ liệu sang view
-        modelAndView.setViewName("verify-otp");
-        modelAndView.addObject("success", true);
-        modelAndView.addObject("email", email);
-
-    } else {
-        modelAndView.addObject("errorMessage", "Mã OTP không hợp lệ hoặc đã hết hạn.");
-        modelAndView.addObject("email", email);
-        modelAndView.setViewName("verify-otp");
-    }
-
-    return modelAndView;
-}
-
 }

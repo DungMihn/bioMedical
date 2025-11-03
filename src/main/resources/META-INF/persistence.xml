@@ -3,6 +3,13 @@
   <persistence-unit name="com.spring_bioMedical_war_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.spring.bioMedical.entity.Users</class>
+    <class>com.spring.bioMedical.entity.Clinics</class>
+    <class>com.spring.bioMedical.entity.Specialties</class>
+    <class>com.spring.bioMedical.entity.AppointmentSlots</class>
+    <class>com.spring.bioMedical.entity.Doctors</class>
+    <class>com.spring.bioMedical.entity.Appointments</class>
+    <class>com.spring.bioMedical.entity.Medicalrecords</class>
+    <class>com.spring.bioMedical.entity.Prescriptions</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://localhost:1433;databaseName=jdbc:sqlserver://localhost:1433;databaseName=ClinicManagement;encrypt=true;trustServerCertificate=true"/>

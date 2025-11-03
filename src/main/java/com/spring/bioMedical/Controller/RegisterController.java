@@ -29,7 +29,7 @@ public class RegisterController {
         this.emailService = emailService;
     }
 
-    // API check username tồn tại (realtime)
+    // API check username exists (realtime)
     @GetMapping("/check-username")
     @ResponseBody
     public boolean checkUsername(@RequestParam("username") String username) {
@@ -37,7 +37,7 @@ public class RegisterController {
         return (u == null); // true = available
     }
 
-    // API check email tồn tại (realtime)
+    // API check email exists (realtime)
     @GetMapping("/check-email")
     @ResponseBody
     public boolean checkEmail(@RequestParam("email") String email) {
@@ -45,7 +45,7 @@ public class RegisterController {
         return (u == null); // true = available
     }
 
-    // GET form đăng ký
+    // GET registration form
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public ModelAndView showRegistrationPage() {
         ModelAndView mv = new ModelAndView("register");
@@ -53,14 +53,14 @@ public class RegisterController {
         return mv;
     }
 
-    // POST xử lý đăng ký
+    // POST handle registration
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ModelAndView processRegistrationForm(@Valid Users user,
                                                 BindingResult bindingResult,
                                                 @RequestParam("confirmPassword") String confirmPassword,
                                                 HttpServletRequest request) {
 
-        // ====== VALIDATION SERVER-SIDE ======
+        // ====== SERVER-SIDE VALIDATION ======
 
         // 1) Username required + unique
         if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
@@ -72,7 +72,7 @@ public class RegisterController {
             }
         }
 
-        // 2) Email required + unique nếu đã kích hoạt
+        // 2) Email required + unique if activated
         if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             bindingResult.rejectValue("email", "", "Email is required");
         } else {
@@ -82,12 +82,12 @@ public class RegisterController {
             }
         }
 
-        // 3) Password ≥8, 1 hoa, 1 số, 1 ký tự đặc biệt
+        // 3) Password ≥8, 1 uppercase, 1 number, 1 special char
         String pass = user.getPasswordHash();
         if (pass == null || pass.isEmpty()) {
             bindingResult.rejectValue("passwordHash", "", "Password is required");
         } else if (!pass.matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}$")) {
-            bindingResult.rejectValue("passwordHash", "", "Min 8 chars, 1 uppercase, 1 number, 1 special char");
+            bindingResult.rejectValue("passwordHash", "", "Minimum 8 characters, 1 uppercase, 1 number, 1 special character");
         }
 
         // 4) Confirm password
@@ -97,11 +97,11 @@ public class RegisterController {
             bindingResult.rejectValue("passwordHash", "", "Passwords do not match");
         }
 
-        // 5) Phone 10 số
+        // 5) Phone number (10 digits)
         if (user.getPhone() == null || user.getPhone().trim().isEmpty()) {
-            bindingResult.rejectValue("phone", "", "Phone is required");
+            bindingResult.rejectValue("phone", "", "Phone number is required");
         } else if (!user.getPhone().matches("^[0-9]{10}$")) {
-            bindingResult.rejectValue("phone", "", "Phone must be exactly 10 digits");
+            bindingResult.rejectValue("phone", "", "Phone number must be exactly 10 digits");
         }
 
         // 6) Full name
@@ -114,14 +114,14 @@ public class RegisterController {
             bindingResult.rejectValue("gender", "", "Gender is required");
         }
 
-        // 8) DOB không lớn hơn hôm nay
+        // 8) DOB not in the future
         if (user.getDateOfBirth() == null) {
             bindingResult.rejectValue("dateOfBirth", "", "Date of birth is required");
         } else if (user.getDateOfBirth().isAfter(LocalDate.now())) {
             bindingResult.rejectValue("dateOfBirth", "", "Date of birth cannot be in the future");
         }
 
-        // Nếu có lỗi => quay lại form
+        // If validation errors => return to form
         if (bindingResult.hasErrors()) {
             ModelAndView mv = new ModelAndView("register");
             mv.addObject("user", user);
@@ -129,10 +129,10 @@ public class RegisterController {
             return mv;
         }
 
-        // ====== LOGIC TẠO/CẬP NHẬT USER ======
+        // ====== USER CREATION / UPDATE LOGIC ======
         Users userByEmail = usersService.findByEmail(user.getEmail());
         if (userByEmail != null && !Boolean.TRUE.equals(userByEmail.getEnabled())) {
-            // Update hồ sơ chưa kích hoạt
+            // Update unverified profile
             userByEmail.setUsername(user.getUsername());
             userByEmail.setFullName(user.getFullName());
             userByEmail.setPasswordHash(user.getPasswordHash());
@@ -148,10 +148,10 @@ public class RegisterController {
 
             SimpleMailMessage mail = new SimpleMailMessage();
             mail.setTo(userByEmail.getEmail());
-            mail.setSubject("Mã OTP xác nhận đăng ký (cập nhật)");
-            mail.setText("Xin chào " + userByEmail.getFullName() +
-                    ",\n\nMã OTP mới của bạn là: " + otp +
-                    "\nCó hiệu lực trong 5 phút.\n\nRemedic Team");
+            mail.setSubject("Registration OTP Code (Updated)");
+            mail.setText("Hello " + userByEmail.getFullName() +
+                    ",\n\nYour new OTP code is: " + otp +
+                    "\nValid for 5 minutes.\n\nRemedic Team");
             mail.setFrom("dungminh2505@gmail.com");
             emailService.sendEmail(mail);
 
@@ -160,7 +160,7 @@ public class RegisterController {
             return mv;
         }
 
-        // Tạo user mới
+        // Create new user
         user.setEnabled(false);
         user.setRole("PATIENT");
         user.setCreatedAt(new Date());
@@ -173,10 +173,10 @@ public class RegisterController {
 
         SimpleMailMessage otpMail = new SimpleMailMessage();
         otpMail.setTo(user.getEmail());
-        otpMail.setSubject("Mã OTP xác nhận đăng ký");
-        otpMail.setText("Xin chào " + user.getFullName() +
-                ",\n\nMã OTP của bạn là: " + otp +
-                "\nCó hiệu lực trong 5 phút.\n\nRemedic Team");
+        otpMail.setSubject("Registration OTP Code");
+        otpMail.setText("Hello " + user.getFullName() +
+                ",\n\nYour OTP code is: " + otp +
+                "\nValid for 5 minutes.\n\nRemedic Team");
         otpMail.setFrom("dungminh2505@gmail.com");
         emailService.sendEmail(otpMail);
 

@@ -30,4 +30,8 @@ public class MailTestController {
             return "❌ Failed to send mail: " + e.getMessage();
         }
     }
+    @GetMapping("/layout")
+    public String showLayout() {
+        return "layout"; // sẽ render templates/layout.html
+    }
 }

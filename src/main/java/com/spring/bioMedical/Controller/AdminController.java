@@ -1,36 +1,28 @@
 package com.spring.bioMedical.Controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.*;
 import com.spring.bioMedical.entity.Users;
-import com.spring.bioMedical.entity.Appointment;
+import com.spring.bioMedical.entity.Appointments;
 import com.spring.bioMedical.service.UsersService;
-import com.spring.bioMedical.service.AppointmentServiceImplementation;
+import com.spring.bioMedical.service.BookingService;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
     private final UsersService usersService;
-    private final AppointmentServiceImplementation appointmentServiceImplementation;
+    private final BookingService bookingService;
 
     @Autowired
-    public AdminController(UsersService usersService,
-                           AppointmentServiceImplementation appointmentServiceImplementation) {
+    public AdminController(UsersService usersService, BookingService bookingService) {
         this.usersService = usersService;
-        this.appointmentServiceImplementation = appointmentServiceImplementation;
+        this.bookingService = bookingService;
     }
 
     @RequestMapping("/user-details")
@@ -66,7 +58,7 @@ public class AdminController {
     public String saveDoctor(@ModelAttribute("doctor") Users user) {
         user.setRole("DOCTOR");
         user.setEnabled(true);
-        user.setPasswordHash("default"); // TODO: mã hóa password
+        user.setPasswordHash("default");
         usersService.save(user);
         return "redirect:/admin/doctor-details";
     }
@@ -83,7 +75,7 @@ public class AdminController {
     public String saveAdmin(@ModelAttribute("admin") Users user) {
         user.setRole("ADMIN");
         user.setEnabled(true);
-        user.setPasswordHash("default"); // TODO: mã hóa password
+        user.setPasswordHash("default");
         usersService.save(user);
         return "redirect:/admin/admin-details";
     }
@@ -104,7 +96,7 @@ public class AdminController {
 
     @RequestMapping("/appointments")
     public String appointments(Model model) {
-        List<Appointment> list = appointmentServiceImplementation.findAll();
+        List<Appointments> list = bookingService.getAllAppointments();
         model.addAttribute("app", list);
         return "admin/appointment";
     }
@@ -118,4 +110,3 @@ public class AdminController {
         }
     }
 }
-// mới

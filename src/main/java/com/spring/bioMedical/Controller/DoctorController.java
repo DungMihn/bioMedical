@@ -3,48 +3,39 @@ package com.spring.bioMedical.Controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.spring.bioMedical.entity.Users;
-import com.spring.bioMedical.entity.Appointment;
+import com.spring.bioMedical.entity.Appointments;
 import com.spring.bioMedical.service.UsersService;
-import com.spring.bioMedical.service.AppointmentServiceImplementation;
+import com.spring.bioMedical.service.BookingService;
 
 @Controller
 @RequestMapping("/doctor")
 public class DoctorController {
 
     private final UsersService usersService;
-    private final AppointmentServiceImplementation appointmentServiceImplementation;
+    private final BookingService bookingService;
 
     @Autowired
-    public DoctorController(UsersService usersService,
-                            AppointmentServiceImplementation appointmentServiceImplementation) {
+    public DoctorController(UsersService usersService, BookingService bookingService) {
         this.usersService = usersService;
-        this.appointmentServiceImplementation = appointmentServiceImplementation;
+        this.bookingService = bookingService;
     }
 
     @RequestMapping("/index")
     public String index(Model model) {
-        // Lấy username hiện tại
         String username = getCurrentUsername();
-
-        // Lấy user từ DB
         Users currentUser = usersService.findByUsername(username);
 
-        // Cập nhật last seen
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         currentUser.setUpdatedAt(new Date());
         usersService.save(currentUser);
 
-        // Lấy danh sách appointments
-        List<Appointment> list = appointmentServiceImplementation.findAll();
+        List<Appointments> list = bookingService.getAllAppointments();
 
         model.addAttribute("name", currentUser.getFullName());
         model.addAttribute("email", currentUser.getEmail());

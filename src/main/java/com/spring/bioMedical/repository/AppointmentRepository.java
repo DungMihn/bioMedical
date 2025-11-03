@@ -1,19 +1,15 @@
 package com.spring.bioMedical.repository;
 
-import java.util.List;
-
+import com.spring.bioMedical.entity.Appointments;
+import com.spring.bioMedical.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.spring.bioMedical.entity.Appointment;
-/**
- * 
- * @author Soumyadip Chowdhury
- * @github soumyadip007
- *
- */
-@Repository("appointmentRepository")
-public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
+import java.util.List;
 
-	
+@Repository
+public interface AppointmentRepository extends JpaRepository<Appointments, Long> {
+
+    // 🔹 Hàm thêm mới: lấy danh sách lịch hẹn theo user
+    List<Appointments> findByUserId(Users user);
 }

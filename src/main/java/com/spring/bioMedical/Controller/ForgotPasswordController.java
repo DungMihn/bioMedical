@@ -22,44 +22,44 @@ public class ForgotPasswordController {
     @Autowired
     private EmailService emailService;
 
-    // Hiển thị form quên mật khẩu
-@GetMapping("/forgot-password")
-public ModelAndView showForgotPasswordForm() {
-    return new ModelAndView("forgot-password");
-}
+    // Display forgot password form
+    @GetMapping("/forgot-password")
+    public ModelAndView showForgotPasswordForm() {
+        return new ModelAndView("forgot-password");
+    }
 
-// Nhận email và gửi link
-@PostMapping("/forgot-password")
-public ModelAndView forgotPassword(@RequestParam("email") String email) {
-    ModelAndView mv = new ModelAndView("forgot-password");
-    Users user = usersService.findByEmail(email);
+    // Receive email and send reset link
+    @PostMapping("/forgot-password")
+    public ModelAndView forgotPassword(@RequestParam("email") String email) {
+        ModelAndView mv = new ModelAndView("forgot-password");
+        Users user = usersService.findByEmail(email);
 
-    if (user == null || !Boolean.TRUE.equals(user.getEnabled())) {
-        mv.addObject("errorMessage", "Email không tồn tại hoặc chưa kích hoạt!");
+        if (user == null || !Boolean.TRUE.equals(user.getEnabled())) {
+            mv.addObject("errorMessage", "Email does not exist or is not activated!");
+            return mv;
+        }
+
+        String token = UUID.randomUUID().toString();
+        user.setOtpCode(token);
+        user.setOtpExpiry(new Date(System.currentTimeMillis() + 15 * 60 * 1000));
+        usersService.save(user);
+
+        String resetLink = "http://localhost:8089/reset-password?token=" + token;
+
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(user.getEmail());
+        mail.setSubject("Password Reset Link");
+        mail.setText("Hello " + user.getFullName() +
+                ",\n\nClick the link below to reset your password:\n" + resetLink +
+                "\n\nThis link will expire in 15 minutes.\n\nIf you did not request this, please ignore this email.");
+        mail.setFrom("dungminh2505@gmail.com");
+        emailService.sendEmail(mail);
+
+        mv.addObject("successMessage", "✅ The password reset link has been sent to your email!");
         return mv;
     }
 
-    String token = UUID.randomUUID().toString();
-    user.setOtpCode(token);
-    user.setOtpExpiry(new Date(System.currentTimeMillis() + 15 * 60 * 1000));
-    usersService.save(user);
-
-    String resetLink = "http://localhost:8089/reset-password?token=" + token;
-
-    SimpleMailMessage mail = new SimpleMailMessage();
-    mail.setTo(user.getEmail());
-    mail.setSubject("Password Reset Link");
-    mail.setText("Xin chào " + user.getFullName() +
-            ",\n\nClick vào link sau để đặt lại mật khẩu:\n" + resetLink +
-            "\n\nLink có hiệu lực trong 15 phút.\n\nNếu bạn không yêu cầu, hãy bỏ qua email này.");
-    mail.setFrom("dungminh2505@gmail.com");
-    emailService.sendEmail(mail);
-
-    mv.addObject("successMessage", "✅ Link reset mật khẩu đã gửi đến email của bạn!");
-    return mv;
-}
-
-    // Step 2: mở form reset mật khẩu khi click link trong email
+    // Step 2: Show reset password form when link is clicked
     @GetMapping("/reset-password")
     public ModelAndView showResetPasswordForm(@RequestParam("token") String token) {
         ModelAndView mv = new ModelAndView("reset-password");
@@ -67,7 +67,7 @@ public ModelAndView forgotPassword(@RequestParam("email") String email) {
 
         if (user == null || user.getOtpExpiry() == null || user.getOtpExpiry().before(new Date())) {
             mv.setViewName("login");
-            mv.addObject("errorMessage", "❌ Link reset không hợp lệ hoặc đã hết hạn.");
+            mv.addObject("errorMessage", "❌ Reset link is invalid or has expired.");
             return mv;
         }
 
@@ -75,34 +75,33 @@ public ModelAndView forgotPassword(@RequestParam("email") String email) {
         return mv;
     }
 
-    // Step 3: cập nhật mật khẩu mới
+    // Step 3: Update new password
     @PostMapping("/reset-password")
-public ModelAndView resetPassword(@RequestParam("token") String token,
-                                  @RequestParam("newPassword") String newPassword) {
-    Users user = usersService.findByOtpCode(token);
+    public ModelAndView resetPassword(@RequestParam("token") String token,
+                                      @RequestParam("newPassword") String newPassword) {
+        Users user = usersService.findByOtpCode(token);
 
-    if (user == null || user.getOtpExpiry() == null || user.getOtpExpiry().before(new Date())) {
-        ModelAndView mv = new ModelAndView("login");
-        mv.addObject("errorMessage", "❌ Link reset không hợp lệ hoặc đã hết hạn.");
-        return mv;
+        if (user == null || user.getOtpExpiry() == null || user.getOtpExpiry().before(new Date())) {
+            ModelAndView mv = new ModelAndView("login");
+            mv.addObject("errorMessage", "❌ Reset link is invalid or has expired.");
+            return mv;
+        }
+
+        user.setPasswordHash(newPassword);
+        user.setOtpCode(null);
+        user.setOtpExpiry(null);
+        usersService.save(user);
+
+        // Send success email
+        SimpleMailMessage successMail = new SimpleMailMessage();
+        successMail.setTo(user.getEmail());
+        successMail.setSubject("Password Reset Successful");
+        successMail.setText("Hello " + user.getFullName() +
+                ",\n\nYour password has been successfully changed.\nIf this was not you, please contact the administrator immediately.");
+        successMail.setFrom("dungminh2505@gmail.com");
+        emailService.sendEmail(successMail);
+
+        // ⚡ Redirect to reset-success page
+        return new ModelAndView("reset-success");
     }
-
-    user.setPasswordHash(newPassword);
-    user.setOtpCode(null);
-    user.setOtpExpiry(null);
-    usersService.save(user);
-
-    // Gửi mail thông báo
-    SimpleMailMessage successMail = new SimpleMailMessage();
-    successMail.setTo(user.getEmail());
-    successMail.setSubject("Đặt lại mật khẩu thành công");
-    successMail.setText("Xin chào " + user.getFullName() +
-            ",\n\nMật khẩu của bạn đã thay đổi thành công.\nNếu không phải bạn thực hiện, hãy liên hệ quản trị viên ngay.");
-    successMail.setFrom("dungminh2505@gmail.com");
-    emailService.sendEmail(successMail);
-
-    // ⚡ Điều hướng sang trang reset-success
-    return new ModelAndView("reset-success");
-}
-
 }

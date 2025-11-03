@@ -36,7 +36,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         }
 
         if (roles.contains("PATIENT")) {
-            response.sendRedirect("/user/index"); // vẫn dùng controller UserController
+            response.sendRedirect("/user/index"); 
             return;
         }
 
