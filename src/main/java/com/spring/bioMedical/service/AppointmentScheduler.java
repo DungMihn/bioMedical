@@ -23,8 +23,8 @@ public class AppointmentScheduler {
     private AppointmentRepository appointmentRepo;
 
     // ⏰ Runs every day at 00:00 (midnight)
-    @Scheduled(cron = "0 0 0 * * ?")
-//    @Scheduled(fixedRate = 60000) // chạy mỗi 60 giây
+//    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(fixedRate = 60000) // chạy mỗi 60 giây
 
     public void autoCancelOldAppointments() {
         LocalDate today = LocalDate.now();

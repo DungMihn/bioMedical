@@ -54,30 +54,35 @@
           </li>
 
           <!-- ✅ USER MENU -->
-          <li class="nav-item ml-3 position-relative" th:if="${currentUser != null}">
-            <div class="user-menu-wrapper" id="userMenuWrapper">
-              <!-- Avatar + Name -->
-              <div class="user-trigger d-flex align-items-center" id="userTrigger">
-                <i class="fas fa-user-circle fa-lg mr-2 text-warning"></i>
-                <span th:text="${currentUser.fullName}" class="user-name">User</span>
-                <i class="fas fa-chevron-down ml-1 small"></i>
-                <div class="user-tooltip">Account</div>
-              </div>
+<!-- ✅ USER MENU -->
+<li class="nav-item ml-3 position-relative" th:if="${currentUser != null}">
+  <div class="user-menu-wrapper" id="userMenuWrapper">
+    <!-- Avatar + Name -->
+    <div class="user-trigger d-flex align-items-center" id="userTrigger">
+      <!-- 👤 Avatar giống form đăng ký -->
+      <div class="user-avatar d-flex align-items-center justify-content-center mr-2">
+        <span class="lnr lnr-user"></span>
+      </div>
+      <span th:text="${currentUser.fullName}" class="user-name">User</span>
+      <span class="lnr lnr-chevron-down ml-1 text-light small"></span>
+      <div class="user-tooltip">Account</div>
+    </div>
 
-              <!-- Dropdown -->
-              <div class="user-dropdown shadow" id="userDropdown">
-                <a class="dropdown-item d-flex align-items-center" th:href="@{/user/account}">
-                  <i class="fas fa-id-card-alt mr-2 text-primary"></i> Account Management
-                </a>
-                <div class="dropdown-divider m-0"></div>
-                <form th:action="@{/logout}" method="post" class="m-0">
-                  <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                  </button>
-                </form>
-              </div>
-            </div>
-          </li>
+    <!-- Dropdown -->
+    <div class="user-dropdown shadow" id="userDropdown">
+      <a class="dropdown-item d-flex align-items-center" th:href="@{/user/account}">
+        <span class="lnr lnr-license mr-2 text-primary"></span> Account Management
+      </a>
+      <div class="dropdown-divider m-0"></div>
+      <form th:action="@{/logout}" method="post" class="m-0">
+        <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+          <span class="lnr lnr-exit mr-2"></span> Logout
+        </button>
+      </form>
+    </div>
+  </div>
+</li>
+
         </ul>
       </div>
     </div>
@@ -182,6 +187,27 @@
     .navbar.hide { top: -90px !important; }
 
     a, .btn, .nav-link, .dropdown-item { cursor: pointer !important; }
+    
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffd700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+.user-avatar .lnr {
+  font-size: 20px;
+  line-height: 1;
+}
+.user-avatar:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
   </style>
 
   <!-- ✅ SCRIPT -->

@@ -1,175 +1,222 @@
 <th:block th:fragment="accountScripts">
-<script th:inline="javascript">
-$(function () {
-  const filterState = { status: 'ALL', from: null, to: null };
+    <script th:inline="javascript">
+        $(function () {
+            const filterState = {status: 'ALL', from: null, to: null};
 
-  flatpickr(".datepicker", {
-    dateFormat: "Y-m-d",
-    allowInput: true,
-    disableMobile: true,
-    static: true,
-    locale: {
-      firstDayOfWeek: 1,
-      weekdays: {
-        shorthand: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
-        longhand: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      },
-      months: {
-        shorthand: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        longhand: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-      },
-    },
-    onReady: function(selectedDates, dateStr, instance) {
-      const fp = instance;
-      const footer = document.createElement("div");
-      footer.className = "flatpickr-footer d-flex justify-content-between px-3 py-1 border-top";
-      const todayBtn = $('<button class="btn btn-link p-0 text-primary">Today</button>').on('click', () => {
-        fp.setDate(new Date());
-        fp.close();
-        $('#btnFilterDate').trigger('click');
-      })[0];
-      const clearBtn = $('<button class="btn btn-link p-0 text-danger">Clear</button>').on('click', () => {
-        fp.clear();
-        fp.close();
-        $('#btnFilterDate').trigger('click');
-      })[0];
-      footer.appendChild(todayBtn);
-      footer.appendChild(clearBtn);
-      fp.calendarContainer.appendChild(footer);
-    },
-    onChange: function() {
-      $('#btnFilterDate').trigger('click');
-    }
-  });
+            flatpickr(".datepicker", {
+                dateFormat: "Y-m-d",
+                allowInput: true,
+                disableMobile: true,
+                static: true,
+                locale: {
+                    firstDayOfWeek: 1,
+                    weekdays: {
+                        shorthand: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+                        longhand: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                    },
+                    months: {
+                        shorthand: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                        longhand: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                    },
+                },
+                onReady: function (selectedDates, dateStr, instance) {
+                    const fp = instance;
+                    const footer = document.createElement("div");
+                    footer.className = "flatpickr-footer d-flex justify-content-between px-3 py-1 border-top";
+                    const todayBtn = $('<button class="btn btn-link p-0 text-primary">Today</button>').on('click', () => {
+                        fp.setDate(new Date());
+                        fp.close();
+                        $('#btnFilterDate').trigger('click');
+                    })[0];
+                    const clearBtn = $('<button class="btn btn-link p-0 text-danger">Clear</button>').on('click', () => {
+                        fp.clear();
+                        fp.close();
+                        $('#btnFilterDate').trigger('click');
+                    })[0];
+                    footer.appendChild(todayBtn);
+                    footer.appendChild(clearBtn);
+                    fp.calendarContainer.appendChild(footer);
+                },
+                onChange: function () {
+                    $('#btnFilterDate').trigger('click');
+                }
+            });
 
-  function applyFilters() {
-    const { status, from, to } = filterState;
-    $('.appointment-item').each(function () {
-      const itemStatus = String($(this).data('status') || '').toUpperCase();
-      const created = $(this).data('created');
-      const okStatus = (status === 'ALL') || (itemStatus === status);
-      let okDate = true;
-      if (from && created < from) okDate = false;
-      if (to && created > to) okDate = false;
-      $(this).toggle(okStatus && okDate);
-    });
-  }
+            function applyFilters() {
+                const {status, from, to} = filterState;
+                $('.appointment-item').each(function () {
+                    const itemStatus = String($(this).data('status') || '').toUpperCase();
+                    const created = $(this).data('created');
+                    const okStatus = (status === 'ALL') || (itemStatus === status);
+                    let okDate = true;
+                    if (from && created < from)
+                        okDate = false;
+                    if (to && created > to)
+                        okDate = false;
+                    $(this).toggle(okStatus && okDate);
+                });
 
-  // Tab switching
-  $('#btnHistory').click(function(){ 
-    $('#tabHistory').show(); 
-    $('#tabProfile').hide(); 
-    $(this).addClass('active'); 
-    $('#btnProfile').removeClass('active'); 
-  });
-  $('#btnProfile').click(function(){ 
-    $('#tabProfile').show(); 
-    $('#tabHistory').hide(); 
-    $(this).addClass('active'); 
-    $('#btnHistory').removeClass('active'); 
-  });
+                // ✅ Sau khi lọc xong, reset lại LoadMore cho danh sách còn hiển thị
+                setupLoadMore();
+            }
 
-  // Filtering buttons
-  $('.filter-btn').on('click', function(){
-    $('.filter-btn').removeClass('active');
-    $(this).addClass('active');
-    filterState.status = String($(this).data('status') || 'ALL').toUpperCase();
-    applyFilters();
-  });
+            // Tab switching
+            $('#btnHistory').click(function () {
+                $('#tabHistory').show();
+                $('#tabProfile').hide();
+                $(this).addClass('active');
+                $('#btnProfile').removeClass('active');
+            });
+            $('#btnProfile').click(function () {
+                $('#tabProfile').show();
+                $('#tabHistory').hide();
+                $(this).addClass('active');
+                $('#btnHistory').removeClass('active');
+            });
 
-  $('#btnFilterDate').on('click', function(){
-    filterState.from = $('#fromDate').val() || null;
-    filterState.to = $('#toDate').val() || null;
-    applyFilters();
-  });
+            // Filtering buttons
+            $('.filter-btn').on('click', function () {
+                $('.filter-btn').removeClass('active');
+                $(this).addClass('active');
+                filterState.status = String($(this).data('status') || 'ALL').toUpperCase();
+                applyFilters();
+            });
 
-  // ✅ Medical record details
-  $(document).on("click", ".view-detail", function (e) {
-    e.preventDefault();
-    const id = $(this).data("id");
-    $("#recordContent").html('<p class="text-center text-muted">Loading...</p>');
-    $("#recordModal").modal("show");
+            $('#btnFilterDate').on('click', function () {
+                filterState.from = $('#fromDate').val() || null;
+                filterState.to = $('#toDate').val() || null;
+                applyFilters();
+            });
 
-    $.ajax({
-      url: `/api/medical-record/${id}`,
-      type: "GET",
-      dataType: "json",
-      success: function (data) {
-        if (!data) {
-          $("#recordContent").html('<p class="text-danger">Medical record not found.</p>');
-          return;
-        }
-        let html = `
-          <h6 class="text-primary mb-3">General Information</h6>
-          <p><b>Symptoms:</b> ${data.symptoms || '—'}</p>
-          <p><b>Diagnosis:</b> ${data.diagnosis || '—'}</p>
-          <p><b>Treatment:</b> ${data.treatment || '—'}</p>
-          <p><b>Notes:</b> ${data.notes || '—'}</p>
-          <hr><h6 class="text-primary mb-2">Prescription</h6>`;
-        if (data.prescriptionsCollection?.length > 0) {
-          html += `<table class="table table-bordered table-sm">
-            <thead class="thead-light"><tr><th>Medicine</th><th>Dosage</th><th>Frequency</th><th>Duration</th><th>Notes</th></tr></thead><tbody>`;
-          data.prescriptionsCollection.forEach(p => {
-            html += `<tr><td>${p.medicationName}</td><td>${p.dosage || ''}</td><td>${p.frequency || ''}</td><td>${p.duration || ''}</td><td>${p.notes || ''}</td></tr>`;
-          });
-          html += `</tbody></table>`;
-        } else {
-          html += `<p class="text-muted">No prescription available.</p>`;
-        }
-        $("#recordContent").html(html);
-      },
-      error: function () {
-        $("#recordContent").html('<p class="text-danger">Error loading medical record data.</p>');
-      }
-    });
-  });
+            // ✅ Medical record details
+            $(document).on("click", ".view-detail", function (e) {
+                e.preventDefault();
+                const id = $(this).data("id");
+                $("#recordContent").html('<p class="text-center text-muted">Loading...</p>');
+                $("#recordModal").modal("show");
 
-  // ✅ Cancel appointment
-  $(document).on("click", ".cancel-appointment", function () {
-    const id = $(this).data("id");
-    Swal.fire({
-      title: "Confirm appointment cancellation?",
-      text: "Are you sure you want to cancel this appointment?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#6c757d",
-      confirmButtonText: "Yes, cancel it",
-      cancelButtonText: "No"
-    }).then(result => {
-      if (result.isConfirmed) {
-        $.post(`/user/cancel/${id}`, res => {
-          if (res.success) {
-            Swal.fire("Cancelled!", "The appointment has been updated.", "success")
-              .then(() => location.reload());
-          } else {
-            Swal.fire("Error!", res.message || "Unable to cancel appointment.", "error");
-          }
+                $.ajax({
+                    url: `/api/medical-record/${id}`,
+                    type: "GET",
+                    dataType: "json",
+                    success: function (data) {
+                        if (!data) {
+                            $("#recordContent").html('<p class="text-danger">Medical record not found.</p>');
+                            return;
+                        }
+                        let html = `
+              <h6 class="text-primary mb-3">General Information</h6>
+              <p><b>Symptoms:</b> ${data.symptoms || '—'}</p>
+              <p><b>Diagnosis:</b> ${data.diagnosis || '—'}</p>
+              <p><b>Treatment:</b> ${data.treatment || '—'}</p>
+              <p><b>Notes:</b> ${data.notes || '—'}</p>
+              <hr><h6 class="text-primary mb-2">Prescription</h6>`;
+                        if (data.prescriptionsCollection?.length > 0) {
+                            html += `<table class="table table-bordered table-sm">
+                <thead class="thead-light"><tr><th>Medicine</th><th>Dosage</th><th>Frequency</th><th>Duration</th><th>Notes</th></tr></thead><tbody>`;
+                            data.prescriptionsCollection.forEach(p => {
+                                html += `<tr><td>${p.medicationName}</td><td>${p.dosage || ''}</td><td>${p.frequency || ''}</td><td>${p.duration || ''}</td><td>${p.notes || ''}</td></tr>`;
+                            });
+                            html += `</tbody></table>`;
+                        } else {
+                            html += `<p class="text-muted">No prescription available.</p>`;
+                        }
+                        $("#recordContent").html(html);
+                    },
+                    error: function () {
+                        $("#recordContent").html('<p class="text-danger">Error loading medical record data.</p>');
+                    }
+                });
+            });
+
+            // ✅ Cancel appointment
+            $(document).on("click", ".cancel-appointment", function () {
+                const id = $(this).data("id");
+                Swal.fire({
+                    title: "Confirm appointment cancellation?",
+                    text: "Are you sure you want to cancel this appointment?",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#6c757d",
+                    confirmButtonText: "Yes, cancel it",
+                    cancelButtonText: "No"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        $.post(`/user/cancel/${id}`, res => {
+                            if (res.success) {
+                                Swal.fire("Cancelled!", "The appointment has been updated.", "success")
+                                        .then(() => location.reload());
+                            } else {
+                                Swal.fire("Error!", res.message || "Unable to cancel appointment.", "error");
+                            }
+                        });
+                    }
+                });
+            });
+
+            // ✅ Confirm appointment (resend OTP)
+            $(document).on("click", ".confirm-appointment", function () {
+                const email = $(this).data("email");
+                Swal.fire({
+                    title: "Confirm this appointment?",
+                    text: "A new OTP will be sent to your email to verify this booking.",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#28a745",
+                    cancelButtonColor: "#6c757d",
+                    confirmButtonText: "Send OTP",
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        window.location.href = `/resend-otp?email=${encodeURIComponent(email)}`;
+                    }
+                });
+            });
+            // ✅ Thêm chức năng hiển thị giới hạn + nút Xem thêm
+            function setupLoadMore() {
+                const allItems = $('.appointment-item').filter(':visible'); // chỉ lấy những cái đang hiển thị
+                const batchSize = 5;
+
+                // Ẩn toàn bộ và chỉ hiện batch đầu
+                allItems.hide();
+
+                if (allItems.length === 0) {
+                    $('#loadMoreWrapper').hide();
+                    return;
+                }
+
+                let visibleCount = 0;
+
+                // Hàm hiển thị batch tiếp theo
+                function showNextBatch() {
+                    const nextCount = Math.min(visibleCount + batchSize, allItems.length);
+                    allItems.slice(visibleCount, nextCount).fadeIn(150);
+                    visibleCount = nextCount;
+
+                    const remaining = allItems.length - visibleCount;
+                    if (remaining > 0) {
+                        $('#remainingCount').text(`(${remaining} more appointments)`);
+                        $('#loadMoreWrapper').show();
+                    } else {
+                        $('#loadMoreWrapper').hide();
+                    }
+                }
+
+                // Bind lại click event
+                $('#btnLoadMore').off('click').on('click', showNextBatch);
+
+                // Hiển thị batch đầu tiên
+                showNextBatch();
+            }
+        // ✅ Run after DOM is ready and layout is visible
+        setTimeout(() => {
+          applyFilters();
+          setupLoadMore();
+        }, 300);
+
         });
-      }
-    });
-  });
 
-    // ✅ Confirm appointment (resend OTP)
-$(document).on("click", ".confirm-appointment", function () {
-  const email = $(this).data("email");
-  Swal.fire({
-    title: "Confirm this appointment?",
-    text: "A new OTP will be sent to your email to verify this booking.",
-    icon: "question",
-    showCancelButton: true,
-    confirmButtonColor: "#28a745",
-    cancelButtonColor: "#6c757d",
-    confirmButtonText: "Send OTP",
-  }).then(result => {
-    if (result.isConfirmed) {
-      window.location.href = `/resend-otp?email=${encodeURIComponent(email)}`;
-    }
-  });
-});
-
-  applyFilters();
-});
-</script>
+    </script>
 
 </th:block>
+<!--mới--> 

@@ -10,6 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import com.spring.bioMedical.entity.Appointments;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 @Controller
 @RequestMapping("/user")
@@ -84,25 +88,39 @@ public class UserController {
         Users currentUser = getCurrentUser();
         if (currentUser != null) {
             model.addAttribute("user", currentUser);
-            model.addAttribute("appointments", appointmentRepository.findByUserId(currentUser));
+
+            // 🔽 Lấy danh sách lịch, sau đó sắp xếp giảm dần theo ngày tạo
+            List<Appointments> list = appointmentRepository.findByUserId(currentUser);
+            list.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt())); // newest first
+
+            model.addAttribute("appointments", list);
         }
         return "user/account";
     }
 
+
     // Update profile
     @PostMapping("/update-profile")
-    public String updateProfile(@ModelAttribute("user") Users updatedUser, Model model) {
+    public String updateProfile(@ModelAttribute("user") Users updatedUser, RedirectAttributes redirectAttributes) {
         Users currentUser = getCurrentUser();
         if (currentUser != null) {
-            currentUser.setFullName(updatedUser.getFullName());
-            currentUser.setPhone(updatedUser.getPhone());
+            if (updatedUser.getFullName() == null || updatedUser.getFullName().trim().isEmpty() ||
+                updatedUser.getPhone() == null || updatedUser.getPhone().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMsg", "Full name and phone number are required!");
+                return "redirect:/user/account";
+            }
+
+            currentUser.setFullName(updatedUser.getFullName().trim());
+            currentUser.setPhone(updatedUser.getPhone().trim());
             currentUser.setGender(updatedUser.getGender());
             currentUser.setDateOfBirth(updatedUser.getDateOfBirth());
             usersService.save(currentUser);
-            model.addAttribute("successMsg", "Profile updated successfully!");
+
+            redirectAttributes.addFlashAttribute("successMsg", "Profile updated successfully!");
         }
         return "redirect:/user/account";
     }
+
 
     //  Helper methods
     private Users getCurrentUser() {

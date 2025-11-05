@@ -1,17 +1,81 @@
 <th:block th:fragment="recordModal">
-<div class="modal fade account-page-modal" id="recordModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title"><i class="fas fa-file-medical mr-2"></i> Medical Record Details</h5>
-        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div id="recordContent">
-          <p class="text-center text-muted">Loading data...</p>
+  <!-- ===========================
+        🩺 Medical Record Modal
+       =========================== -->
+  <div class="modal fade account-page-modal" id="recordModal" tabindex="-1" role="dialog" aria-labelledby="recordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content border-0 shadow-lg rounded-3 animate__animated animate__fadeInUp">
+
+        <!-- Header -->
+        <div class="modal-header text-white" style="background: linear-gradient(90deg, #007bff, #00bfa5); border-top-left-radius: .6rem; border-top-right-radius: .6rem;">
+          <h5 class="modal-title d-flex align-items-center mb-0">
+            <span class="lnr lnr-file-empty mr-2" style="font-size:20px;"></span>
+            <b>Medical Record Details</b>
+          </h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8;">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+
+        <!-- Body -->
+        <div class="modal-body p-4" id="recordContent">
+          <div class="text-center text-muted py-4">
+            <span class="lnr lnr-sync lnr-spin" style="font-size: 22px;"></span>
+            <p class="mt-2 mb-0">Loading data...</p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer border-0 d-flex justify-content-between bg-light rounded-bottom">
+          <div class="text-muted small">
+            <span class="lnr lnr-clock mr-1"></span> Updated automatically
+          </div>
+          <button type="button" class="btn btn-outline-secondary px-3" data-dismiss="modal">
+            <span class="lnr lnr-cross mr-1"></span> Close
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
-</div>
+
+  <!-- ===========================
+        ✨ Extra Styles
+       =========================== -->
+  <style>
+    .account-page-modal .modal-content {
+      border-radius: 0.8rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .account-page-modal .modal-content:hover {
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .account-page-modal .modal-header h5 {
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    .account-page-modal .modal-body h6 {
+      font-weight: 600;
+      color: #007bff;
+    }
+
+    .account-page-modal table {
+      margin-top: 10px;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .account-page-modal .table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+
+    .account-page-modal .modal-footer {
+      font-size: 14px;
+    }
+  </style>
 </th:block>
