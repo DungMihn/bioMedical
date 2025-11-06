@@ -1,377 +1,462 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="utf-8">
-  <title>Admin Branch - Add Doctor</title>
+    <head>
+        <meta charset="utf-8">
+            <title>Admin Branch - Add Doctor</title>
 
-  <!-- Vendor CSS -->
-  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-  <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-  <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
-  <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
+            <!-- Vendor CSS -->
+            <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+                <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+                    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+                        <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
 
-  <!-- Theme (gradient pink → purple → blue) -->
-  <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
-</head>
-<body id="page-top">
+                            <!-- Theme (gradient pink → purple → blue) -->
+                            <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
+                                </head>
+                                <body id="page-top">
 
-<!-- Navbar: áp dụng bg-gradient-theme -->
-<nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
-  <a class="navbar-brand mr-1" th:href="@{/admin-branch/doctor-details}">Doctor+ Admin Branch</a>
-  <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
-  <ul class="navbar-nav ml-auto ml-md-0">
-    <li class="nav-item dropdown no-arrow">
-      <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-        <i class="fas fa-user-circle fa-fw"></i>
-      </a>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-        <div class="dropdown-divider"></div>
-        <form th:action="@{/logout}" method="post">
-          <button class="dropdown-item" type="submit">Logout</button>
-        </form>
-      </div>
-    </li>
-  </ul>
-</nav>
+                                    <!-- Navbar: áp dụng bg-gradient-theme -->
+                                    <nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
+                                        <a class="navbar-brand mr-1" th:href="@{/admin-branch/doctor-details}">Doctor+ Admin Branch</a>
+                                        <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                                        <ul class="navbar-nav ml-auto ml-md-0">
+                                            <li class="nav-item dropdown no-arrow">
+                                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                                                    <i class="fas fa-user-circle fa-fw"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                                    <div class="dropdown-divider"></div>
+                                                    <form th:action="@{/logout}" method="post">
+                                                        <button class="dropdown-item" type="submit">Logout</button>
+                                                    </form>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </nav>
 
-<div id="wrapper">
-  <!-- Sidebar: giữ style theme + active bằng Thymeleaf -->
-  <ul class="sidebar navbar-nav">
-    <li class="nav-item" th:classappend="${activePage}=='appointments' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/appointments}">
-        <i class="fas fa-fw fa-calendar"></i><span>Appointments</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='doctor-details' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/doctor-details}">
-        <i class="fas fa-fw fa-user-md"></i><span>Doctor Details</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='add-doctor' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/add-doctor}">
-        <i class="fas fa-fw fa-plus"></i><span>Add Doctor</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='invoices' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/invoices}">
-        <i class="fas fa-fw fa-file-invoice-dollar"></i><span>Invoices</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='my-profile' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/edit-my-profile}">
-        <i class="fas fa-fw fa-user"></i><span>My Profile</span>
-      </a>
-    </li>
-  </ul>
+                                    <div id="wrapper">
+                                        <!-- Sidebar: giữ style theme + active bằng Thymeleaf -->
+                                        <ul class="sidebar navbar-nav">
+                                            <li class="nav-item" th:classappend="${activePage}=='appointments' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/appointments}">
+                                                    <i class="fas fa-fw fa-calendar"></i><span>Appointments</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='doctor-details' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/doctor-details}">
+                                                    <i class="fas fa-fw fa-user-md"></i><span>Doctor Details</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='add-doctor' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/add-doctor}">
+                                                    <i class="fas fa-fw fa-plus"></i><span>Add Doctor</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='invoices' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/invoices}">
+                                                    <i class="fas fa-fw fa-file-invoice-dollar"></i><span>Invoices</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='schedule' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/schedule}">
+                                                    <i class="fas fa-fw fa-calendar-alt"></i><span>Schedule</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='add-user' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/add-user}">
+                                                    <i class="fas fa-fw fa-user-plus"></i><span>Add Patient</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='my-profile' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/edit-my-profile}">
+                                                    <i class="fas fa-fw fa-user"></i><span>My Profile</span>
+                                                </a>
+                                            </li>
+                                        </ul>
 
-  <div id="content-wrapper">
-    <div class="container-fluid">
+                                        <div id="content-wrapper">
+                                            <div class="container-fluid">
 
-      <!-- Card bọc form cho gọn & đồng bộ -->
-      <div class="card mb-3">
-        <div class="card-header">
-          <i class="fas fa-user-md"></i> Add Doctor
-        </div>
-        <div class="card-body">
-          <form th:action="@{/admin-branch/save-doctor}" th:object="${doctorForm}" method="post"
-                class="p-3">
+                                                <!-- Card bọc form cho gọn & đồng bộ -->
+                                                <div class="card mb-3">
+                                                    <div class="card-header">
+                                                        <i class="fas fa-user-md"></i> Add Doctor
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <form th:action="@{/admin-branch/save-doctor}" th:object="${doctorForm}" method="post"
+                                                              class="p-3">
 
-            <!-- USER FIELDS -->
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Username</label>
-              <div class="col-sm-9">
-                <input type="text" th:field="*{username}" class="form-control"
-                       th:classappend="${#fields.hasErrors('username')}? ' is-invalid'">
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
-                     th:errors="*{username}">Username error</div>
-              </div>
-            </div>
+                                                            <!-- USER FIELDS -->
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-3 col-form-label">Username</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" th:field="*{username}" class="form-control"
+                                                                           th:classappend="${#fields.hasErrors('username')}? ' is-invalid'">
+                                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}"
+                                                                             th:errors="*{username}">Username error</div>
+                                                                </div>
+                                                            </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Password</label>
-              <div class="col-sm-9">
-                <input type="password" th:field="*{passwordHash}" class="form-control"
-                       th:classappend="${#fields.hasErrors('passwordHash')}? ' is-invalid'">
-                <small class="form-text text-muted">
-                  ≥8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&._-)
-                </small>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordHash')}"
-                     th:errors="*{passwordHash}">Password error</div>
-              </div>
-            </div>
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-3 col-form-label">Password</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="password" th:field="*{passwordHash}" class="form-control"
+                                                                           th:classappend="${#fields.hasErrors('passwordHash')}? ' is-invalid'">
+                                                                        <small class="form-text text-muted">
+                                                                            ≥8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&._-)
+                                                                        </small>
+                                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('passwordHash')}"
+                                                                             th:errors="*{passwordHash}">Password error</div>
+                                                                </div>
+                                                            </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Email</label>
-              <div class="col-sm-9">
-                <input type="email" th:field="*{email}" class="form-control"
-                       th:classappend="${#fields.hasErrors('email')}? ' is-invalid'">
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
-                     th:errors="*{email}">Email error</div>
-              </div>
-            </div>
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-3 col-form-label">Email</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="email" th:field="*{email}" class="form-control"
+                                                                           th:classappend="${#fields.hasErrors('email')}? ' is-invalid'">
+                                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                                                                             th:errors="*{email}">Email error</div>
+                                                                </div>
+                                                            </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Phone</label>
-              <div class="col-sm-9">
-                <input type="text" th:field="*{phone}" class="form-control">
-              </div>
-            </div>
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-3 col-form-label">Phone</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" th:field="*{phone}" class="form-control">
+                                                                </div>
+                                                            </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Full Name</label>
-              <div class="col-sm-9">
-                <input type="text" th:field="*{fullName}" class="form-control"
-                       th:classappend="${#fields.hasErrors('fullName')}? ' is-invalid'">
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}"
-                     th:errors="*{fullName}">Full name error</div>
-              </div>
-            </div>
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-3 col-form-label">Full Name</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="text" th:field="*{fullName}" class="form-control"
+                                                                           th:classappend="${#fields.hasErrors('fullName')}? ' is-invalid'">
+                                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}"
+                                                                             th:errors="*{fullName}">Full name error</div>
+                                                                </div>
+                                                            </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Gender</label>
-              <div class="col-sm-9">
-                <select th:field="*{gender}" class="form-control">
-                  <option value="">-- Select Gender --</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-3 col-form-label">Gender</label>
+                                                                <div class="col-sm-9">
+                                                                    <select th:field="*{gender}" class="form-control">
+                                                                        <option value="">-- Select Gender --</option>
+                                                                        <option value="Male">Male</option>
+                                                                        <option value="Female">Female</option>
+                                                                        <option value="Other">Other</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Date of Birth</label>
-              <div class="col-sm-9">
-                <input type="date" th:field="*{dateOfBirth}" class="form-control">
-              </div>
-            </div>
+                                                            <div class="mb-3 row">
+                                                                <label class="col-sm-3 col-form-label">Date of Birth</label>
+                                                                <div class="col-sm-9">
+                                                                    <input type="date" th:field="*{dateOfBirth}" class="form-control">
+                                                                </div>
+                                                            </div>
 
-            <hr class="my-4">
+                                                            <hr class="my-4">
 
-            <!-- DOCTOR FIELDS -->
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Clinic</label>
-              <div class="col-sm-9">
-                <select th:field="*{clinicId}" class="form-control"
-                        th:classappend="${#fields.hasErrors('clinicId')}? ' is-invalid'">
-                  <option th:each="c : ${clinics}" th:value="${c.clinicId}" th:text="${c.name}"></option>
-                </select>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('clinicId')}"
-                     th:errors="*{clinicId}">Clinic error</div>
-              </div>
-            </div>
+                                                                <!-- DOCTOR FIELDS -->
+                                                                <div class="mb-3 row">
+                                                                    <label class="col-sm-3 col-form-label">Clinic</label>
+                                                                    <div class="col-sm-9">
+                                                                        <select th:field="*{clinicId}" class="form-control"
+                                                                                th:classappend="${#fields.hasErrors('clinicId')}? ' is-invalid'">
+                                                                            <option th:each="c : ${clinics}" th:value="${c.clinicId}" th:text="${c.name}"></option>
+                                                                        </select>
+                                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('clinicId')}"
+                                                                             th:errors="*{clinicId}">Clinic error</div>
+                                                                    </div>
+                                                                </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Specialty</label>
-              <div class="col-sm-9">
-                <select th:field="*{specialtyId}" class="form-control">
-                  <option th:each="s : ${specialties}" th:value="${s.specialtyId}" th:text="${s.name}"></option>
-                </select>
-              </div>
-            </div>
+                                                                <div class="mb-3 row">
+                                                                    <label class="col-sm-3 col-form-label">Specialty</label>
+                                                                    <div class="col-sm-9">
+                                                                        <select th:field="*{specialtyId}" class="form-control">
+                                                                            <option th:each="s : ${specialties}" th:value="${s.specialtyId}" th:text="${s.name}"></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
 
-            <div class="mb-3 row">
-              <label class="col-sm-3 col-form-label">Bio</label>
-              <div class="col-sm-9">
-                <textarea th:field="*{bio}" class="form-control" rows="3"
-                          th:classappend="${#fields.hasErrors('bio')}? ' is-invalid'"></textarea>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('bio')}"
-                     th:errors="*{bio}">Bio error</div>
-              </div>
-            </div>
+                                                                <div class="mb-3 row">
+                                                                    <label class="col-sm-3 col-form-label">Bio</label>
+                                                                    <div class="col-sm-9">
+                                                                        <textarea th:field="*{bio}" class="form-control" rows="3"
+                                                                                  th:classappend="${#fields.hasErrors('bio')}? ' is-invalid'"></textarea>
+                                                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('bio')}"
+                                                                             th:errors="*{bio}">Bio error</div>
+                                                                    </div>
+                                                                </div>
 
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary btn-lg px-5">Save Doctor</button>
-            </div>
-          </form>
-        </div>
-        <div class="card-footer small text-muted">Doctor+</div>
-      </div>
+                                                                <div class="text-center">
+                                                                    <button type="submit" class="btn btn-primary btn-lg px-5">Save Doctor</button>
+                                                                </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="card-footer small text-muted">Doctor+</div>
+                                                </div>
 
-    </div>
-  </div>
-</div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-<!-- Vendor JS -->
-<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
-<script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
-<script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
-<script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
-<script th:src="@{/vendor/js/sb-admin.min.js}"></script>
+                                    <!-- Vendor JS -->
+                                    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+                                    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+                                    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+                                    <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+                                    <script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+                                    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+                                    <script th:src="@{/vendor/js/sb-admin.min.js}"></script>
 
-<!-- AJAX blur check username/email -->
-<script th:inline="javascript">
-/*<![CDATA[*/
-// === Helpers chung ===
-function getFeedback(input) {
-  var fb = input.parentElement.querySelector('.invalid-feedback');
-  if (!fb) {
-    fb = document.createElement('div');
-    fb.className = 'invalid-feedback';
-    input.parentElement.appendChild(fb);
-  }
-  return fb;
-}
-function setInvalid(input, msg) {
-  input.classList.add('is-invalid');
-  var fb = getFeedback(input);
-  fb.textContent = msg || 'Invalid';
-}
-function clearInvalid(input) {
-  input.classList.remove('is-invalid');
-  var fb = input.parentElement.querySelector('.invalid-feedback');
-  if (fb) fb.textContent = '';
-}
-function isEmpty(v){ return !v || !v.trim(); }
+                                    <!-- AJAX blur check username/email -->
+                                    <script th:inline="javascript">
+                                        /*<![CDATA[*/
+                                        // === Helpers chung ===
+                                        function getFeedback(input) {
+                                            var fb = input.parentElement.querySelector('.invalid-feedback');
+                                            if (!fb) {
+                                                fb = document.createElement('div');
+                                                fb.className = 'invalid-feedback';
+                                                input.parentElement.appendChild(fb);
+                                            }
+                                            return fb;
+                                        }
+                                        function setInvalid(input, msg) {
+                                            input.classList.add('is-invalid');
+                                            var fb = getFeedback(input);
+                                            fb.textContent = msg || 'Invalid';
+                                        }
+                                        function clearInvalid(input) {
+                                            input.classList.remove('is-invalid');
+                                            var fb = input.parentElement.querySelector('.invalid-feedback');
+                                            if (fb)
+                                                fb.textContent = '';
+                                        }
+                                        function isEmpty(v) {
+                                            return !v || !v.trim();
+                                        }
 
-// Debounce tiện dụng
-function debounce(fn, wait) {
-  var t; return function() {
-    var ctx = this, args = arguments;
-    clearTimeout(t);
-    t = setTimeout(function(){ fn.apply(ctx, args); }, wait);
-  };
-}
+                                        // Debounce tiện dụng
+                                        function debounce(fn, wait) {
+                                            var t;
+                                            return function () {
+                                                var ctx = this, args = arguments;
+                                                clearTimeout(t);
+                                                t = setTimeout(function () {
+                                                    fn.apply(ctx, args);
+                                                }, wait);
+                                            };
+                                        }
 
-// === Các validate cục bộ (client) ===
-var PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
-var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                        // === Các validate cục bộ (client) ===
+                                        var PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._-])[A-Za-z\d@$!%*?&._-]{8,}$/;
+                                        var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function validateUsernameLocal(input) {
-  var v = input.value.trim();
-  if (isEmpty(v)) { setInvalid(input, 'Username is required'); return false; }
-  if (v.length > 100) { setInvalid(input, 'Username tối đa 100 ký tự'); return false; }
-  clearInvalid(input); return true;
-}
-function validateEmailLocal(input) {
-  var v = input.value.trim();
-  if (isEmpty(v)) { setInvalid(input, 'Email is required'); return false; }
-  if (v.length > 255) { setInvalid(input, 'Email tối đa 255 ký tự'); return false; }
-  if (!EMAIL_RE.test(v)) { setInvalid(input, 'Email không hợp lệ'); return false; }
-  clearInvalid(input); return true;
-}
-function validatePasswordLocal(input) {
-  var v = input.value;
-  if (isEmpty(v)) { setInvalid(input, 'Password is required'); return false; }
-  if (!PASSWORD_RE.test(v)) {
-    setInvalid(input, '≥8 ký tự, có hoa, thường, số và ký tự đặc biệt (@$!%*?&._-)');
-    return false;
-  }
-  clearInvalid(input); return true;
-}
-function validateFullNameLocal(input) {
-  var v = input.value.trim();
-  if (isEmpty(v)) { setInvalid(input, 'Full name is required'); return false; }
-  if (v.length > 255) { setInvalid(input, 'Full name tối đa 255 ký tự'); return false; }
-  clearInvalid(input); return true;
-}
-function validateClinicLocal(selectEl) {
-  var v = selectEl.value;
-  if (isEmpty(v)) { setInvalid(selectEl, 'Clinic is required'); return false; }
-  clearInvalid(selectEl); return true;
-}
+                                        function validateUsernameLocal(input) {
+                                            var v = input.value.trim();
+                                            if (isEmpty(v)) {
+                                                setInvalid(input, 'Username is required');
+                                                return false;
+                                            }
+                                            if (v.length > 100) {
+                                                setInvalid(input, 'Username tối đa 100 ký tự');
+                                                return false;
+                                            }
+                                            clearInvalid(input);
+                                            return true;
+                                        }
+                                        function validateEmailLocal(input) {
+                                            var v = input.value.trim();
+                                            if (isEmpty(v)) {
+                                                setInvalid(input, 'Email is required');
+                                                return false;
+                                            }
+                                            if (v.length > 255) {
+                                                setInvalid(input, 'Email tối đa 255 ký tự');
+                                                return false;
+                                            }
+                                            if (!EMAIL_RE.test(v)) {
+                                                setInvalid(input, 'Email không hợp lệ');
+                                                return false;
+                                            }
+                                            clearInvalid(input);
+                                            return true;
+                                        }
+                                        function validatePasswordLocal(input) {
+                                            var v = input.value;
+                                            if (isEmpty(v)) {
+                                                setInvalid(input, 'Password is required');
+                                                return false;
+                                            }
+                                            if (!PASSWORD_RE.test(v)) {
+                                                setInvalid(input, '≥8 ký tự, có hoa, thường, số và ký tự đặc biệt (@$!%*?&._-)');
+                                                return false;
+                                            }
+                                            clearInvalid(input);
+                                            return true;
+                                        }
+                                        function validateFullNameLocal(input) {
+                                            var v = input.value.trim();
+                                            if (isEmpty(v)) {
+                                                setInvalid(input, 'Full name is required');
+                                                return false;
+                                            }
+                                            if (v.length > 255) {
+                                                setInvalid(input, 'Full name tối đa 255 ký tự');
+                                                return false;
+                                            }
+                                            clearInvalid(input);
+                                            return true;
+                                        }
+                                        function validateClinicLocal(selectEl) {
+                                            var v = selectEl.value;
+                                            if (isEmpty(v)) {
+                                                setInvalid(selectEl, 'Clinic is required');
+                                                return false;
+                                            }
+                                            clearInvalid(selectEl);
+                                            return true;
+                                        }
 
-// === Remote check (debounced) cho username/email ===
-// Trả về Promise<boolean>
-function remoteCheck(url, paramName, value) {
-  var u = url + '?' + encodeURIComponent(paramName) + '=' + encodeURIComponent(value);
-  return fetch(u, { credentials: 'same-origin' })
-    .then(function(r){ return r.json(); })
-    .then(function(j){ return !!j.valid; })
-    .catch(function(){ return true; }); // lỗi mạng: đừng chặn người dùng
-}
+                                        // === Remote check (debounced) cho username/email ===
+                                        // Trả về Promise<boolean>
+                                        function remoteCheck(url, paramName, value) {
+                                            var u = url + '?' + encodeURIComponent(paramName) + '=' + encodeURIComponent(value);
+                                            return fetch(u, {credentials: 'same-origin'})
+                                                    .then(function (r) {
+                                                        return r.json();
+                                                    })
+                                                    .then(function (j) {
+                                                        return !!j.valid;
+                                                    })
+                                                    .catch(function () {
+                                                        return true;
+                                                    }); // lỗi mạng: đừng chặn người dùng
+                                        }
 
-// Hook vào các input
-var $username = document.querySelector('[name="username"]');
-var $email    = document.querySelector('[name="email"]');
-var $password = document.querySelector('[name="passwordHash"]');
-var $fullName = document.querySelector('[name="fullName"]');
-var $clinic   = document.querySelector('[name="clinicId"]');
+                                        // Hook vào các input
+                                        var $username = document.querySelector('[name="username"]');
+                                        var $email = document.querySelector('[name="email"]');
+                                        var $password = document.querySelector('[name="passwordHash"]');
+                                        var $fullName = document.querySelector('[name="fullName"]');
+                                        var $clinic = document.querySelector('[name="clinicId"]');
 
-// Endpoints (Thymeleaf sẽ resolve)
-var CHECK_U = /*[[@{/admin-branch/api/check-username}]]*/ '/admin-branch/api/check-username';
-var CHECK_E = /*[[@{/admin-branch/api/check-email}]]*/ '/admin-branch/api/check-email';
+                                        // Endpoints (Thymeleaf sẽ resolve)
+                                        var CHECK_U = /*[[@{/admin-branch/api/check-username}]]*/ '/admin-branch/api/check-username';
+                                        var CHECK_E = /*[[@{/admin-branch/api/check-email}]]*/ '/admin-branch/api/check-email';
 
-// Username: validate cục bộ khi gõ, rồi remote check sau 300ms
-if ($username) {
-  var checkUsernameRemote = debounce(function() {
-    var v = $username.value.trim();
-    if (!validateUsernameLocal($username)) return;
-    remoteCheck(CHECK_U, 'u', v).then(function(ok){
-      if (!ok) setInvalid($username, 'Username đã tồn tại'); else clearInvalid($username);
-    });
-  }, 300);
+                                        // Username: validate cục bộ khi gõ, rồi remote check sau 300ms
+                                        if ($username) {
+                                            var checkUsernameRemote = debounce(function () {
+                                                var v = $username.value.trim();
+                                                if (!validateUsernameLocal($username))
+                                                    return;
+                                                remoteCheck(CHECK_U, 'u', v).then(function (ok) {
+                                                    if (!ok)
+                                                        setInvalid($username, 'Username đã tồn tại');
+                                                    else
+                                                        clearInvalid($username);
+                                                });
+                                            }, 300);
 
-  $username.addEventListener('input', function(){
-    validateUsernameLocal($username);
-    checkUsernameRemote();
-  });
-  $username.addEventListener('blur', function(){
-    validateUsernameLocal($username);
-    checkUsernameRemote();
-  });
-}
+                                            $username.addEventListener('input', function () {
+                                                validateUsernameLocal($username);
+                                                checkUsernameRemote();
+                                            });
+                                            $username.addEventListener('blur', function () {
+                                                validateUsernameLocal($username);
+                                                checkUsernameRemote();
+                                            });
+                                        }
 
-// Email: validate cục bộ khi gõ, rồi remote check sau 300ms
-if ($email) {
-  var checkEmailRemote = debounce(function() {
-    var v = $email.value.trim();
-    if (!validateEmailLocal($email)) return;
-    remoteCheck(CHECK_E, 'e', v).then(function(ok){
-      if (!ok) setInvalid($email, 'Email đã được sử dụng'); else clearInvalid($email);
-    });
-  }, 300);
+                                        // Email: validate cục bộ khi gõ, rồi remote check sau 300ms
+                                        if ($email) {
+                                            var checkEmailRemote = debounce(function () {
+                                                var v = $email.value.trim();
+                                                if (!validateEmailLocal($email))
+                                                    return;
+                                                remoteCheck(CHECK_E, 'e', v).then(function (ok) {
+                                                    if (!ok)
+                                                        setInvalid($email, 'Email đã được sử dụng');
+                                                    else
+                                                        clearInvalid($email);
+                                                });
+                                            }, 300);
 
-  $email.addEventListener('input', function(){
-    validateEmailLocal($email);
-    checkEmailRemote();
-  });
-  $email.addEventListener('blur', function(){
-    validateEmailLocal($email);
-    checkEmailRemote();
-  });
-}
+                                            $email.addEventListener('input', function () {
+                                                validateEmailLocal($email);
+                                                checkEmailRemote();
+                                            });
+                                            $email.addEventListener('blur', function () {
+                                                validateEmailLocal($email);
+                                                checkEmailRemote();
+                                            });
+                                        }
 
-// Password + Fullname + Clinic: validate khi gõ/đổi
-if ($password) {
-  $password.addEventListener('input', function(){ validatePasswordLocal($password); });
-  $password.addEventListener('blur', function(){ validatePasswordLocal($password); });
-}
-if ($fullName) {
-  $fullName.addEventListener('input', function(){ validateFullNameLocal($fullName); });
-  $fullName.addEventListener('blur', function(){ validateFullNameLocal($fullName); });
-}
-if ($clinic) {
-  $clinic.addEventListener('change', function(){ validateClinicLocal($clinic); });
-  $clinic.addEventListener('blur', function(){ validateClinicLocal($clinic); });
-}
+                                        // Password + Fullname + Clinic: validate khi gõ/đổi
+                                        if ($password) {
+                                            $password.addEventListener('input', function () {
+                                                validatePasswordLocal($password);
+                                            });
+                                            $password.addEventListener('blur', function () {
+                                                validatePasswordLocal($password);
+                                            });
+                                        }
+                                        if ($fullName) {
+                                            $fullName.addEventListener('input', function () {
+                                                validateFullNameLocal($fullName);
+                                            });
+                                            $fullName.addEventListener('blur', function () {
+                                                validateFullNameLocal($fullName);
+                                            });
+                                        }
+                                        if ($clinic) {
+                                            $clinic.addEventListener('change', function () {
+                                                validateClinicLocal($clinic);
+                                            });
+                                            $clinic.addEventListener('blur', function () {
+                                                validateClinicLocal($clinic);
+                                            });
+                                        }
 
-// Chặn submit nếu còn lỗi client
-var form = document.querySelector('form[th\\:object], form[action*="save-doctor"]') || document.querySelector('form');
-if (form) {
-  form.addEventListener('submit', function(e){
-    var ok = true;
-    if ($username) ok = validateUsernameLocal($username) && ok;
-    if ($email)    ok = validateEmailLocal($email) && ok;
-    if ($password) ok = validatePasswordLocal($password) && ok;
-    if ($fullName) ok = validateFullNameLocal($fullName) && ok;
-    if ($clinic)   ok = validateClinicLocal($clinic) && ok;
-    if (!ok) e.preventDefault(); // vẫn giữ validate server-side ở controller
-  });
+                                        // Chặn submit nếu còn lỗi client
+                                        var form = document.querySelector('form[th\\:object], form[action*="save-doctor"]') || document.querySelector('form');
+                                        if (form) {
+                                            form.addEventListener('submit', function (e) {
+                                                var ok = true;
+                                                if ($username)
+                                                    ok = validateUsernameLocal($username) && ok;
+                                                if ($email)
+                                                    ok = validateEmailLocal($email) && ok;
+                                                if ($password)
+                                                    ok = validatePasswordLocal($password) && ok;
+                                                if ($fullName)
+                                                    ok = validateFullNameLocal($fullName) && ok;
+                                                if ($clinic)
+                                                    ok = validateClinicLocal($clinic) && ok;
+                                                if (!ok)
+                                                    e.preventDefault(); // vẫn giữ validate server-side ở controller
+                                            });
 
-  // Validate ngay khi load nếu có sẵn giá trị (prefill)
-  window.addEventListener('DOMContentLoaded', function(){
-    if ($username && $username.value) $username.dispatchEvent(new Event('input'));
-    if ($email && $email.value) $email.dispatchEvent(new Event('input'));
-    if ($password && $password.value) $password.dispatchEvent(new Event('input'));
-    if ($fullName && $fullName.value) $fullName.dispatchEvent(new Event('input'));
-    if ($clinic) $clinic.dispatchEvent(new Event('change'));
-  });
-}
-/*]]>*/
-</script>
-</body>
-</html>
+                                            // Validate ngay khi load nếu có sẵn giá trị (prefill)
+                                            window.addEventListener('DOMContentLoaded', function () {
+                                                if ($username && $username.value)
+                                                    $username.dispatchEvent(new Event('input'));
+                                                if ($email && $email.value)
+                                                    $email.dispatchEvent(new Event('input'));
+                                                if ($password && $password.value)
+                                                    $password.dispatchEvent(new Event('input'));
+                                                if ($fullName && $fullName.value)
+                                                    $fullName.dispatchEvent(new Event('input'));
+                                                if ($clinic)
+                                                    $clinic.dispatchEvent(new Event('change'));
+                                            });
+                                        }
+                                        /*]]>*/
+                                    </script>
+                                </body>
+                                </html>

@@ -174,6 +174,13 @@ public class Users implements Serializable {
     /* NEW: clinic getter/setter */
     public Clinic getClinic() { return clinic; }
     public void setClinic(Clinic clinic) { this.clinic = clinic; }
+    
+    // trong class Users
+@javax.persistence.Transient
+public Long getClinicId() {
+    return clinic != null ? clinic.getClinicId() : null;
+}
+
 
     /* ====== equals/hashCode/toString ====== */
     @Override

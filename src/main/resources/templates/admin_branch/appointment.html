@@ -1,134 +1,230 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="utf-8">
-  <title>Admin Branch - Appointments</title>
+    <head>
+        <meta charset="utf-8">
+            <title>Admin Branch - Appointments</title>
 
-  <!-- Vendor CSS -->
-  <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
-  <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-  <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
-  <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
+            <!-- Vendor CSS -->
+            <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+                <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+                    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+                        <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
 
-  <!-- Theme (gradient pink → purple → blue) -->
-  <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
-</head>
-<body id="page-top">
+                            <!-- Theme (gradient pink → purple → blue) -->
+                            <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
+                                </head>
+                                <body id="page-top">
 
-<!-- Navbar: áp dụng bg-gradient-theme -->
-<nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
-  <a class="navbar-brand mr-1" th:href="@{/admin-branch/doctor-details}">Doctor+ Admin Branch</a>
-  <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+                                    <!-- Navbar: áp dụng bg-gradient-theme -->
+                                    <nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
+                                        <a class="navbar-brand mr-1" th:href="@{/admin-branch/doctor-details}">Doctor+ Admin Branch</a>
+                                        <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle"><i class="fas fa-bars"></i></button>
 
-  <ul class="navbar-nav ml-auto ml-md-0">
-    <li class="nav-item dropdown no-arrow">
-      <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-        <i class="fas fa-user-circle fa-fw"></i>
-      </a>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-        <div class="dropdown-divider"></div>
-        <form th:action="@{/logout}" method="post">
-          <button class="dropdown-item" type="submit">Logout</button>
-        </form>
-      </div>
-    </li>
-  </ul>
-</nav>
+                                        <ul class="navbar-nav ml-auto ml-md-0">
+                                            <li class="nav-item dropdown no-arrow">
+                                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                                                    <i class="fas fa-user-circle fa-fw"></i>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                                    <div class="dropdown-divider"></div>
+                                                    <form th:action="@{/logout}" method="post">
+                                                        <button class="dropdown-item" type="submit">Logout</button>
+                                                    </form>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </nav>
 
-<div id="wrapper">
-  <!-- Sidebar: giữ style theme từ admin-theme.css, thêm active bằng Thymeleaf -->
-  <ul class="sidebar navbar-nav">
-    <li class="nav-item" th:classappend="${activePage}=='appointments' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/appointments}">
-        <i class="fas fa-fw fa-calendar"></i><span>Appointments</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='doctor-details' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/doctor-details}">
-        <i class="fas fa-fw fa-user-md"></i><span>Doctor Details</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='add-doctor' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/add-doctor}">
-        <i class="fas fa-fw fa-plus"></i><span>Add Doctor</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='invoices' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/invoices}">
-        <i class="fas fa-fw fa-file-invoice-dollar"></i><span>Invoices</span>
-      </a>
-    </li>
-    <li class="nav-item" th:classappend="${activePage}=='my-profile' ? ' active'">
-      <a class="nav-link" th:href="@{/admin-branch/edit-my-profile}">
-        <i class="fas fa-fw fa-user"></i><span>My Profile</span>
-      </a>
-    </li>
-  </ul>
+                                    <div id="wrapper">
+                                        <!-- Sidebar: giữ style theme từ admin-theme.css, thêm active bằng Thymeleaf -->
+                                        <ul class="sidebar navbar-nav">
+                                            <li class="nav-item" th:classappend="${activePage}=='appointments' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/appointments}">
+                                                    <i class="fas fa-fw fa-calendar"></i><span>Appointments</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='doctor-details' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/doctor-details}">
+                                                    <i class="fas fa-fw fa-user-md"></i><span>Doctor Details</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='add-doctor' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/add-doctor}">
+                                                    <i class="fas fa-fw fa-plus"></i><span>Add Doctor</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='invoices' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/invoices}">
+                                                    <i class="fas fa-fw fa-file-invoice-dollar"></i><span>Invoices</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='schedule' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/schedule}">
+                                                    <i class="fas fa-fw fa-calendar-alt"></i><span>Schedule</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='add-user' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/add-user}">
+                                                    <i class="fas fa-fw fa-user-plus"></i><span>Add Patient</span>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item" th:classappend="${activePage}=='my-profile' ? ' active'">
+                                                <a class="nav-link" th:href="@{/admin-branch/edit-my-profile}">
+                                                    <i class="fas fa-fw fa-user"></i><span>My Profile</span>
+                                                </a>
+                                            </li>
+                                        </ul>
 
-  <div id="content-wrapper">
-    <div class="container-fluid">
-      <!-- Breadcrumb -->
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a th:href="@{/admin-branch/doctor-details}">Dashboard</a></li>
-        <li class="breadcrumb-item active">Appointments</li>
-      </ol>
+                                        <div id="content-wrapper">
+                                            <div class="container-fluid">
+                                                <!-- Breadcrumb -->
+                                                <ol class="breadcrumb">
+                                                    <li class="breadcrumb-item"><a th:href="@{/admin-branch/doctor-details}">Dashboard</a></li>
+                                                    <li class="breadcrumb-item active">Appointments</li>
+                                                </ol>
 
-      <!-- Card + DataTable -->
-      <div class="card mb-3">
-        <div class="card-header">
-          <i class="fas fa-table"></i> Appointments
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-              <thead>
-              <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Description</th>
-                <th>Reg. Time</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr th:each="temp : ${app}">
-                <td th:text="${temp.id}">1</td>
-                <td th:text="${temp.name}">John</td>
-                <td th:text="${temp.email}">john@mail.com</td>
-                <td th:text="${temp.date}">2025-01-01</td>
-                <td th:text="${temp.time}">09:00</td>
-                <td th:text="${temp.description}">—</td>
-                <td th:text="${temp.regtime}">—</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="card-footer small text-muted">Doctor+</div>
-      </div>
-    </div>
+                                                <!-- Card + DataTable -->
+                                                <div class="card mb-3">
+                                                    <div class="card-header">
+                                                        <i class="fas fa-table"></i> Appointments
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Id</th>
+                                                                        <th>Name</th>
+                                                                        <th>Email</th>
+                                                                        <th>Date</th>
+                                                                        <th>Time</th>
+                                                                        <th>Description</th>
+                                                                        <th>Reg. Time</th>
+                                                                        <th class="text-center">Actions</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr th:each="temp : ${app}">
+                                                                        <td th:text="${temp.id}"></td>
+                                                                        <td th:text="${temp.name}"></td>
+                                                                        <td th:text="${temp.email}"></td>
+                                                                        <td th:text="${temp.date}"></td>
+                                                                        <td th:text="${temp.time}"></td>
+                                                                        <td th:text="${temp.description}"></td>
+                                                                        <td th:text="${temp.regtime}"></td>
 
-    <footer class="sticky-footer">
-      <div class="container my-auto">
-        <div class="copyright text-center my-auto">
-          <span>Copyright © Doctor+ 2025</span>
-        </div>
-      </div>
-    </footer>
-  </div>
-</div>
+                                                                        <td class="text-center">
+                                                                            <button class="btn btn-sm btn-info"
+                                                                                    data-toggle="modal"
+                                                                                    data-target="#detailModal"
+                                                                                    th:attr="data-name=${temp.name}, data-email=${temp.email}, data-date=${temp.date}, data-time=${temp.time}, data-description=${temp.description}"
+                                                                                    onclick="fillDetail(this)">
+                                                                                Chi tiết
+                                                                            </button>
 
-<!-- Vendor JS -->
-<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
-<script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
-<script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
-<script th:src="@{/vendor/js/sb-admin.min.js}"></script>
+                                                                            <button class="btn btn-sm btn-danger ml-1"
+                                                                                    th:attr="data-id=${temp.id}"
+                                                                                    onclick="openCancelModal(this)">
+                                                                                Hủy
+                                                                            </button>
+
+                                                                        </td>
+
+                                                                    </tr>
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-footer small text-muted">Doctor+</div>
+                                                </div>
+                                            </div>
+
+                                            <footer class="sticky-footer">
+                                                <div class="container my-auto">
+                                                    <div class="copyright text-center my-auto">
+                                                        <span>Copyright © Doctor+ 2025</span>
+                                                    </div>
+                                                </div>
+                                            </footer>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-gradient-theme text-white">
+                                                    <h5 class="modal-title">Chi tiết lịch khám</h5>
+                                                    <button type="button" class="close" data-dismiss="modal">
+                                                        <span>&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Tên bệnh nhân:</strong> <span id="dName"></span></p>
+                                                    <p><strong>Email:</strong> <span id="dEmail"></span></p>
+                                                    <p><strong>Ngày:</strong> <span id="dDate"></span></p>
+                                                    <p><strong>Giờ:</strong> <span id="dTime"></span></p>
+                                                    <p><strong>Ghi chú:</strong> <span id="dDescription"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal Confirm Cancel -->
+                                    <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content" style="border-radius: 12px;">
+
+                                                <div class="modal-header bg-danger text-white" style="border-radius: 12px 12px 0 0;">
+                                                    <h5 class="modal-title">Xác nhận hủy lịch</h5>
+                                                    <button type="button" class="close text-white" data-dismiss="modal">
+                                                        <span>&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="modal-body text-center">
+                                                    <p style="font-size: 16px;">Bạn có chắc muốn hủy lịch hẹn này không?</p>
+                                                </div>
+
+                                                <div class="modal-footer justify-content-center pb-3">
+                                                    <button type="button" class="btn btn-secondary px-4" data-dismiss="modal">Không</button>
+
+                                                    <a id="cancelConfirmBtn"
+                                                       class="btn btn-danger px-4">
+                                                        Có
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        function openCancelModal(btn) {
+                                            let id = btn.getAttribute("data-id");
+                                            document.getElementById("cancelConfirmBtn").setAttribute("href", "/admin-branch/appointments/cancel/" + id);
+                                            $('#cancelModal').modal('show');
+                                        }
+                                    </script>
 
 
-</body>
-</html>
+                                    <script>
+                                        function fillDetail(btn) {
+                                            document.getElementById("dName").innerText = btn.getAttribute("data-name");
+                                            document.getElementById("dEmail").innerText = btn.getAttribute("data-email");
+                                            document.getElementById("dDate").innerText = btn.getAttribute("data-date");
+                                            document.getElementById("dTime").innerText = btn.getAttribute("data-time");
+                                            document.getElementById("dDescription").innerText = btn.getAttribute("data-description");
+                                        }
+                                    </script>
+
+                                    <!-- Vendor JS -->
+                                    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+                                    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+                                    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+                                    <script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+                                    <script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+                                    <script th:src="@{/vendor/js/sb-admin.min.js}"></script>
+
+
+                                </body>
+                                </html>

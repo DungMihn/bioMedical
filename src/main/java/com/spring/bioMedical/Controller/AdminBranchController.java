@@ -1,9 +1,12 @@
 package com.spring.bioMedical.Controller;
 
-import com.spring.bioMedical.dto.DoctorForm;
 import com.spring.bioMedical.entity.Appointment;
 import com.spring.bioMedical.entity.Clinic;
 import com.spring.bioMedical.entity.Users;
+import com.spring.bioMedical.dto.DoctorForm;
+import com.spring.bioMedical.entity.AppointmentBooking;
+import com.spring.bioMedical.entity.AppointmentSlot;
+import com.spring.bioMedical.repository.AppointmentBookingRepository;
 import com.spring.bioMedical.service.AppointmentServiceImplementation;
 import com.spring.bioMedical.service.ClinicService;
 import com.spring.bioMedical.service.SpecialtyService;
@@ -13,30 +16,45 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.spring.bioMedical.form.AppointmentForm;
+import com.spring.bioMedical.repository.AppointmentSlotRepository;
+import com.spring.bioMedical.service.ScheduleServiceImplementation;
+import java.time.LocalDate;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
+import com.spring.bioMedical.service.ScheduleService;
 
 @Controller
 @RequestMapping("/admin-branch")
 public class AdminBranchController {
-
+   
   private final UsersService usersService;
   private final AppointmentServiceImplementation appointmentService;
   private final ClinicService clinicService;
   private final SpecialtyService specialtyService;
+  private final AppointmentBookingRepository bookingRepo;
+  private final AppointmentSlotRepository slotRepo;
+  private final ScheduleService scheduleService;
 
   public AdminBranchController(UsersService usersService,
                                AppointmentServiceImplementation appointmentService,
                                ClinicService clinicService,
-                               SpecialtyService specialtyService) {
+                               SpecialtyService specialtyService,
+                               AppointmentBookingRepository bookingRepo,
+                               AppointmentSlotRepository slotRepo,
+                               ScheduleService scheduleService) {
     this.usersService = usersService;
     this.appointmentService = appointmentService;
     this.clinicService = clinicService;
     this.specialtyService = specialtyService;
+    this.bookingRepo = bookingRepo;
+    this.slotRepo = slotRepo;
+    this.scheduleService = scheduleService; 
   }
 
   /* ========== DOCTOR LIST ========== */
@@ -119,12 +137,24 @@ public class AdminBranchController {
     return "redirect:/admin-branch/doctor-details";
   }
 
-  /* ========== APPOINTMENTS ========== */
+   /* ========== APPOINTMENTS ========== */
   @GetMapping("/appointments")
-  public String appointments(Model model) {
+  public String appointments(Model model,
+      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE)
+      LocalDate date) {
+
     Long clinicId = currentClinicId();
-    model.addAttribute("app", appointmentService.findAllByBranch(clinicId)); // ✅ chỉ chi nhánh của mình
+    LocalDate today = LocalDate.now();
+
+        java.util.List<AppointmentForm> rows = (date == null)
+        ? bookingRepo.findUpcomingRowsForClinic(clinicId, today)   // ✅ Chỉ lấy lịch chưa diễn ra
+        : bookingRepo.findRowsForClinicAndDate(clinicId, date);
+
+
+    model.addAttribute("app", rows);            // 👈 GIỮ NGUYÊN TÊN attribute theo template
     model.addAttribute("activePage", "appointments");
+    model.addAttribute("clinicId", clinicId);
+    model.addAttribute("date", (date != null) ? date : LocalDate.now());
     return "admin_branch/appointment";
   }
 
@@ -136,6 +166,30 @@ public class AdminBranchController {
     appointmentService.save(app);
     return "redirect:/admin-branch/appointments";
   }
+  
+
+@GetMapping("/appointments/cancel/{id}")
+public String cancelAppointment(@PathVariable("id") Long id,
+                                org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+
+    // huỷ: trả slot -> AVAILABLE + booking -> CANCELLED
+    scheduleService.cancel(id);
+
+    // Lấy ngày của slot để giữ filter theo ngày (nếu lấy được)
+    java.time.LocalDate slotDate = bookingRepo.findById(id)
+        .flatMap(b -> slotRepo.findById(b.getSlotId()))
+        .map(com.spring.bioMedical.entity.AppointmentSlot::getSlotDate)
+        .orElse(null);
+
+    ra.addFlashAttribute("ok", "Đã huỷ lịch #" + id);
+
+    return (slotDate != null)
+        ? "redirect:/admin-branch/appointments?date=" + slotDate   // 👈 về Appointments kèm ngày
+        : "redirect:/admin-branch/appointments";                    // 👈 về Appointments
+}
+
+
+
 
   /* ========== PROFILE ========== */
   @GetMapping("/edit-my-profile")
@@ -210,4 +264,56 @@ public class AdminBranchController {
     if (email == null || email.trim().isEmpty()) return false;
     return usersService.findByEmail(email.trim()) != null;
   }
+  
+  /* ========== ADD USER (BRANCH) ========== */
+@GetMapping("/add-user")
+public String showAddUser(Model model) {
+    com.spring.bioMedical.dto.UserForm form = new com.spring.bioMedical.dto.UserForm();
+    form.setRole("PATIENT");              // 👈 mặc định
+    form.setEnabled(Boolean.TRUE);        // 👈 mặc định
+    // form.setClinicId(null);            // nếu DTO có clinicId, để null
+    model.addAttribute("form", form);
+    model.addAttribute("activePage", "add-user");
+    // KHÔNG cần allowedRoles/clinicId nữa
+    return "admin_branch/addUser";
+}
+
+
+@PostMapping("/save-user")
+public String saveUser(
+    @Valid @ModelAttribute("form") com.spring.bioMedical.dto.UserForm form,
+    org.springframework.validation.BindingResult binding,
+    Model model,
+    org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+
+  // ——— validate trùng + whitelist email như đang có ———
+
+  if (binding.hasErrors()) {
+    binding.getAllErrors().forEach(e -> System.out.println("[ADD-USER-ERROR] " + e));
+    model.addAttribute("activePage", "add-user");
+    return "admin_branch/addUser";
+}
+
+
+  com.spring.bioMedical.entity.Users u = new com.spring.bioMedical.entity.Users();
+  u.setUsername(form.getUsername().trim());
+  u.setPasswordHash(form.getPassword());   // hoặc encode
+  u.setEmail(form.getEmail().trim().toLowerCase());
+  u.setPhone(form.getPhone());
+  u.setFullName(form.getFullName());
+  u.setGender(form.getGender());
+  u.setDateOfBirth(form.getDateOfBirth());
+
+  // ✅ ÉP role + enabled, bỏ clinic
+  u.setRole("PATIENT");        // luôn là PATIENT
+  u.setEnabled(true);          // luôn kích hoạt
+  // KHÔNG assign clinic cho patient:
+  // Long cid = currentClinicId();  ❌ bỏ
+  // usersService.assignClinic(u, clinicService.findById(cid)); ❌ bỏ
+
+  usersService.save(u);
+  ra.addFlashAttribute("ok", "Đã tạo tài khoản bệnh nhân: " + u.getUsername());
+  return "redirect:/admin-branch/appointments";  // hoặc trang bạn muốn
+}
+
 }

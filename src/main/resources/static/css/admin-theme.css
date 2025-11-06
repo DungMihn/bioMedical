@@ -75,3 +75,44 @@
   border-color: var(--purple) !important;
   box-shadow: 0 0 0 .2rem rgba(118, 75, 162, .25) !important;
 }
+
+.table td.text-center {
+    vertical-align: middle !important;
+}
+
+.btn-info {
+    background: #0ea5e9 !important;
+    border-color: #0ea5e9 !important;
+}
+
+.btn-danger {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+#cancelModal .modal-content {
+    border: none;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+}
+
+#cancelModal .modal-body p {
+    font-weight: 500;
+    color: #374151;
+}
+
+#cancelModal .btn-danger {
+    background: #dc3545;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+#cancelModal .btn-secondary {
+    border-radius: 6px;
+    font-weight: 500;
+}

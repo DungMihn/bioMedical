@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,7 +38,11 @@ public class AdminBranchInvoiceController {
         this.usersService = usersService;
         this.invoiceItemRepo = invoiceItemRepo;
     }
-
+    @ModelAttribute
+    public void setActiveNav(Model model) {
+        model.addAttribute("activePage", "invoices");
+    }
+    
     /* ===== helper lấy clinicId của user đăng nhập ===== */
     private Long getCurrentClinicId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

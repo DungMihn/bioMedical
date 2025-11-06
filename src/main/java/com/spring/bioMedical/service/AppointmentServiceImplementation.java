@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.spring.bioMedical.entity.Appointment;
 import com.spring.bioMedical.repository.AppointmentRepository;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -29,8 +30,10 @@ public class AppointmentServiceImplementation  {
     }
 
   public List<Appointment> findAllByBranch(Long clinicId) {
-    return clinicId == null ? Collections.emptyList()
-                            : appointmentRepository.findByClinic_ClinicId(clinicId);
+    if (clinicId == null) return Collections.emptyList();
+
+    String today = LocalDate.now().toString(); // "2025-11-04" kiểu yyyy-MM-dd
+    return appointmentRepository.findByClinic_ClinicIdAndDateGreaterThanEqual(clinicId, today);
 }
  /** LẤY APPOINTMENT THEO ID */
     public Optional<Appointment> findById(Long id) {
