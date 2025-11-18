@@ -47,14 +47,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
  @Override
 protected void configure(HttpSecurity http) throws Exception {
     http
+        // 1) Bỏ CSRF cho API chat (nếu muốn có thể disable toàn bộ, nhưng mình để giới hạn)
+        .csrf()
+            .ignoringAntMatchers("/api/chat")
+        .and()
+        // 2) Phân quyền
         .authorizeRequests()
+            // Cho phép API chat truy cập không cần đăng nhập
+            .antMatchers("/api/chat").permitAll()
+
             .antMatchers("/admin-super/**").hasAuthority("ADMIN_SUPER")
-            .antMatchers("/admin-branch/**").hasAnyAuthority("ADMIN_SUPER","ADMIN_BRANCH")
+            .antMatchers("/admin-branch/**").hasAnyAuthority("ADMIN_SUPER", "ADMIN_BRANCH")
             .antMatchers("/doctor/**").hasAuthority("DOCTOR")
             .antMatchers("/user/**").hasAuthority("PATIENT")
-            .antMatchers("/register", "/confirm", "/showMyLoginPage",
-                         "/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**",
-                         "/login/**").permitAll()
+
+            .antMatchers(
+                    "/register", "/confirm", "/showMyLoginPage",
+                    "/css/**", "/js/**", "/static/**", "/vendor/**", "/resources/**",
+                    "/login/**"
+            ).permitAll()
             .anyRequest().authenticated()
         .and()
         .formLogin()
@@ -68,8 +79,9 @@ protected void configure(HttpSecurity http) throws Exception {
         .exceptionHandling()
             .accessDeniedHandler((req, res, ex) ->
                 res.sendRedirect(req.getContextPath() + "/access-denied")
-            ); // dùng redirect -> luôn là GET
+            );
 }
+
 
 
 
