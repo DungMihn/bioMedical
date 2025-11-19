@@ -1,0 +1,234 @@
+<div th:fragment="modal">
+  <!-- Modal Appointment -->
+  <div class="modal fade" id="modalAppointment" tabindex="-1" role="dialog" aria-labelledby="modalAppointmentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content border-0 rounded-3 shadow-lg animate__animated animate__fadeInUp">
+        <div class="modal-header bg-gradient-primary text-white">
+          <h5 class="modal-title font-weight-bold">
+            <i class="fas fa-calendar-plus mr-2"></i> Book Appointment
+          </h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body p-4">
+          <form id="appointmentForm" th:object="${appointmentForm}" novalidate>
+
+            <!-- Guest (Not Logged In) -->
+            <div th:if="${#authentication == null or #authentication.name == 'anonymousUser'}" class="mb-4">
+              <h6 class="text-primary mb-3"><i class="fas fa-user mr-2"></i> Personal Information</h6>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label>Full Name <span class="text-danger">*</span></label>
+                  <input type="text" name="fullName" class="form-control" placeholder="Enter full name" required>
+                  <div class="invalid-feedback">Please enter your full name.</div>
+                </div>
+                <div class="form-group col-md-6">
+                  <label>Email <span class="text-danger">*</span></label>
+                  <input type="email" name="email" class="form-control" placeholder="example@email.com" required>
+                  <div class="invalid-feedback">Invalid email format.</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label>Phone Number <span class="text-danger">*</span></label>
+                  <input type="text" name="phone" class="form-control" placeholder="0xxxxxxxxx" required pattern="^0[0-9]{9,10}$">
+                  <div class="invalid-feedback">Phone number must be 10 digits starting with 0.</div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label>Gender <span class="text-danger">*</span></label>
+                  <select name="gender" class="form-control" required>
+                    <option value="">-- Select --</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                  </select>
+                  <div class="invalid-feedback">Please select gender.</div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label>Date of Birth <span class="text-danger">*</span></label>
+                  <input type="date" name="dateOfBirth" class="form-control" required>
+                  <div class="invalid-feedback">Please select your date of birth.</div>
+                </div>
+              </div>
+              <hr>
+            </div>
+
+            <!-- Logged In User -->
+            <div th:if="${#authentication != null and #authentication.name != 'anonymousUser'}"
+                 class="alert alert-info py-2 mb-3 shadow-sm">
+              Hello, <b th:text="${currentUser != null ? currentUser.fullName : #authentication.name}"></b> — your personal details are already saved.
+            </div>
+
+            <!-- Clinic -->
+            <div class="form-group">
+              <label><i class="fas fa-hospital mr-2 text-primary"></i> Clinic <span class="text-danger">*</span></label>
+              <select id="clinicSelect" th:field="*{clinicId}" class="form-control" required>
+                <option value="">-- Select clinic --</option>
+                <option th:each="c : ${clinics}" th:value="${c.clinicId}" th:text="${c.name}"></option>
+              </select>
+              <div class="invalid-feedback">Please select a clinic.</div>
+            </div>
+
+            <!-- Date -->
+            <div class="form-group">
+              <label><i class="far fa-calendar-alt mr-2 text-primary"></i> Appointment Date <span class="text-danger">*</span></label>
+              <input type="date" id="dateSelect" class="form-control" required>
+              <div class="invalid-feedback">Please select a valid appointment date.</div>
+            </div>
+
+            <!-- Slot -->
+            <div class="form-group">
+              <label><i class="far fa-clock mr-2 text-primary"></i> Available Time Slots <span class="text-danger">*</span></label>
+              <select id="slotSelect" th:field="*{slotId}" class="form-control" required>
+                <option value="">Please select appointment date</option>
+              </select>
+              <div class="invalid-feedback">Please select a time slot.</div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+              <label><i class="fas fa-notes-medical mr-2 text-primary"></i> Notes</label>
+              <textarea th:field="*{notes}" class="form-control" rows="3" placeholder="Symptoms / additional notes..."></textarea>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMsg" class="alert alert-danger mt-3" style="display:none;"></div>
+
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-success px-4 py-2 rounded-pill font-weight-bold shadow-sm">
+                <i class="fas fa-check-circle mr-1"></i> Confirm Booking
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ STYLE -->
+  <style>
+    .bg-gradient-primary {
+      background: linear-gradient(90deg, #007bff, #0062cc);
+    }
+    #modalAppointment .modal-content {
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+    #modalAppointment .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+    #modalAppointment label {
+      font-weight: 600;
+    }
+    #modalAppointment .btn-success {
+      transition: 0.3s all ease;
+    }
+    #modalAppointment .btn-success:hover {
+      background-color: #28a745;
+      transform: translateY(-2px);
+    }
+  </style>
+
+  <!-- ✅ SCRIPT -->
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const clinicSelect = document.getElementById("clinicSelect");
+    const dateSelect = document.getElementById("dateSelect");
+    const slotSelect = document.getElementById("slotSelect");
+    const form = document.getElementById("appointmentForm");
+    const today = new Date().toISOString().split("T")[0];
+    dateSelect.setAttribute("min", today);
+
+    // Reset date and slot when clinic changes
+    clinicSelect.addEventListener("change", () => {
+      dateSelect.value = "";
+      slotSelect.innerHTML = '<option value="">Please select appointment date</option>';
+    });
+
+    // Load time slots by date
+    dateSelect.addEventListener("change", async function () {
+      const clinicId = clinicSelect.value;
+      const selectedDate = this.value;
+
+      if (!clinicId) {
+        Swal.fire("Notice", "Please select a clinic first.", "warning");
+        this.value = "";
+        return;
+      }
+
+      slotSelect.innerHTML = '<option value="">Loading available slots...</option>';
+
+      try {
+        const res = await fetch(`/user/slots-by-clinic/${clinicId}?date=${selectedDate}`);
+        const data = await res.json();
+        const now = new Date();
+        let hasSlot = false;
+        slotSelect.innerHTML = '<option value="">-- Select time slot --</option>';
+
+        data.forEach(slot => {
+          const slotDate = new Date(slot.slotDate);
+          const slotTime = new Date("1970-01-01T" + slot.slotTime);
+          const fullSlotTime = new Date(slotDate);
+          fullSlotTime.setHours(slotTime.getHours(), slotTime.getMinutes());
+
+          if (fullSlotTime > now) {
+            const opt = document.createElement("option");
+            opt.value = slot.slotId;
+            opt.textContent = slot.slotTime.substring(0, 5);
+            slotSelect.appendChild(opt);
+            hasSlot = true;
+          }
+        });
+
+        if (!hasSlot) {
+          const opt = document.createElement("option");
+          opt.disabled = true;
+          opt.textContent = "No available slots for this date";
+          slotSelect.appendChild(opt);
+        }
+      } catch (err) {
+        slotSelect.innerHTML = '<option disabled>Error loading data!</option>';
+      }
+    });
+
+    // Validate and submit via AJAX
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.classList.add("was-validated");
+        return;
+      }
+
+      const formData = new FormData(form);
+      const errorMsg = document.getElementById("errorMsg");
+      errorMsg.style.display = "none";
+
+      try {
+        const res = await fetch("/user/ajax-save-app", {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          await Swal.fire({
+            icon: "info",
+            title: "OTP Sent!",
+            text: "Please check your email and enter the OTP to confirm your appointment.",
+            confirmButtonColor: "#007bff"
+          });
+          window.location.href = data.redirectUrl;
+        } else {
+          errorMsg.style.display = "block";
+          errorMsg.textContent = data.message || "An error occurred. Please try again.";
+        }
+      } catch {
+        Swal.fire("Error", "Failed to send request. Please try again.", "error");
+      }
+    });
+  });
+  </script>
+</div>

@@ -1,6 +1,7 @@
 package com.spring.bioMedical.repository;
 
 import com.spring.bioMedical.entity.Appointments;
+import com.spring.bioMedical.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,12 +31,6 @@ public interface AppointmentRepository extends JpaRepository<Appointments, Long>
             + "AND CAST(s.slot_date AS DATE) = CAST(GETDATE() AS DATE)) "
             + "ORDER BY a.slot_id", nativeQuery = true)
     List<Appointments> findTodayAppointmentsByDoctorId(@Param("doctorId") Long doctorId);
-
-    // ✅ Query với date range
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId) "
-            + "AND a.status = :status", nativeQuery = true)
-    List<Appointments> findByDoctorIdAndStatus(@Param("doctorId") Long doctorId, @Param("status") String status);
 
     // ✅ THÊM MỚI: Tìm appointments có slot_date trước ngày chỉ định và status cụ thể
     @Query(value = "SELECT a.* FROM Appointments a "
@@ -80,4 +75,25 @@ public interface AppointmentRepository extends JpaRepository<Appointments, Long>
     @Query("SELECT a FROM Appointments a WHERE a.status = 'PENDING' AND EXISTS "
             + "(SELECT s FROM AppointmentSlots s WHERE s.slotId = a.slotId AND s.slotDate < CURRENT_DATE)")
     List<Appointments> findExpiredPendingAppointments();
+
+    // ✅ THÊM MỚI: Tìm appointments theo doctorId và status
+    @Query(value = "SELECT a.* FROM Appointments a "
+            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId) "
+            + "AND a.status = :status "
+            + "ORDER BY a.created_at DESC", nativeQuery = true)
+    List<Appointments> findByDoctorIdAndStatus(@Param("doctorId") Long doctorId, @Param("status") String status);
+
+    // ✅ THÊM MỚI: Đếm appointments theo status và doctorId
+    @Query(value = "SELECT COUNT(*) FROM Appointments a "
+            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId) "
+            + "AND a.status = :status", nativeQuery = true)
+    Long countByDoctorIdAndStatus(@Param("doctorId") Long doctorId, @Param("status") String status);
+
+    // ✅ THÊM MỚI: Tìm appointments có medical record
+    @Query(value = "SELECT a.* FROM Appointments a "
+            + "WHERE a.appointment_id IN (SELECT mr.appointment_id FROM MedicalRecords mr) "
+            + "AND a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId)", nativeQuery = true)
+    List<Appointments> findAppointmentsWithMedicalRecords(@Param("doctorId") Long doctorId);
+
+    List<Appointments> findByUserId(Users user);
 }

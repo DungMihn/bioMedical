@@ -1,50 +1,254 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <title>Register</title>
     <meta charset="UTF-8">
-    <title>Đăng ký</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="login/vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="login/css/util.css">
+    <link rel="stylesheet" type="text/css" href="login/css/main.css">
+
+    <style>
+        .btn-show-pass{position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:#999;}
+        .wrap-input100{position:relative;}
+        .wrap-login100{max-width:450px;}
+        .invalid-feedback{font-size:13px;margin-top:6px;}
+        .is-invalid{border-color:#dc3545 !important;}
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="text-center">Đăng ký tài khoản</h4>
-                    </div>
-                    <div class="card-body">
-                        <!-- Sửa lỗi: thay thế th:object="${user}" bằng form đơn giản -->
-                        <form th:action="@{/register}" method="post">
-                            <div class="mb-3">
-                                <label class="form-label">Họ và tên</label>
-                                <input type="text" class="form-control" name="fullName" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Số điện thoại</label>
-                                <input type="tel" class="form-control" name="phone" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Mật khẩu</label>
-                                <input type="password" class="form-control" name="password" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Xác nhận mật khẩu</label>
-                                <input type="password" class="form-control" name="confirmPassword" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
-                        </form>
-                        <div class="text-center mt-3">
-                            <a th:href="@{/login}">Đã có tài khoản? Đăng nhập</a>
-                        </div>
-                    </div>
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-l-50 p-r-50 p-t-50 p-b-30">
+            <form class="login100-form validate-form" th:action="@{/register}" th:object="${user}" method="POST" novalidate>
+
+                <span class="login100-form-title p-b-25">User Registration</span>
+
+                <!-- Username -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="text" id="username"
+                           th:field="*{username}" placeholder="Username" required
+                           th:classappend="${#fields.hasErrors('username')}? ' is-invalid' : ''">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-user"></span></span>
+                    <div id="usernameError" class="invalid-feedback d-block"
+                         th:text="${#fields.hasErrors('username')}? ${#fields.errors('username')[0]} : ''"></div>
                 </div>
-            </div>
+
+                <!-- Full Name -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="text" id="fullName"
+                           th:field="*{fullName}" placeholder="Full Name" required
+                           th:classappend="${#fields.hasErrors('fullName')}? ' is-invalid' : ''">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-text-align-left"></span></span>
+                    <div id="fullNameError" class="invalid-feedback d-block"
+                         th:text="${#fields.hasErrors('fullName')}? ${#fields.errors('fullName')[0]} : ''"></div>
+                </div>
+
+                <!-- Email -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="email" id="email"
+                           th:field="*{email}" placeholder="Email Address" required
+                           th:classappend="${#fields.hasErrors('email')}? ' is-invalid' : ''">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-envelope"></span></span>
+                    <div id="emailError" class="invalid-feedback d-block"
+                         th:text="${#fields.hasErrors('email')}? ${#fields.errors('email')[0]} : ''"></div>
+                </div>
+
+                <!-- Phone -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="text" id="phone"
+                           th:field="*{phone}" placeholder="Phone Number" required
+                           th:classappend="${#fields.hasErrors('phone')}? ' is-invalid' : ''">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-phone-handset"></span></span>
+                    <div id="phoneError" class="invalid-feedback d-block"
+                         th:text="${#fields.hasErrors('phone')}? ${#fields.errors('phone')[0]} : ''"></div>
+                </div>
+
+                <!-- Gender -->
+                <div class="m-b-16 text-left"
+                     th:classappend="${#fields.hasErrors('gender')}? ' is-invalid' : ''">
+                    <label class="radio-inline m-r-20">
+                        <input type="radio" th:field="*{gender}" value="Male"> Male
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" th:field="*{gender}" value="Female"> Female
+                    </label>
+                    <div id="genderError" class="invalid-feedback d-block"
+                         th:text="${#fields.hasErrors('gender')}? ${#fields.errors('gender')[0]} : ''"></div>
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="date" id="dateOfBirth"
+                           th:field="*{dateOfBirth}" required
+                           th:classappend="${#fields.hasErrors('dateOfBirth')}? ' is-invalid' : ''">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-calendar-full"></span></span>
+                    <div id="dobError" class="invalid-feedback d-block"
+                         th:text="${#fields.hasErrors('dateOfBirth')}? ${#fields.errors('dateOfBirth')[0]} : ''"></div>
+                </div>
+
+                <!-- Password -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="password" id="password"
+                           th:field="*{passwordHash}" placeholder="Password" required
+                           th:classappend="${#fields.hasErrors('passwordHash')}? ' is-invalid' : ''">
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-lock"></span></span>
+                    <span class="btn-show-pass"><i class="fa fa-eye"></i></span>
+                    <div id="passwordError" class="invalid-feedback d-block"
+                         th:text="${#fields.hasErrors('passwordHash')}? ${#fields.errors('passwordHash')[0]} : ''"></div>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-lock"></span></span>
+                    <span class="btn-show-pass"><i class="fa fa-eye"></i></span>
+                    <div id="confirmError" class="invalid-feedback d-block"></div>
+                </div>
+
+                <div class="container-login100-form-btn p-t-15">
+                    <button type="submit" class="login100-form-btn" onclick="return validateForm();">Register</button>
+                </div>
+
+                <div class="text-center w-full p-t-30">
+                    <span class="txt1">Already have an account?</span>
+                    <a class="txt1 bo1 hov1" th:href="@{/showMyLoginPage}">Log-in</a>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
+<script src="login/vendor/jquery/jquery-3.2.1.min.js"></script>
+<script>
+    function setError(inputSelector, errorSelector, message){
+        const $input = $(inputSelector);
+        const $err = $(errorSelector);
+        if(message){
+            $input.addClass('is-invalid');
+            $err.text(message);
+        }else{
+            $input.removeClass('is-invalid');
+            $err.text('');
+        }
+    }
+
+    // Username
+    $("#username").on("blur", function(){
+        const v = $(this).val().trim();
+        if(!v){ setError("#username","#usernameError","Username is required"); return; }
+        $.get("/check-username",{username:v}, function(ok){
+            if(!ok) setError("#username","#usernameError","Username is already taken");
+            else    setError("#username","#usernameError","");
+        });
+    });
+
+    // Email
+    $("#email").on("blur", function(){
+        const v = $(this).val().trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!v){ setError("#email","#emailError","Email is required"); return; }
+        if(!emailRegex.test(v)){ setError("#email","#emailError","Invalid email format"); return; }
+        $.get("/check-email",{email:v}, function(ok){
+            if(!ok) setError("#email","#emailError","This email is already registered");
+            else    setError("#email","#emailError","");
+        });
+    });
+
+    // Phone
+    $("#phone").on("input", function(){
+        const v = $(this).val().trim();
+        if(!v){ setError("#phone","#phoneError","Phone is required"); return; }
+        if(!/^[0-9]{10}$/.test(v)) setError("#phone","#phoneError","Phone must be exactly 10 digits");
+        else                       setError("#phone","#phoneError","");
+    });
+
+    // Full Name
+    $("#fullName").on("input", function(){
+        const v = $(this).val().trim();
+        if(v.length<2) setError("#fullName","#fullNameError","Full name is required");
+        else           setError("#fullName","#fullNameError","");
+    });
+
+    // DOB
+    $("#dateOfBirth").on("change", function(){
+        const v = $(this).val();
+        if(!v){ setError("#dateOfBirth","#dobError","Date of birth is required"); return; }
+        const d = new Date(v); const now = new Date();
+        if(d>now) setError("#dateOfBirth","#dobError","Date of birth cannot be in the future");
+        else      setError("#dateOfBirth","#dobError","");
+    });
+
+    // Password
+    $("#password").on("input blur", function(){
+        const v = $(this).val();
+        const strong = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+        if(!v){ setError("#password","#passwordError","Password is required"); return; }
+        if(!strong.test(v)) setError("#password","#passwordError","Min 8 chars, 1 uppercase, 1 number, 1 special char");
+        else                setError("#password","#passwordError","");
+    });
+
+    // Confirm Password
+    $("#confirmPassword, #password").on("input", function(){
+        const p = $("#password").val();
+        const c = $("#confirmPassword").val();
+        if(!c){ setError("#confirmPassword","#confirmError","Confirm password is required"); }
+        else if(p !== c) setError("#confirmPassword","#confirmError","Passwords do not match");
+        else             setError("#confirmPassword","#confirmError","");
+    });
+
+    // Gender
+    function validateGender(){
+        const checked = $("input[name='gender']:checked").length > 0;
+        if(!checked){
+            $("#genderError").text("Gender is required");
+            return false;
+        } else {
+            $("#genderError").text("");
+            return true;
+        }
+    }
+    $("input[name='gender']").on("change", validateGender);
+
+    // Toggle password
+    $(".btn-show-pass").on("click", function(){
+        let input = $(this).siblings("input");
+        if(input.attr("type")==="password"){
+            input.attr("type","text");
+            $(this).find("i").removeClass("fa-eye").addClass("fa-eye-slash");
+        }else{
+            input.attr("type","password");
+            $(this).find("i").removeClass("fa-eye-slash").addClass("fa-eye");
+        }
+    });
+
+    // Validate before submit
+    function validateForm(){
+        $("#username").blur();
+        $("#email").blur();
+        $("#phone").trigger("input");
+        $("#fullName").trigger("input");
+        $("#dateOfBirth").trigger("change");
+        $("#password").trigger("blur");
+        $("#confirmPassword").trigger("input");
+        const genderOk = validateGender();
+
+        const hasErr = $(".invalid-feedback").toArray().some(x => $(x).text().trim().length>0);
+        return !hasErr && genderOk;
+    }
+</script>
 </body>
 </html>
+<!--cũ-->

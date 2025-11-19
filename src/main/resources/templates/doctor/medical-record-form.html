@@ -1,156 +1,1309 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Medical Record</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" th:href="@{/doctor/dashboard}">Doctor Dashboard</a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" th:href="@{/doctor/dashboard}">Dashboard</a>
-                <a class="nav-link" th:href="@{/doctor/appointments}">Appointments</a>
-                <a class="nav-link active" th:href="@{/doctor/medical-records}">Medical Records</a>
-                <a class="nav-link" th:href="@{/logout}">Logout</a>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <title>Tạo Hồ sơ Bệnh án - Remedic</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        <style>
+            :root {
+                --sidebar-width: 250px;
+                --primary-color: #1089ff;
+                --primary-dark: #0c6ed4;
+                --success-color: #198754;
+                --warning-color: #ffc107;
+                --danger-color: #dc3545;
+                --info-color: #0dcaf0;
+                --light-bg: #f8fbff;
+                --card-shadow: 0 8px 25px -8px rgba(0,0,0,0.1);
+                --card-hover-shadow: 0 15px 35px -12px rgba(0,0,0,0.15);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: var(--light-bg);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+            }
+
+            /* Sidebar Styles */
+            .rm-sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: var(--sidebar-width);
+                z-index: 1000;
+                background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                color: #fff;
+                box-shadow: 2px 0 12px rgba(0,0,0,.08);
+                padding-top: 70px;
+                overflow-y: auto;
+            }
+
+            .rm-sidebar .brand {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: var(--sidebar-width);
+                height: 70px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0,0,0,.08);
+                font-weight: 700;
+                letter-spacing: .5px;
+                font-size: 1.2rem;
+                backdrop-filter: blur(10px);
+                z-index: 1001;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+
+            .rm-sidebar .menu {
+                list-style: none;
+                margin: 0;
+                padding: 10px 0;
+            }
+
+            .rm-sidebar .menu li {
+                margin: 0;
+                padding: 0;
+            }
+
+            .rm-sidebar .menu li a {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: rgba(255,255,255,.95);
+                text-decoration: none;
+                padding: 12px 18px;
+                transition: .2s;
+                border-left: 4px solid transparent;
+                margin: 2px 0;
+            }
+
+            .rm-sidebar .menu li a:hover,
+            .rm-sidebar .menu li a.active {
+                background: rgba(255,255,255,.12);
+                border-left-color: #fff;
+                color: #fff;
+                transform: translateX(4px);
+            }
+
+            /* Content Area */
+            .rm-content {
+                margin-left: var(--sidebar-width);
+                min-height: 100vh;
+                position: relative;
+            }
+
+            /* Header Styles */
+            .rm-header {
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                color: white;
+                padding: 2.5rem 0;
+                margin-bottom: 2rem;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .rm-header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="rgba(255,255,255,0.1)"><path d="M500 50L550 0L450 0Z"/></svg>');
+                background-size: 200px 100px;
+            }
+
+            /* Card Styles */
+            .rm-card {
+                background: #fff;
+                border-radius: 12px;
+                border: 1px solid #e9ecef;
+                box-shadow: var(--card-shadow);
+                transition: all 0.3s ease;
+                margin-bottom: 2rem;
+                overflow: hidden;
+            }
+
+            .rm-card:hover {
+                transform: translateY(-5px);
+                box-shadow: var(--card-hover-shadow);
+            }
+
+            .rm-card .card-header {
+                background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+                border-bottom: 1px solid rgba(0,0,0,.08);
+                padding: 1.5rem;
+                font-weight: 700;
+                font-size: 1.1rem;
+                color: var(--primary-dark);
+            }
+
+            .rm-card .card-body {
+                padding: 1.5rem;
+            }
+
+            .rm-card .card-footer {
+                background: #f8f9fa;
+                border-top: 1px solid rgba(0,0,0,.05);
+                padding: 1.25rem 1.5rem;
+            }
+
+            /* Button Styles */
+            .rm-btn {
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                font-size: 0.95rem;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .rm-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+
+            .btn-primary {
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+                color: white;
+            }
+
+            .btn-success {
+                background: linear-gradient(135deg, var(--success-color), #157347);
+                color: white;
+            }
+
+            .btn-danger {
+                background: linear-gradient(135deg, var(--danger-color), #c82333);
+                color: white;
+            }
+
+            .btn-warning {
+                background: linear-gradient(135deg, var(--warning-color), #e0a800);
+                color: #212529;
+            }
+
+            .btn-info {
+                background: linear-gradient(135deg, var(--info-color), #0baccc);
+                color: white;
+            }
+
+            .btn-secondary {
+                background: linear-gradient(135deg, #6c757d, #5a6268);
+                color: white;
+            }
+
+            .btn-outline-secondary {
+                border: 2px solid #6c757d;
+                color: #6c757d;
+                background: transparent;
+            }
+
+            .btn-outline-secondary:hover {
+                background: #6c757d;
+                color: white;
+            }
+
+            .btn-sm {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            /* Form Styles */
+            .rm-form-control {
+                border-radius: 8px;
+                border: 1px solid #e1e5e9;
+                padding: 0.875rem 1rem;
+                transition: all 0.3s ease;
+                font-size: 0.95rem;
+                width: 100%;
+            }
+
+            .rm-form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.3rem rgba(16, 137, 255, 0.15);
+                transform: translateY(-1px);
+                outline: none;
+            }
+
+            .form-control {
+                border-radius: 8px;
+                border: 1px solid #e1e5e9;
+                padding: 0.875rem 1rem;
+                transition: all 0.3s ease;
+            }
+
+            .form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.3rem rgba(16, 137, 255, 0.15);
+            }
+
+            select.form-control {
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+                background-position: right 0.75rem center;
+                background-repeat: no-repeat;
+                background-size: 1rem;
+                padding-right: 2.5rem;
+            }
+
+            /* Patient Avatar */
+            .patient-avatar {
+                width: 70px;
+                height: 70px;
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 700;
+                font-size: 1.5rem;
+                box-shadow: 0 4px 15px rgba(16, 137, 255, 0.3);
+                flex-shrink: 0;
+            }
+
+            /* Medication Items */
+            .medication-item {
+                border-left: 4px solid var(--primary-color);
+                padding: 1.25rem;
+                margin-bottom: 1rem;
+                background: linear-gradient(135deg, #f8fbff 0%, #fff 100%);
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                position: relative;
+                overflow: hidden;
+                border: 1px solid #e9ecef;
+            }
+
+            .medication-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            }
+
+            .medication-item:hover {
+                background: linear-gradient(135deg, #e8f2ff 0%, #f8fbff 100%);
+                transform: translateX(8px);
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            }
+
+            /* Loading Overlay */
+            .loading-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.7);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+                backdrop-filter: blur(5px);
+            }
+
+            .loading-spinner {
+                background: white;
+                padding: 2.5rem;
+                border-radius: 15px;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                min-width: 200px;
+            }
+
+            /* Search Suggestions */
+            .search-suggestions {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                border: 1px solid #e1e5e9;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                z-index: 1000;
+                max-height: 300px;
+                overflow-y: auto;
+                display: none;
+                margin-top: 5px;
+            }
+
+            .search-suggestion-item {
+                padding: 1rem 1.25rem;
+                border-bottom: 1px solid #f8f9fa;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .search-suggestion-item:hover {
+                background: linear-gradient(135deg, #f8fbff, #e8f2ff);
+                transform: translateX(4px);
+            }
+
+            .search-suggestion-item:last-child {
+                border-bottom: none;
+            }
+
+            .suggestion-avatar {
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #6c757d, #495057);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: 600;
+                font-size: 0.9rem;
+                flex-shrink: 0;
+            }
+
+            .patient-info-small {
+                font-size: 0.85rem;
+                color: #6c757d;
+                opacity: 0.8;
+            }
+
+            .cursor-pointer {
+                cursor: pointer;
+            }
+
+            /* Badge Styles */
+            .quick-search-tag {
+                transition: all 0.3s ease;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-weight: 500;
+                cursor: pointer;
+                display: inline-block;
+            }
+
+            .quick-search-tag:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            }
+
+            .badge {
+                font-weight: 500;
+                padding: 0.5rem 1rem;
+            }
+
+            /* Alert Styles */
+            .selected-patient-alert {
+                background: linear-gradient(135deg, #d1edff, #e8f2ff);
+                border: 1px solid #b6e0fe;
+                border-radius: 10px;
+                padding: 1rem 1.25rem;
+            }
+
+            .alert {
+                border-radius: 10px;
+                border: none;
+                padding: 1rem 1.25rem;
+            }
+
+            .alert-warning {
+                background: linear-gradient(135deg, #fff3cd, #ffe08a);
+                color: #7a5e00;
+            }
+
+            /* Form Labels */
+            .form-label {
+                font-weight: 600;
+                color: #495057;
+                margin-bottom: 0.75rem;
+                font-size: 0.95rem;
+                display: block;
+            }
+
+            /* Textarea Styles */
+            textarea.rm-form-control {
+                resize: vertical;
+                min-height: 100px;
+                font-family: inherit;
+            }
+
+            textarea.form-control {
+                resize: vertical;
+                min-height: 100px;
+            }
+
+            /* Grid System Improvements */
+            .row {
+                margin-left: -0.75rem;
+                margin-right: -0.75rem;
+            }
+
+            .row > * {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+
+            .g-3 {
+                --bs-gutter-x: 1rem;
+                --bs-gutter-y: 1rem;
+            }
+
+            /* Text Utilities */
+            .text-muted {
+                color: #6c757d !important;
+            }
+
+            .text-primary {
+                color: var(--primary-color) !important;
+            }
+
+            .text-success {
+                color: var(--success-color) !important;
+            }
+
+            .text-danger {
+                color: var(--danger-color) !important;
+            }
+
+            .text-warning {
+                color: var(--warning-color) !important;
+            }
+
+            .text-info {
+                color: var(--info-color) !important;
+            }
+
+            .fw-semibold {
+                font-weight: 600;
+            }
+
+            .fw-bold {
+                font-weight: 700;
+            }
+
+            .small {
+                font-size: 0.875rem;
+            }
+
+            .fs-5 {
+                font-size: 1.25rem !important;
+            }
+
+            .fs-6 {
+                font-size: 1rem !important;
+            }
+
+            .opacity-90 {
+                opacity: 0.9;
+            }
+
+            /* Display Utilities */
+            .d-flex {
+                display: flex !important;
+            }
+
+            .d-none {
+                display: none !important;
+            }
+
+            /* Position Utilities */
+            .position-relative {
+                position: relative !important;
+            }
+
+            .position-absolute {
+                position: absolute !important;
+            }
+
+            /* Spacing Utilities */
+            .mt-3 {
+                margin-top: 1rem !important;
+            }
+
+            .mt-4 {
+                margin-top: 1.5rem !important;
+            }
+
+            .mt-5 {
+                margin-top: 3rem !important;
+            }
+
+            .mb-0 {
+                margin-bottom: 0 !important;
+            }
+
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+
+            .mb-3 {
+                margin-bottom: 1rem !important;
+            }
+
+            .mb-4 {
+                margin-bottom: 1.5rem !important;
+            }
+
+            .mb-5 {
+                margin-bottom: 3rem !important;
+            }
+
+            .me-2 {
+                margin-right: 0.5rem !important;
+            }
+
+            .me-3 {
+                margin-right: 1rem !important;
+            }
+
+            .me-4 {
+                margin-right: 1.5rem !important;
+            }
+
+            .ms-2 {
+                margin-left: 0.5rem !important;
+            }
+
+            .py-3 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+
+            .py-5 {
+                padding-top: 3rem !important;
+                padding-bottom: 3rem !important;
+            }
+
+            .px-3 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+
+            .gap-2 {
+                gap: 0.5rem !important;
+            }
+
+            .gap-3 {
+                gap: 1rem !important;
+            }
+
+            /* Flex Utilities */
+            .flex-wrap {
+                flex-wrap: wrap !important;
+            }
+
+            .flex-grow-1 {
+                flex-grow: 1 !important;
+            }
+
+            .justify-content-between {
+                justify-content: space-between !important;
+            }
+
+            .justify-content-center {
+                justify-content: center !important;
+            }
+
+            .align-items-center {
+                align-items: center !important;
+            }
+
+            .align-items-end {
+                align-items: flex-end !important;
+            }
+
+            .text-center {
+                text-align: center !important;
+            }
+
+            .text-end {
+                text-align: right !important;
+            }
+
+            /* Responsive */
+            @media (max-width: 991.98px) {
+                .rm-sidebar {
+                    transform: translateX(-100%);
+                    transition: .3s;
+                }
+                .rm-sidebar.show {
+                    transform: translateX(0);
+                }
+                .rm-content {
+                    margin-left: 0;
+                }
+
+                .medication-item .row {
+                    gap: 1rem;
+                }
+
+                .container {
+                    padding-left: 15px;
+                    padding-right: 15px;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .rm-header {
+                    padding: 1.5rem 0;
+                }
+
+                .rm-card .card-body {
+                    padding: 1rem;
+                }
+
+                .medication-item {
+                    padding: 1rem;
+                }
+
+                .btn {
+                    width: 100%;
+                    margin-bottom: 0.5rem;
+                }
+            }
+
+            /* Animation */
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .fade-in {
+                animation: fadeIn 0.5s ease;
+            }
+
+            /* Custom Scrollbar */
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: var(--primary-color);
+                border-radius: 10px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--primary-dark);
+            }
+
+            /* Focus States for Accessibility */
+            button:focus,
+            input:focus,
+            textarea:focus,
+            select:focus {
+                outline: 2px solid var(--primary-color);
+                outline-offset: 2px;
+            }
+
+            /* Print Styles */
+            @media print {
+                .rm-sidebar,
+                .rm-header,
+                .btn {
+                    display: none !important;
+                }
+                .rm-content {
+                    margin-left: 0 !important;
+                }
+                .rm-card {
+                    box-shadow: none !important;
+                    border: 1px solid #000 !important;
+                }
+            }
+
+            /* Selection Styles */
+            ::selection {
+                background: rgba(16, 137, 255, 0.2);
+                color: inherit;
+            }
+
+            /* Placeholder Styles */
+            ::placeholder {
+                color: #6c757d;
+                opacity: 0.7;
+            }
+
+            /* Visually Hidden for Accessibility */
+            .visually-hidden {
+                position: absolute !important;
+                width: 1px !important;
+                height: 1px !important;
+                padding: 0 !important;
+                margin: -1px !important;
+                overflow: hidden !important;
+                clip: rect(0, 0, 0, 0) !important;
+                white-space: nowrap !important;
+                border: 0 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3 fw-semibold">Đang xử lý...</p>
             </div>
         </div>
-    </nav>
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-12">
-                <h2>Create Medical Record</h2>
-                
-                <div class="card">
+        <!-- Sidebar -->
+        <div class="rm-sidebar">
+            <div class="brand">
+                <i class="fas fa-hospital me-2"></i> REMEDIC
+            </div>
+            <ul class="menu">
+                <li>
+                    <a th:href="@{/doctor/index}">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/doctor/appointments}">
+                        <i class="fas fa-calendar"></i> Lịch hẹn
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/doctor/medical-records}" class="active">
+                        <i class="fas fa-file-medical"></i> Hồ sơ bệnh án
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/doctor/profile}">
+                        <i class="fas fa-user-md"></i> Hồ sơ bác sĩ
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/logout}">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="rm-content">
+            <!-- Header -->
+            <div class="rm-header">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="display-6 fw-bold mb-2">
+                                <i class="fas fa-file-medical me-3"></i> Tạo Hồ sơ Bệnh án
+                            </h1>
+                            <p class="lead mb-0 opacity-90">Tạo hồ sơ bệnh án mới cho bệnh nhân</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a th:href="@{/doctor/medical-records}" class="btn btn-light rm-btn">
+                                <i class="fas fa-arrow-left me-2"></i> Quay lại danh sách
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="container fade-in">
+                <!-- Patient Information Section -->
+                <div class="rm-card" th:if="${patient != null}">
                     <div class="card-header">
-                        <h5>Patient Information</h5>
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-user-injured me-2"></i> Thông tin Bệnh nhân
+                            <small class="text-muted ms-2">(Từ Lịch hẹn)</small>
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><strong>Name:</strong> <span th:text="${patient.fullName}"></span></p>
-                                <p><strong>Email:</strong> <span th:text="${patient.email}"></span></p>
+                        <div class="d-flex align-items-center">
+                            <div class="patient-avatar me-4">
+                                <i class="fas fa-user"></i>
                             </div>
-                            <div class="col-md-6">
-                                <p><strong>Phone:</strong> <span th:text="${patient.phone}"></span></p>
-                                <p><strong>Appointment Date:</strong> <span th:text="${appointment.appointmentDate}"></span></p>
+                            <div class="flex-grow-1">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="fw-semibold text-muted small">Họ và tên</label>
+                                            <p class="mb-0 fs-5 fw-semibold text-dark" th:text="${patient.fullName}"></p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="fw-semibold text-muted small">Email</label>
+                                            <p class="mb-0 fs-6" th:text="${patient.email}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="fw-semibold text-muted small">Số điện thoại</label>
+                                            <p class="mb-0 fs-6" th:text="${patient.phone}"></p>
+                                        </div>
+                                        <div class="mb-3" th:if="${appointment != null}">
+                                            <label class="fw-semibold text-muted small">Ngày hẹn khám</label>
+                                            <p class="mb-0 fs-6 fw-semibold text-primary" th:text="${appointment.appointmentDate}"></p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <form th:action="@{/doctor/medical-record/save}" method="post" class="mt-4">
-                    <input type="hidden" name="appointmentId" th:value="${appointment.appointmentId}">
-                    
-                    <div class="card mb-4">
+                <!-- Form tìm patient nếu không có appointment -->
+                <div class="rm-card" th:unless="${patient != null}">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-search me-2"></i> Tìm Bệnh nhân
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row align-items-end">
+                            <div class="col-md-8">
+                                <label class="form-label">Tìm bệnh nhân theo tên hoặc số điện thoại</label>
+                                <div class="position-relative">
+                                    <input type="text" 
+                                           class="form-control rm-form-control" 
+                                           id="patientSearchInput"
+                                           placeholder="Nhập tên hoặc số điện thoại bệnh nhân..."
+                                           autocomplete="off">
+                                    <div class="search-suggestions" id="searchSuggestions">
+                                        <!-- Search suggestions will be populated here -->
+                                    </div>
+                                </div>
+
+                                <!-- Selected Patient Info -->
+                                <div id="selectedPatientInfo" class="mt-3" style="display: none;">
+                                    <div class="selected-patient-alert">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="suggestion-avatar">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div>
+                                                    <strong id="selectedPatientName" class="text-dark"></strong>
+                                                    <div class="patient-info-small mt-1">
+                                                        <span id="selectedPatientPhone"></span>
+                                                        <span id="selectedPatientEmail"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-circle" onclick="clearSelectedPatient()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-primary rm-btn w-100" onclick="searchPatients()">
+                                    <i class="fas fa-search me-2"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Search Tags -->
+                        <div class="mt-4">
+                            <label class="form-label mb-3">Tìm nhanh theo tên phổ biến:</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-primary text-white quick-search-tag cursor-pointer" 
+                                      data-search="Nguyễn">Nguyễn</span>
+                                <span class="badge bg-success text-white quick-search-tag cursor-pointer" 
+                                      data-search="Trần">Trần</span>
+                                <span class="badge bg-info text-white quick-search-tag cursor-pointer" 
+                                      data-search="Lê">Lê</span>
+                                <span class="badge bg-warning text-dark quick-search-tag cursor-pointer" 
+                                      data-search="09">SĐT 09...</span>
+                            </div>
+                        </div>
+
+                        <!-- Hoặc chọn từ danh sách appointments gần đây -->
+                        <div th:if="${recentAppointments != null and not recentAppointments.empty}" class="mt-4">
+                            <label class="form-label mb-3">Hoặc chọn từ lịch hẹn gần đây</label>
+                            <select class="form-control rm-form-control" onchange="location = this.value;">
+                                <option value="">-- Chọn lịch hẹn --</option>
+                                <option th:each="appt : ${recentAppointments}"
+                                        th:value="@{'/doctor/medical-record/create?appointmentId=' + ${appt.appointmentId}}"
+                                        th:text="${appt.patientName} + ' - ' + ${appt.appointmentDate}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <form th:action="@{/doctor/medical-record/save}" method="post" id="medicalRecordForm">
+                    <input type="hidden" th:field="${medicalRecord.appointmentId}" />
+                    <input type="hidden" id="selectedPatientId" name="patientId" />
+
+                    <!-- Medical Information -->
+                    <div class="rm-card">
                         <div class="card-header">
-                            <h5>Medical Information</h5>
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-stethoscope me-2"></i> Thông tin Y tế
+                            </h5>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <label for="symptoms" class="form-label">Symptoms</label>
-                                <textarea class="form-control" id="symptoms" name="symptoms" rows="3" 
-                                          placeholder="Describe patient's symptoms"></textarea>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="diagnosis" class="form-label">Diagnosis</label>
-                                <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3" 
-                                          placeholder="Enter diagnosis"></textarea>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="treatment" class="form-label">Treatment</label>
-                                <textarea class="form-control" id="treatment" name="treatment" rows="3" 
-                                          placeholder="Describe treatment plan"></textarea>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="notes" class="form-label">Additional Notes</label>
-                                <textarea class="form-control" id="notes" name="notes" rows="2" 
-                                          placeholder="Any additional notes"></textarea>
+                            <div class="row">
+                                <div class="col-md-12 mb-4">
+                                    <label for="symptoms" class="form-label">
+                                        <i class="fas fa-notes-medical me-2 text-primary"></i> Triệu chứng
+                                    </label>
+                                    <textarea class="form-control rm-form-control" id="symptoms" name="symptoms" rows="4" 
+                                              placeholder="Mô tả chi tiết các triệu chứng của bệnh nhân..."></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-4">
+                                    <label for="diagnosis" class="form-label">
+                                        <i class="fas fa-diagnoses me-2 text-success"></i> Chẩn đoán
+                                    </label>
+                                    <textarea class="form-control rm-form-control" id="diagnosis" name="diagnosis" rows="4" 
+                                              placeholder="Nhập chẩn đoán chính xác..."></textarea>
+                                </div>
+
+                                <div class="col-md-12 mb-4">
+                                    <label for="treatment" class="form-label">
+                                        <i class="fas fa-hand-holding-medical me-2 text-info"></i> Phương pháp điều trị
+                                    </label>
+                                    <textarea class="form-control rm-form-control" id="treatment" name="treatment" rows="4" 
+                                              placeholder="Mô tả kế hoạch điều trị chi tiết..."></textarea>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <label for="notes" class="form-label">
+                                        <i class="fas fa-clipboard-list me-2 text-warning"></i> Ghi chú thêm
+                                    </label>
+                                    <textarea class="form-control rm-form-control" id="notes" name="notes" rows="3" 
+                                              placeholder="Các ghi chú bổ sung, lời khuyên..."></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5>Prescription</h5>
-                            <button type="button" class="btn btn-sm btn-success" onclick="addMedication()">
-                                <i class="fas fa-plus"></i> Add Medication
+                    <!-- Prescription -->
+                    <div class="rm-card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-pills me-2"></i> Đơn thuốc
+                            </h5>
+                            <button type="button" class="btn btn-success rm-btn" onclick="addMedication()">
+                                <i class="fas fa-plus me-2"></i> Thêm thuốc
                             </button>
                         </div>
                         <div class="card-body">
                             <div id="medications-container">
-                                <div class="medication-item border p-3 mb-3">
-                                    <div class="row">
+                                <div class="medication-item fade-in">
+                                    <div class="row g-3">
                                         <div class="col-md-4">
-                                            <label class="form-label">Medication Name</label>
-                                            <input type="text" class="form-control" name="medicationNames" 
-                                                   placeholder="Enter medication name" required>
+                                            <label class="form-label">Tên thuốc <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control rm-form-control" name="medicationNames" 
+                                                   placeholder="Nhập tên thuốc" required>
                                         </div>
                                         <div class="col-md-2">
-                                            <label class="form-label">Dosage</label>
-                                            <input type="text" class="form-control" name="dosages" 
-                                                   placeholder="e.g., 500mg">
+                                            <label class="form-label">Liều dùng</label>
+                                            <input type="text" class="form-control rm-form-control" name="dosages" 
+                                                   placeholder="VD: 500mg">
                                         </div>
                                         <div class="col-md-2">
-                                            <label class="form-label">Frequency</label>
-                                            <input type="text" class="form-control" name="frequencies" 
-                                                   placeholder="e.g., 3 times daily">
+                                            <label class="form-label">Tần suất</label>
+                                            <input type="text" class="form-control rm-form-control" name="frequencies" 
+                                                   placeholder="VD: 3 lần/ngày">
                                         </div>
                                         <div class="col-md-2">
-                                            <label class="form-label">Duration</label>
-                                            <input type="text" class="form-control" name="durations" 
-                                                   placeholder="e.g., 7 days">
+                                            <label class="form-label">Thời gian</label>
+                                            <input type="text" class="form-control rm-form-control" name="durations" 
+                                                   placeholder="VD: 7 ngày">
                                         </div>
                                         <div class="col-md-2">
-                                            <label class="form-label">Notes</label>
-                                            <input type="text" class="form-control" name="notes" 
-                                                   placeholder="Additional notes">
+                                            <label class="form-label">Ghi chú</label>
+                                            <input type="text" class="form-control rm-form-control" name="medicationNotes" 
+                                                   placeholder="Ghi chú thêm">
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-sm btn-danger mt-2" onclick="removeMedication(this)">
-                                        <i class="fas fa-trash"></i> Remove
+                                    <div class="text-end mt-3">
+                                        <button type="button" class="btn btn-danger btn-sm rm-btn" onclick="removeMedication(this)">
+                                            <i class="fas fa-trash me-1"></i> Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4" id="no-medications" style="display: none;">
+                                <div class="py-5">
+                                    <i class="fas fa-pills fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted mb-4">Chưa có thuốc nào được thêm vào</p>
+                                    <button type="button" class="btn btn-primary rm-btn" onclick="addMedication()">
+                                        <i class="fas fa-plus me-2"></i> Thêm thuốc đầu tiên
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-save"></i> Save Medical Record
-                        </button>
-                        <a th:href="@{/doctor/medical-records}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times"></i> Cancel
-                        </a>
+                    <!-- Action Buttons -->
+                    <div class="row mt-4 mb-5">
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-primary rm-btn w-100 py-3 fs-5" onclick="validateForm(event)">
+                                <i class="fas fa-save me-2"></i> Lưu Hồ sơ Bệnh án
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <a th:href="@{/doctor/medical-records}" class="btn btn-outline-secondary rm-btn w-100 py-3 fs-5">
+                                <i class="fas fa-times me-2"></i> Hủy bỏ
+                            </a>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
 
-    <script>
-    function addMedication() {
-        const container = document.getElementById('medications-container');
-        const newItem = container.firstElementChild.cloneNode(true);
-        
-        // Clear input values
-        newItem.querySelectorAll('input').forEach(input => input.value = '');
-        
-        container.appendChild(newItem);
-    }
-    
-    function removeMedication(button) {
-        const container = document.getElementById('medications-container');
-        if (container.children.length > 1) {
-            button.parentElement.remove();
-        }
-    }
-    </script>
-</body>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+                                // Hiển thị loading
+                                function showLoading() {
+                                    document.getElementById('loadingOverlay').style.display = 'flex';
+                                }
+
+                                // Ẩn loading
+                                function hideLoading() {
+                                    document.getElementById('loadingOverlay').style.display = 'none';
+                                }
+
+                                // Search patients function
+                                let searchTimeout;
+                                const searchInput = document.getElementById('patientSearchInput');
+                                const suggestionsContainer = document.getElementById('searchSuggestions');
+
+                                searchInput.addEventListener('input', function (e) {
+                                    const query = e.target.value.trim();
+
+                                    clearTimeout(searchTimeout);
+
+                                    if (query.length === 0) {
+                                        hideSuggestions();
+                                        return;
+                                    }
+
+                                    if (query.length < 2) {
+                                        hideSuggestions();
+                                        return;
+                                    }
+
+                                    searchTimeout = setTimeout(() => {
+                                        fetchPatientSuggestions(query);
+                                    }, 300);
+                                });
+
+                                // Hide suggestions when clicking outside
+                                document.addEventListener('click', function (e) {
+                                    if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                                        hideSuggestions();
+                                    }
+                                });
+
+                                function fetchPatientSuggestions(query) {
+                                    fetch(`/doctor/medical-records/search-suggestions?query=${encodeURIComponent(query)}`)
+                                            .then(response => response.json())
+                                            .then(patients => {
+                                                displayPatientSuggestions(patients, query);
+                                            })
+                                            .catch(error => {
+                                                console.error('Error fetching patient suggestions:', error);
+                                                hideSuggestions();
+                                            });
+                                }
+
+                                function displayPatientSuggestions(patients, query) {
+                                    if (patients.length === 0) {
+                                        suggestionsContainer.innerHTML = `
+                        <div class="search-suggestion-item text-muted">
+                            <i class="fas fa-search me-2"></i>
+                            Không tìm thấy bệnh nhân phù hợp
+                        </div>
+                    `;
+                                    } else {
+                                        suggestionsContainer.innerHTML = patients.map(patient => `
+                        <div class="search-suggestion-item" onclick="selectPatient('${patient.name.replace(/'/g, "\\'")}', '${patient.phone || ''}', '${patient.email || ''}')">
+                            <div class="suggestion-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <div class="fw-semibold">${patient.name}</div>
+                                <div class="patient-info-small">
+                                    ${patient.phone ? `<i class="fas fa-phone me-1"></i>${patient.phone}` : ''}
+                                    ${patient.email ? `<br><i class="fas fa-envelope me-1"></i>${patient.email}` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                                    }
+
+                                    suggestionsContainer.style.display = 'block';
+                                }
+
+                                function hideSuggestions() {
+                                    suggestionsContainer.style.display = 'none';
+                                }
+
+                                function selectPatient(name, phone, email) {
+                                    document.getElementById('selectedPatientName').textContent = name;
+                                    document.getElementById('selectedPatientPhone').textContent = phone ? ` • ${phone}` : '';
+                                    document.getElementById('selectedPatientEmail').textContent = email ? ` • ${email}` : '';
+
+                                    document.getElementById('selectedPatientInfo').style.display = 'block';
+                                    searchInput.value = name;
+
+                                    hideSuggestions();
+                                }
+
+                                function clearSelectedPatient() {
+                                    document.getElementById('selectedPatientInfo').style.display = 'none';
+                                    searchInput.value = '';
+                                    document.getElementById('selectedPatientId').value = '';
+                                }
+
+                                // Quick search tags
+                                document.querySelectorAll('.quick-search-tag').forEach(tag => {
+                                    tag.addEventListener('click', function () {
+                                        const searchValue = this.getAttribute('data-search');
+                                        searchInput.value = searchValue;
+                                        fetchPatientSuggestions(searchValue);
+                                    });
+                                });
+
+                                function searchPatients() {
+                                    const query = searchInput.value.trim();
+                                    if (query) {
+                                        fetchPatientSuggestions(query);
+                                    }
+                                }
+
+                                // Medication management functions
+                                function addMedication() {
+                                    const container = document.getElementById('medications-container');
+                                    const newItem = container.firstElementChild.cloneNode(true);
+
+                                    newItem.querySelectorAll('input').forEach(input => input.value = '');
+                                    newItem.classList.add('fade-in');
+
+                                    container.appendChild(newItem);
+                                    updateNoMedicationsMessage();
+                                }
+
+                                function removeMedication(button) {
+                                    const container = document.getElementById('medications-container');
+                                    if (container.children.length > 1) {
+                                        button.closest('.medication-item').remove();
+                                    }
+                                    updateNoMedicationsMessage();
+                                }
+
+                                function updateNoMedicationsMessage() {
+                                    const container = document.getElementById('medications-container');
+                                    const noMedications = document.getElementById('no-medications');
+
+                                    if (container.children.length === 0) {
+                                        noMedications.style.display = 'block';
+                                    } else {
+                                        noMedications.style.display = 'none';
+                                    }
+                                }
+
+                                // Form validation
+                                function validateForm(event) {
+                                    // Check if patient is selected (when no appointment)
+                                    const patientInfo = document.getElementById('selectedPatientInfo');
+                                    const appointmentId = document.querySelector('[th\\:field="${medicalRecord.appointmentId}"]').value;
+
+                                    if (!appointmentId && patientInfo.style.display === 'none') {
+                                        event.preventDefault();
+                                        alert('Vui lòng chọn bệnh nhân trước khi tạo hồ sơ');
+                                        return;
+                                    }
+
+                                    // Validate medical information
+                                    const symptoms = document.getElementById('symptoms').value.trim();
+                                    const diagnosis = document.getElementById('diagnosis').value.trim();
+
+                                    if (!symptoms && !diagnosis) {
+                                        event.preventDefault();
+                                        alert('Vui lòng nhập ít nhất triệu chứng hoặc chẩn đoán');
+                                        return;
+                                    }
+
+                                    // Validate medication names
+                                    const medicationNames = document.getElementsByName('medicationNames');
+                                    let hasValidMedication = false;
+
+                                    for (let i = 0; i < medicationNames.length; i++) {
+                                        if (medicationNames[i].value.trim()) {
+                                            hasValidMedication = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!hasValidMedication) {
+                                        if (!confirm('Bạn chưa thêm thuốc nào vào đơn. Bạn có muốn tiếp tục không?')) {
+                                            event.preventDefault();
+                                            return;
+                                        }
+                                    }
+
+                                    showLoading();
+                                }
+
+                                // Auto-resize textareas
+                                document.querySelectorAll('textarea').forEach(textarea => {
+                                    textarea.addEventListener('input', function () {
+                                        this.style.height = 'auto';
+                                        this.style.height = (this.scrollHeight) + 'px';
+                                    });
+                                });
+
+                                // Initialize
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    updateNoMedicationsMessage();
+
+                                    // Add animation to cards
+                                    document.querySelectorAll('.rm-card').forEach((card, index) => {
+                                        card.style.animationDelay = `${index * 0.1}s`;
+                                    });
+                                });
+        </script>
+    </body>
 </html>

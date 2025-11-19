@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Verify OTP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="login/images/icons/favicon.ico"/>
+    <link rel="stylesheet" type="text/css" href="login/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="login/vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="login/css/util.css">
+    <link rel="stylesheet" type="text/css" href="login/css/main.css">
+
+    <style>
+        .wrap-login100 { max-width: 450px; }
+        .modal-content { border-radius: 15px; overflow: hidden; }
+        .modal-header { justify-content: center; }
+        .progress { height: 6px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100 p-l-50 p-r-50 p-t-50 p-b-30">
+            <form class="login100-form validate-form" th:action="@{/verify-otp}" method="POST">
+
+                <span class="login100-form-title p-b-25">
+                    Verify OTP
+                </span>
+
+                <!-- Error -->
+                <div th:if="${errorMessage}" class="alert alert-danger text-center m-t-15">
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <!-- OTP -->
+                <div class="wrap-input100 m-b-16">
+                    <input class="input100" type="text" name="otp" placeholder="Enter OTP" required>
+                    <span class="focus-input100"></span>
+                    <span class="symbol-input100"><span class="lnr lnr-key"></span></span>
+                </div>
+
+                <!-- Hidden email -->
+                <input type="hidden" name="email" th:value="${email}"/>
+
+                <!-- Button -->
+                <div class="container-login100-form-btn p-t-15">
+                    <button type="submit" class="login100-form-btn">
+                        Verify
+                    </button>
+                </div>
+                <!-- Nút quay lại -->
+                <div class="text-center w-full p-t-10">
+                    <button type="button" class="btn btn-outline-secondary" onclick="history.back()">
+                        ← Back
+                    </button>
+                </div>
+
+                <!-- Resend -->
+                <div class="text-center w-full p-t-20">
+                    <a class="txt1 bo1 hov1" th:href="@{/resend-otp(email=${email})}">
+                        Resend OTP
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Success Popup -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content text-center">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title w-100">🎉 Success</h5>
+      </div>
+      <div class="modal-body">
+        <p>You have registered successfully.</p>
+        <p>Redirecting to login in <b><span id="countdown">5</span>s</b>...</p>
+        <div class="progress">
+          <div id="progressBar" class="progress-bar bg-success" role="progressbar" style="width: 100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="login/vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="login/vendor/bootstrap/js/popper.js"></script>
+<script src="login/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- ✅ Countdown + Progress bar -->
+<script th:if="${success}">
+    $(document).ready(function(){
+        $("#successModal").modal({backdrop: 'static', keyboard: false}).modal("show");
+
+        let counter = 5;
+        let progress = 100;
+        const interval = setInterval(() => {
+            counter--;
+            progress -= 20; // vì 5s -> 100% / 5 = 20%
+            $("#countdown").text(counter);
+            $("#progressBar").css("width", progress + "%");
+
+            if(counter <= 0){
+                clearInterval(interval);
+                window.location.href = '/showMyLoginPage';
+            }
+        }, 1000);
+    });
+</script>
+</body>
+</html>

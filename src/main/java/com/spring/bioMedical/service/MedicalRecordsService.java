@@ -1,16 +1,22 @@
 package com.spring.bioMedical.service;
 
+import com.spring.bioMedical.entity.Appointments;
 import com.spring.bioMedical.entity.MedicalRecords;
 import com.spring.bioMedical.entity.Prescriptions;
 import com.spring.bioMedical.entity.Users;
 import com.spring.bioMedical.repository.MedicalRecordsRepository;
 import com.spring.bioMedical.repository.PrescriptionsRepository;
+import java.awt.print.Pageable;
+import java.util.ArrayList;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import org.springframework.data.domain.PageRequest;
 
 @Service
 public class MedicalRecordsService {
@@ -26,41 +32,95 @@ public class MedicalRecordsService {
 
     @Autowired
     private UsersService userService;
-    
-    
 
     public List<MedicalRecords> getMedicalRecordsByDoctorId(Long doctorId) {
-        List<MedicalRecords> records = medicalRecordsRepository.findByDoctorId(doctorId);
-        records.forEach(this::enrichMedicalRecordData);
-        return records;
+        try {
+            // Lấy tất cả appointments của doctor
+            List<Appointments> doctorAppointments = appointmentService.getAppointmentsByDoctorId(doctorId);
+            List<Long> appointmentIds = doctorAppointments.stream()
+                    .map(Appointments::getAppointmentId)
+                    .collect(Collectors.toList());
+
+            if (appointmentIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+
+            // Lấy medical records từ appointment ids
+            List<MedicalRecords> records = medicalRecordsRepository.findByAppointmentIdIn(appointmentIds);
+            records.forEach(this::enrichMedicalRecordData);
+            return records;
+
+        } catch (Exception e) {
+            System.err.println("Error getting medical records by doctor ID: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     public List<MedicalRecords> searchMedicalRecords(String keyword, Long doctorId) {
-        List<MedicalRecords> records;
+        try {
+            if (keyword == null || keyword.trim().isEmpty()) {
+                return getMedicalRecordsByDoctorId(doctorId);
+            }
 
-        if (keyword.matches("\\d+")) {
-            // Search by phone number
-            records = medicalRecordsRepository.findByDoctorId(doctorId).stream()
+            List<MedicalRecords> allRecords = getMedicalRecordsByDoctorId(doctorId);
+            String searchTerm = keyword.trim().toLowerCase();
+
+            return allRecords.stream()
                     .filter(record -> {
-                        Users patient = userService.findById(record.getAppointment().getUserId());
-                        return patient != null && patient.getPhone() != null
-                                && patient.getPhone().contains(keyword);
+                        try {
+                            if (record.getAppointment() == null) {
+                                return false;
+                            }
+
+                            Users patient = userService.findById(record.getAppointment().getUserId());
+                            if (patient == null) {
+                                return false;
+                            }
+
+                            // Tìm kiếm đơn giản - chỉ cần match bất kỳ field nào
+                            boolean patientNameMatch = patient.getFullName() != null
+                                    && patient.getFullName().toLowerCase().contains(searchTerm);
+
+                            boolean phoneMatch = patient.getPhone() != null
+                                    && patient.getPhone().contains(searchTerm);
+
+                            boolean diagnosisMatch = record.getDiagnosis() != null
+                                    && record.getDiagnosis().toLowerCase().contains(searchTerm);
+
+                            boolean symptomsMatch = record.getSymptoms() != null
+                                    && record.getSymptoms().toLowerCase().contains(searchTerm);
+
+                            return patientNameMatch || phoneMatch || diagnosisMatch || symptomsMatch;
+
+                        } catch (Exception e) {
+                            System.err.println("Error searching record: " + e.getMessage());
+                            return false;
+                        }
                     })
-                    .toList();
-        } else {
-            // Search by patient name
-            records = medicalRecordsRepository.findByDoctorId(doctorId).stream()
-                    .filter(record -> {
-                        Users patient = userService.findById(record.getAppointment().getUserId());
-                        return patient != null && patient.getFullName() != null
-                                && patient.getFullName().toLowerCase().contains(keyword.toLowerCase());
-                    })
-                    .toList();
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            System.err.println("Error in searchMedicalRecords: " + e.getMessage());
+            return new ArrayList<>();
         }
-
-        records.forEach(this::enrichMedicalRecordData);
-        return records;
     }
+
+//    private boolean matchesSearch(Users patient, String keyword) {
+//        if (keyword == null || keyword.trim().isEmpty()) {
+//            return true;
+//        }
+//
+//        String searchLower = keyword.toLowerCase().trim();
+//        boolean nameMatch = patient.getFullName() != null
+//                && patient.getFullName().toLowerCase().contains(searchLower);
+//        boolean phoneMatch = patient.getPhone() != null
+//                && patient.getPhone().contains(keyword);
+//        boolean emailMatch = patient.getEmail() != null
+//                && patient.getEmail().toLowerCase().contains(searchLower);
+//
+//        return nameMatch || phoneMatch || emailMatch;
+//    }
+
 
     public void updateMedicalRecord(MedicalRecords medicalRecord) {
         MedicalRecords existingRecord = medicalRecordsRepository.findById(medicalRecord.getRecordId()).orElse(null);
@@ -90,6 +150,10 @@ public class MedicalRecordsService {
     public void deletePrescriptionsByRecordId(Long recordId) {
         List<Prescriptions> prescriptions = prescriptionsRepository.findByRecordId(recordId);
         prescriptionsRepository.deleteAll(prescriptions);
+    }
+
+    public MedicalRecords getMedicalRecordByAppointmentId(Long appointmentId) {
+        return medicalRecordsRepository.findByAppointmentId(appointmentId);
     }
 
     @Transactional
