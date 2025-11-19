@@ -9,24 +9,25 @@ import java.math.BigDecimal;
 @Table(name = "InvoiceItems")
 @Getter @Setter
 public class InvoiceItem {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long itemId;
+ @Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+@Column(name = "item_id")
+private Long itemId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "invoice_id", nullable = false)
-  private Invoice invoice;
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "invoice_id", nullable = false)
+private Invoice invoice;
 
-  @Column(nullable = false)
-  private String itemName;
+@Column(name = "item_name", nullable = false)
+private String itemName;
 
-  @Column(nullable = false)
-  private BigDecimal quantity = BigDecimal.ONE;
+@Column(name = "quantity", nullable = false)
+private BigDecimal quantity = BigDecimal.ONE;
 
-  @Column(nullable = false)
-  private BigDecimal unitPrice = BigDecimal.ZERO;
+@Column(name = "unit_price", nullable = false)
+private BigDecimal unitPrice = BigDecimal.ZERO;
 
-  // CHO PHÉP service set line_total
-  @Column(name = "line_total", nullable = false)
-  private BigDecimal lineTotal = BigDecimal.ZERO;
+@Column(name = "line_total", nullable = false)
+private BigDecimal lineTotal = BigDecimal.ZERO;
+
 }

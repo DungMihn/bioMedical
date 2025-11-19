@@ -129,7 +129,6 @@
                        pattern="^[^@\s]+@(gmail\.com|example\.com|exampl\.com)$"
                        inputmode="email" oninput="this.value=this.value.trim()"
                        th:classappend="${#fields.hasErrors('email')}? ' is-invalid'">
-                <small class="text-muted">Chỉ chấp nhận @gmail.com, @example.com, @exampl.com</small>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
               </div>
             </div>

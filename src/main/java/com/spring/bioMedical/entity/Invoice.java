@@ -12,8 +12,10 @@ import java.util.ArrayList; import java.util.List;
 @Table(name = "Invoices")
 @Getter @Setter
 public class Invoice {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "invoice_id")
   private Long invoiceId;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -28,10 +30,10 @@ public class Invoice {
   @JoinColumn(name = "patient_user_id", nullable = false)
   private Users patient;
 
-  @Column(unique = true)
+  @Column(name = "invoice_no", unique = true)        // <<< SỬA
   private String invoiceNo;
 
-  @Column(nullable = false)
+  @Column(name = "invoice_date", nullable = false)   // <<< SỬA
   private LocalDateTime invoiceDate = LocalDateTime.now();
 
   @Column(nullable = false)
@@ -40,10 +42,9 @@ public class Invoice {
   @Column(nullable = false)
   private BigDecimal discount = BigDecimal.ZERO;
 
-  @Column(nullable = false)
+  @Column(name = "tax_amount", nullable = false)     // <<< SỬA
   private BigDecimal taxAmount = BigDecimal.ZERO;
 
-  // CHO PHÉP service set tổng tiền
   @Column(name = "total_amount", nullable = false)
   private BigDecimal totalAmount = BigDecimal.ZERO;
 
@@ -54,6 +55,6 @@ public class Invoice {
   @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<InvoiceItem> items = new ArrayList<>();
 
-  @Column(nullable = false)
+  @Column(name = "created_at", nullable = false, updatable = false)
   private LocalDateTime createdAt = LocalDateTime.now();
 }

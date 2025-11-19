@@ -10,22 +10,37 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity @Table(name="Payments")
 @Getter @Setter
+@Entity
+@Table(name = "Payments")
 public class Payment {
-  @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "payment_id")               // <<< SỬA
   private Long paymentId;
 
-  @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="invoice_id", nullable=false)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "invoice_id", nullable = false)
   private Invoice invoice;
 
-  @Column(nullable=false) private BigDecimal amount;
-  @Column(nullable=false) private String method;
+  @Column(name = "amount", nullable = false) // <<< SỬA (thêm name cho chắc ăn)
+  private BigDecimal amount;
+
+  @Column(name = "method", nullable = false) // <<< SỬA
+  private String method;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable=false) private PaymentStatus status = PaymentStatus.PENDING;
+  @Column(name = "status", nullable = false) // <<< SỬA
+  private PaymentStatus status = PaymentStatus.PENDING;
 
+  @Column(name = "paid_at")                  // <<< SỬA
   private LocalDateTime paidAt;
+
+  @Column(name = "reference_no")             // <<< SỬA
   private String referenceNo;
-  @Column(nullable=false) private LocalDateTime createdAt = LocalDateTime.now();
+
+  @Column(name = "created_at", nullable = false)
+  private LocalDateTime createdAt = LocalDateTime.now();
 }
+
