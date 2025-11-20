@@ -38,4 +38,5 @@ public class UsersService {
      public Users findByOtpCode(String otpCode) {
         return usersRepository.findByOtpCode(otpCode);
     }
+     
 }
