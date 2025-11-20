@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,16 @@ public class AppointmentService {
     /**
      * Xác nhận appointment - với validation mạnh mẽ
      */
+    // Trong AppointmentService - thêm method này
+    public List<AppointmentSlots> getSlotsByDoctorId(Long doctorId) {
+        try {
+            return appointmentSlotRepository.findByDoctorId(doctorId);
+        } catch (Exception e) {
+            System.err.println("❌ Error getting slots by doctor ID: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     @Transactional
     public boolean confirmAppointment(Long appointmentId) {
         try {
@@ -107,6 +118,31 @@ public class AppointmentService {
             System.err.println("Error confirming appointment: " + e.getMessage());
             e.printStackTrace();
             return false;
+        }
+    }
+
+    // Trong AppointmentService - thêm method test
+    public void testRepositoryMethods(Long doctorId) {
+        try {
+            System.out.println("=== TESTING REPOSITORY METHODS ===");
+
+            // Test method chính
+            List<Appointments> appointments = appointmentRepository.findByDoctorId(doctorId);
+            System.out.println("findByDoctorId: " + appointments.size() + " appointments");
+
+            // Test native query
+            List<Appointments> todayApps = appointmentRepository.findTodayAppointmentsByDoctorId(doctorId);
+            System.out.println("findTodayAppointmentsByDoctorId: " + todayApps.size() + " appointments");
+
+            // Test pending
+            List<Appointments> pendingApps = appointmentRepository.findPendingAppointmentsByDoctorId(doctorId);
+            System.out.println("findPendingAppointmentsByDoctorId: " + pendingApps.size() + " appointments");
+
+            System.out.println("=== END TEST ===");
+
+        } catch (Exception e) {
+            System.err.println("Repository test error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -410,47 +446,39 @@ public class AppointmentService {
         }
     }
 
-    // Các methods khác giữ nguyên...
+// Trong AppointmentService - sửa method enrichAppointmentData
     private void enrichAppointmentData(Appointments appointment) {
-        // Giữ nguyên implementation cũ
         if (appointment == null) {
             return;
         }
 
         try {
-            AppointmentSlots slot = appointmentSlotService.getSlotById(appointment.getSlotId());
+            // Lấy thông tin slot từ repository
+            AppointmentSlots slot = appointmentSlotRepository.findById(appointment.getSlotId()).orElse(null);
             if (slot != null) {
+                // Format date và time từ slot thực tế
                 if (slot.getSlotDate() != null) {
                     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     appointment.setAppointmentDate(slot.getSlotDate().format(dateFormatter));
-                } else {
-                    appointment.setAppointmentDate("N/A");
                 }
-
                 if (slot.getSlotTime() != null) {
                     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
                     appointment.setAppointmentTime(slot.getSlotTime().format(timeFormatter));
-                } else {
-                    appointment.setAppointmentTime("N/A");
                 }
             }
-        } catch (Exception e) {
-            appointment.setAppointmentDate("N/A");
-            appointment.setAppointmentTime("N/A");
-        }
 
-        try {
+            // Lấy thông tin patient
             Users patient = userService.findById(appointment.getUserId());
             if (patient != null) {
-                appointment.setPatientName(patient.getFullName() != null ? patient.getFullName() : "Unknown Patient");
-                appointment.setPatientEmail(patient.getEmail() != null ? patient.getEmail() : "No email");
+                appointment.setPatientName(patient.getFullName() != null ? patient.getFullName() : "Bệnh nhân");
+                appointment.setPatientEmail(patient.getEmail() != null ? patient.getEmail() : "Không có email");
             } else {
-                appointment.setPatientName("Unknown Patient");
-                appointment.setPatientEmail("No email");
+                appointment.setPatientName("Bệnh nhân ẩn danh");
+                appointment.setPatientEmail("Không có email");
             }
+
         } catch (Exception e) {
-            appointment.setPatientName("Unknown Patient");
-            appointment.setPatientEmail("No email");
+            System.err.println("❌ Error enriching appointment " + appointment.getAppointmentId() + ": " + e.getMessage());
         }
     }
 
@@ -791,4 +819,21 @@ public class AppointmentService {
 
         return false;
     }
+
+    //LONG
+    /**
+     * LẤY APPOINTMENT THEO ID
+     *
+     * @param id
+     * @return
+     */
+    public Optional<Appointments> findById(Long id) {
+        return appointmentRepository.findById(id); // JpaRepository đã có sẵn
+    }
+
+    @Transactional
+    public void save(Appointments app) {
+        appointmentRepository.save(app);
+    }
+
 }

@@ -14,16 +14,20 @@ import java.util.List;
 import com.spring.bioMedical.entity.Appointments;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired private UsersService usersService;
-    @Autowired private ClinicRepository clinicRepository;
-    @Autowired private DoctorRepository doctorRepository;
-    @Autowired private AppointmentSlotRepository slotRepository;
-    @Autowired private AppointmentRepository appointmentRepository;
+    @Autowired
+    private UsersService usersService;
+    @Autowired
+    private ClinicRepository clinicRepository;
+    @Autowired
+    private DoctorRepository doctorRepository;
+    @Autowired
+    private AppointmentSlotRepository slotRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     //  Common model attributes for all views
     @ModelAttribute
@@ -32,7 +36,8 @@ public class UserController {
         Users currentUser = null;
         if (username != null && !"anonymousUser".equals(username)) {
             currentUser = usersService.findByUsername(username);
-            model.addAttribute("appointments", appointmentRepository.findByUserId(currentUser));
+            model.addAttribute("appointments", appointmentRepository.findByUserId(currentUser.getUserId()));
+
         }
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("appointmentForm", new BookingRequest());
@@ -90,7 +95,7 @@ public class UserController {
             model.addAttribute("user", currentUser);
 
             // 🔽 Lấy danh sách lịch, sau đó sắp xếp giảm dần theo ngày tạo
-            List<Appointments> list = appointmentRepository.findByUserId(currentUser);
+            List<Appointments> list = appointmentRepository.findByUserId(currentUser.getUserId());
             list.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt())); // newest first
 
             model.addAttribute("appointments", list);
@@ -98,14 +103,13 @@ public class UserController {
         return "user/account";
     }
 
-
     // Update profile
     @PostMapping("/update-profile")
     public String updateProfile(@ModelAttribute("user") Users updatedUser, RedirectAttributes redirectAttributes) {
         Users currentUser = getCurrentUser();
         if (currentUser != null) {
-            if (updatedUser.getFullName() == null || updatedUser.getFullName().trim().isEmpty() ||
-                updatedUser.getPhone() == null || updatedUser.getPhone().trim().isEmpty()) {
+            if (updatedUser.getFullName() == null || updatedUser.getFullName().trim().isEmpty()
+                    || updatedUser.getPhone() == null || updatedUser.getPhone().trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMsg", "Full name and phone number are required!");
                 return "redirect:/user/account";
             }
@@ -121,7 +125,6 @@ public class UserController {
         return "redirect:/user/account";
     }
 
-
     //  Helper methods
     private Users getCurrentUser() {
         String username = getCurrentUsername();
@@ -130,8 +133,9 @@ public class UserController {
 
     private String getCurrentUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof UserDetails)
+        if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
+        }
         return principal.toString();
     }
 }

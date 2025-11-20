@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+            <title>Doctor+ Admin Branch – Lịch ngày</title>
+
+            <!-- Vendor CSS -->
+            <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+                <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+                    <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+                        <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
+
+                            <!-- Theme gradient (file bạn đã có) -->
+                            <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
+
+                                <link rel="icon" th:href="@{/Error/pic.jpg}" type="image/png"/>
+
+                                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+                                        <style>
+                                            /* Tinh chỉnh riêng cho trang lịch (không đụng tone) */
+                                            .page-title {
+                                                display:flex;
+                                                align-items:center;
+                                                gap:12px;
+                                            }
+                                            .page-title .date-pill{
+                                                font-size:.95rem;
+                                                padding:4px 10px;
+                                                border-radius:999px;
+                                                background:#e9ecef;
+                                                color:#212529;
+                                            }
+                                            .slot-card .fw-bold{
+                                                font-size:1.05rem;
+                                            }
+                                            .slot-card{
+                                                min-height:170px;
+                                            }
+                                            .slot-badge{
+                                                font-size:.7rem;
+                                                letter-spacing:.3px;
+                                            }
+                                            .filter-row .form-label{
+                                                margin-bottom:4px;
+                                                font-weight:500;
+                                            }
+                                        </style>
+                                        </head>
+
+                                        <body id="page-top">
+
+                                            <!-- Top Navbar: dùng bg-gradient-theme từ admin-theme.css -->
+                                            <nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
+                                                <a class="navbar-brand mr-1" th:href="@{/admin-branch/schedule}">Doctor+ Admin Branch</a>
+                                                <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle">
+                                                    <i class="fas fa-bars"></i>
+                                                </button>
+                                                <ul class="navbar-nav ml-auto ml-md-0">
+                                                    <li class="nav-item dropdown no-arrow">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="fas fa-user-circle fa-fw"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                                            <div class="dropdown-divider"></div>
+                                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">Đăng xuất</a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+
+                                            <div id="wrapper">
+                                                <!-- Sidebar (giữ cấu trúc sb-admin; màu active/hover đã được theme xử lý) -->
+                                                <ul class="sidebar navbar-nav">
+                                                    <li class="nav-item" th:classappend="${activePage}=='appointments' ? ' active'">
+                                                        <a class="nav-link" th:href="@{/admin-branch/appointments}">
+                                                            <i class="fas fa-fw fa-calendar"></i><span>Appointments</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item" th:classappend="${activePage}=='doctor-details' ? ' active'">
+                                                        <a class="nav-link" th:href="@{/admin-branch/doctor-details}">
+                                                            <i class="fas fa-fw fa-user-md"></i><span>Doctor Details</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item" th:classappend="${activePage}=='add-doctor' ? ' active'">
+                                                        <a class="nav-link" th:href="@{/admin-branch/add-doctor}">
+                                                            <i class="fas fa-fw fa-plus"></i><span>Add Doctor</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item" th:classappend="${activePage}=='invoices' ? ' active'">
+                                                        <a class="nav-link" th:href="@{/admin-branch/invoices}">
+                                                            <i class="fas fa-fw fa-file-invoice-dollar"></i><span>Invoices</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item" th:classappend="${activePage}=='schedule' ? ' active'">
+                                                        <a class="nav-link" th:href="@{/admin-branch/schedule}">
+                                                            <i class="fas fa-fw fa-calendar-alt"></i><span>Schedule</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item" th:classappend="${activePage}=='add-user' ? ' active'">
+                                                        <a class="nav-link" th:href="@{/admin-branch/add-user}">
+                                                            <i class="fas fa-fw fa-user-plus"></i><span>Add Patient</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item" th:classappend="${activePage}=='my-profile' ? ' active'">
+                                                        <a class="nav-link" th:href="@{/admin-branch/edit-my-profile}">
+                                                            <i class="fas fa-fw fa-user"></i><span>My Profile</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+
+                                                <div id="content-wrapper">
+                                                    <div class="container-fluid">
+
+                                                        <!-- Tiêu đề -->
+                                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                                            <div class="page-title">
+                                                                <h4 class="mb-0">Lịch ngày</h4>
+                                                                <span class="date-pill" th:text="${#temporals.format(date,'dd/MM/yyyy')}"></span>
+                                                                <small class="text-muted">· Chi nhánh #<span th:text="${clinicId}"></span></small>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Thông báo -->
+                                                        <div th:if="${ok}" class="alert alert-success py-2" th:text="${ok}"></div>
+                                                        <div th:if="${err}" class="alert alert-danger py-2" th:text="${err}"></div>
+
+                                                        <!-- Bộ lọc ngày -->
+                                                        <form th:action="@{/admin-branch/schedule}" method="get" class="row filter-row g-2 mb-3">
+                                                            <div class="col-auto">
+                                                                <label class="form-label">Ngày</label>
+                                                                <input type="date" name="date" class="form-control"
+                                                                       th:value="${#temporals.format(date,'yyyy-MM-dd')}">
+                                                            </div>
+                                                            <div class="col-auto align-self-end">
+                                                                <button class="btn btn-primary"><i class="fas fa-search mr-1"></i>Xem</button>
+                                                            </div>
+                                                        </form>
+
+                                                        <!-- Giờ làm việc -->
+                                                        <div class="card mb-3">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title mb-2"><i class="fas fa-clock mr-1"></i>Giờ làm việc chi nhánh</h5>
+                                                                <p class="mb-3">
+                                                                    Mở cửa:
+                                                                    <b th:text="${clinic != null ? #temporals.format(clinic.openTime,'HH:mm') : '—'}"></b>
+                                                                    · Đóng cửa:
+                                                                    <b th:text="${clinic != null ? #temporals.format(clinic.closeTime,'HH:mm') : '—'}"></b>
+                                                                    · Thời lượng mỗi ca:
+                                                                    <b th:text="${clinic != null ? clinic.slotTime : 60}"></b> phút
+                                                                </p>
+
+                                                                <!-- Cập nhật giờ & tạo slot -->
+                                                                <form th:action="@{/admin-branch/schedule/update-hours}" method="post" class="row g-2 align-items-end">
+                                                                    <input type="hidden" name="date" th:value="${#temporals.format(date,'yyyy-MM-dd')}">
+
+                                                                        <div class="col-auto">
+                                                                            <label class="form-label">Giờ mở</label>
+                                                                            <input type="time" name="openTime" class="form-control"
+                                                                                   th:value="${clinic != null ? #temporals.format(clinic.openTime,'HH:mm') : '08:00'}" required>
+                                                                        </div>
+                                                                        <div class="col-auto">
+                                                                            <label class="form-label">Giờ đóng</label>
+                                                                            <input type="time" name="closeTime" class="form-control"
+                                                                                   th:value="${clinic != null ? #temporals.format(clinic.closeTime,'HH:mm') : '17:00'}" required>
+                                                                        </div>
+                                                                        <div class="col-auto">
+                                                                            <label class="form-label">Phút/ca</label>
+                                                                            <input type="number" name="slotTime" class="form-control" value="60" min="60" max="60" readonly>
+                                                                        </div>
+
+                                                                        <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}"/>
+
+                                                                        <div class="col-auto">
+                                                                            <button class="btn btn-outline-primary" type="submit">
+                                                                                <i class="fas fa-sync-alt mr-1"></i>Cập nhật & tạo slot
+                                                                            </button>
+                                                                        </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Lưới khung giờ -->
+                                                        <div th:with="dur=${clinic != null ? clinic.slotTime : 60}">
+                                                            <div class="row g-3 mt-2">
+                                                                <div class="col-6 col-md-3 d-flex" th:each="s : ${slots}">
+                                                                    <div class="card slot-card flex-fill h-100 p-2">
+                                                                        <div class="fw-bold">
+                                                                            <span th:text="${#temporals.format(s.slotTime,'HH:mm')}"></span>
+                                                                            –
+                                                                            <span th:text="${#temporals.format(s.slotTime.plusMinutes(dur),'HH:mm')}"></span>
+                                                                        </div>
+
+                                                                        <div class="small mb-1">
+                                                                            Trạng thái:
+                                                                            <span class="slot-badge badge ms-1"
+                                                                                  th:text="${s.status}"
+                                                                                  th:classappend="${s.status == 'AVAILABLE'} ? 'badge-success' : 'badge-secondary'"></span>
+                                                                        </div>
+
+                                                                        <!-- Đặt lịch -->
+                                                                        <!-- Đặt lịch -->
+                                                                        <form th:if="${s.status == 'AVAILABLE'}"
+                                                                              th:action="@{/admin-branch/schedule/book-by-email}"
+                                                                              method="post"
+                                                                              class="mt-1"
+                                                                              novalidate>
+                                                                            <input type="hidden" name="slotId" th:value="${s.slotId}">
+                                                                                <input type="hidden" name="date" th:value="${#temporals.format(date,'yyyy-MM-dd')}">
+
+                                                                                    <!-- Email: bỏ pattern, trim khi gõ, giữ required -->
+                                                                                    <input type="email" name="email"
+                                                                                           class="form-control form-control-sm mb-1"
+                                                                                           placeholder="nhập email..."
+                                                                                           required
+                                                                                           inputmode="email"
+                                                                                           oninput="this.value=this.value.trim()">
+
+                                                                                        <input type="text" class="form-control form-control-sm mb-2"
+                                                                                               name="note" placeholder="Ghi chú (tuỳ chọn)">
+
+                                                                                            <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}"/>
+                                                                                            <button class="btn btn-primary btn-sm w-100">
+                                                                                                <i class="fas fa-paper-plane mr-1"></i>Đặt bằng Gmail
+                                                                                            </button>
+                                                                                            </form>
+
+
+                                                                                            <button th:if="${s.status != 'AVAILABLE'}" class="btn btn-secondary btn-sm w-100 mt-1" disabled>
+                                                                                                Hết chỗ
+                                                                                            </button>
+                                                                                            </div>
+                                                                                            </div>
+                                                                                            </div>
+                                                                                            </div>
+
+                                                                                            </div><!-- /.container-fluid -->
+                                                                                            </div><!-- /#content-wrapper -->
+                                                                                            </div><!-- /#wrapper -->
+
+                                                                                            <!-- Scroll to Top -->
+                                                                                            <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
+                                                                                            <!-- Logout Modal -->
+                                                                                            <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutLabel" aria-hidden="true">
+                                                                                                <div class="modal-dialog" role="document">
+                                                                                                    <div class="modal-content">
+                                                                                                        <div class="modal-header">
+                                                                                                            <h5 class="modal-title" id="logoutLabel">Đăng xuất?</h5>
+                                                                                                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                                                        </div>
+                                                                                                        <div class="modal-body">Chọn "Đăng xuất" để kết thúc phiên hiện tại.</div>
+                                                                                                        <div class="modal-footer">
+                                                                                                            <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">Hủy</button>
+                                                                                                            <form th:action="@{/logout}" method="post">
+                                                                                                                <button type="submit" class="btn btn-primary">Đăng xuất</button>
+                                                                                                            </form>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <!-- Vendor JS -->
+                                                                                            <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+                                                                                            <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+                                                                                            <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+                                                                                            <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+                                                                                            <script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+                                                                                            <script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+                                                                                            <script th:src="@{/vendor/js/sb-admin.min.js}"></script>
+                                                                                            </body>
+                                                                                            </html>

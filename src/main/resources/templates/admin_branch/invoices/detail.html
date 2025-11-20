@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <title>Chi tiết hóa đơn</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap & theme -->
+        <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+        <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+        <style>
+            .card + .card {
+                margin-top: 1rem;
+            }
+            .table-sm td, .table-sm th {
+                padding: .4rem .6rem;
+            }
+            .text-small {
+                font-size: .925rem;
+            }
+            .muted {
+                color:#6c757d;
+            }
+            .invoice-meta dt {
+                width: 120px;
+            }
+            .invoice-meta dd {
+                margin-left: 130px;
+            }
+            .right-actions .btn + .btn {
+                margin-left: .5rem;
+            }
+            @media print {
+                .no-print {
+                    display: none !important;
+                }
+                .card {
+                    box-shadow: none;
+                    border: 0;
+                }
+                body {
+                    padding: 0;
+                }
+            }
+        </style>
+    </head>
+    <body class="p-3">
+
+        <!-- Breadcrumb / Actions -->
+        <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/admin-branch/doctor-details}">Admin Branch</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin-branch/invoices}">Invoices</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Chi tiết</li>
+                </ol>
+            </nav>
+            <div class="right-actions">
+                <a class="btn btn-light" th:href="@{/admin-branch/invoices}">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+                <button class="btn btn-outline-secondary" onclick="window.print()">
+                    <i class="fas fa-print"></i> In
+                </button>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between flex-wrap">
+                    <div>
+                        <h4 class="mb-1" th:text="${invoice != null && !#strings.isEmpty(invoice.invoiceNo) ? ('Invoice #' + invoice.invoiceNo) : 'Invoice'}">Invoice</h4>
+
+                        <!-- Badge trạng thái, không dùng #maps, không dùng ?. -->
+                        <span class="badge"
+                              th:with="st=${invoice != null and invoice.status != null ? invoice.status.name() : 'NONE'}"
+                              th:classappend="${st=='PAID'} ? ' badge-success' :
+                              (${st=='ISSUED'} ? ' badge-primary' :
+                              (${st=='DRAFT'} ? ' badge-secondary' :
+                              (${st=='VOID'} ? ' badge-dark' : ' badge-warning')))">
+                            <span th:text="${st}">STATUS</span>
+                        </span>
+                    </div>
+
+                    <!-- META (gọn, đối xứng, responsive) -->
+                    <table class="table table-sm table-borderless mb-0 w-auto">
+  <tr>
+    <th class="text-right pr-3">Ngày lập</th>
+    <td th:text="${invoice != null && invoice.invoiceDate != null ? #temporals.format(invoice.invoiceDate,'dd/MM/yyyy HH:mm') : 'N/A'}">N/A</td>
+  </tr>
+  <tr>
+    <th class="text-right pr-3">Mã HĐ</th>
+    <td th:text="${invoice != null && !#strings.isEmpty(invoice.invoiceNo) ? invoice.invoiceNo : 'N/A'}">N/A</td>
+  </tr>
+  <tr>
+    <th class="text-right pr-3">Appointment</th>
+    <td th:text="${appointmentId != null ? appointmentId : 'N/A'}">N/A</td>
+  </tr>
+</table>
+
+
+                </div>
+
+                <hr>
+
+                <div class="row">
+                    <!-- Clinic -->
+                    <div class="col-md-6">
+                        <h6 class="text-uppercase text-small mb-2">Phòng khám</h6>
+                        <div class="text-small">
+                            <div><strong th:text="${invoice != null && invoice.clinic != null && !#strings.isEmpty(invoice.clinic.name) ? invoice.clinic.name : 'N/A'}">N/A</strong></div>
+                            <div class="muted"
+                                 th:text="${invoice != null and invoice.clinic != null and !#strings.isEmpty(invoice.clinic.address) ? invoice.clinic.address : 'N/A'}">N/A</div>
+                            <div th:text="${invoice != null and invoice.clinic != null and !#strings.isEmpty(invoice.clinic.phone) ? ('☎ ' + invoice.clinic.phone) : ''}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Patient -->
+                    <div class="col-md-6">
+                        <h6 class="text-uppercase text-small mb-2">Bệnh nhân</h6>
+                        <div class="text-small">
+                            <div><strong th:text="${invoice != null and invoice.patient != null and !#strings.isEmpty(invoice.patient.fullName) ? invoice.patient.fullName : 'N/A'}">N/A</strong></div>
+                            <div class="muted"
+                                 th:text="${invoice != null and invoice.patient != null and !#strings.isEmpty(invoice.patient.email) ? invoice.patient.email : 'N/A'}">N/A</div>
+                            <div th:text="${invoice != null and invoice.patient != null and !#strings.isEmpty(invoice.patient.phone) ? ('☎ ' + invoice.patient.phone) : ''}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+  <strong>Dòng hàng</strong>
+  <a class="btn btn-sm btn-primary no-print"
+     th:href="@{'/admin-branch/invoices/' + ${invoice != null ? invoice.invoiceId : 0} + '/items/new'}">
+    <i class="fas fa-plus"></i> Thêm dòng
+  </a>
+</div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="width:42%">Tên dịch vụ / thuốc</th>
+                                <th class="text-right" style="width:12%">Số lượng</th>
+                                <th class="text-right" style="width:18%">Đơn giá</th>
+                                <th class="text-right" style="width:18%">Thành tiền</th>
+                                <th class="text-right no-print" style="width:10%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${items == null or #lists.isEmpty(items)}">
+                                <td colspan="5" class="text-center text-muted">Chưa có dòng hàng</td>
+                            </tr>
+                            <tr th:each="it : ${items}">
+                                <td th:text="${!#strings.isEmpty(it.itemName) ? it.itemName : 'N/A'}">N/A</td>
+                                <td class="text-right" th:text="${it.quantity}">1</td>
+                                <td class="text-right" th:text="${#numbers.formatDecimal(it.unitPrice, 1, 'COMMA', 2, 'POINT')}">0.00</td>
+                                <td class="text-right" th:text="${#numbers.formatDecimal(it.lineTotal, 1, 'COMMA', 2, 'POINT')}">0.00</td>
+                                <td class="text-right no-print">
+                                    <a class="btn btn-sm btn-outline-secondary"
+                                       th:href="@{'/admin-branch/invoices/' + ${invoice.invoiceId} + '/items/' + ${it.itemId} + '/edit'}">Sửa</a>
+
+                                    <a class="btn btn-sm btn-outline-danger ml-1"
+                                       th:href="@{'/admin-branch/invoices/' + ${invoice.invoiceId} + '/items/' + ${it.itemId} + '/delete'}"
+                                       onclick="return confirm('Xóa dòng hàng này?')">Xóa</a>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Totals -->
+            <div class="card-footer">
+  <table class="table table-sm mb-0 w-100">
+    <tr>
+      <th class="border-0">Tạm tính</th>
+      <td class="text-right border-0"
+          th:text="${invoice != null ? #numbers.formatDecimal(invoice.subtotal, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+    </tr>
+    <tr>
+      <th>Giảm giá</th>
+      <td class="text-right"
+          th:text="${invoice != null ? #numbers.formatDecimal(invoice.discount, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+    </tr>
+    <tr>
+      <th>Thuế</th>
+      <td class="text-right"
+          th:text="${invoice != null ? #numbers.formatDecimal(invoice.taxAmount, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+    </tr>
+    <tr class="font-weight-bold">
+      <th>Tổng cộng</th>
+      <td class="text-right"
+          th:text="${invoice != null ? #numbers.formatDecimal(invoice.totalAmount, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</td>
+    </tr>
+  </table>
+</div>
+
+        </div>
+
+        <!-- Payments -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Thanh toán</strong>
+                <a class="btn btn-sm btn-success no-print"
+                   th:href="@{'/admin-branch/invoices/' + ${invoice != null ? invoice.invoiceId : 0} + '/payments/new'}">
+                    <i class="fas fa-plus"></i> Thêm thanh toán
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th style="width:20%">Ngày thanh toán</th>
+                                <th style="width:15%">Số tiền</th>
+                                <th style="width:15%">Phương thức</th>
+                                <th style="width:20%">Mã tham chiếu</th>
+                                <th style="width:15%">Trạng thái</th>
+                                <th class="text-right no-print" style="width:15%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${payments == null or #lists.isEmpty(payments)}">
+                                <td colspan="6" class="text-center text-muted">Chưa có thanh toán</td>
+                            </tr>
+                            <tr th:each="p : ${payments}">
+                                <td th:text="${p.paidAt != null ? #temporals.format(p.paidAt,'dd/MM/yyyy HH:mm') : 'N/A'}">N/A</td>
+                                <td th:text="${#numbers.formatDecimal(p.amount, 1, 'COMMA', 2, 'POINT')}">0.00</td>
+                                <td th:text="${!#strings.isEmpty(p.method) ? p.method : 'N/A'}">N/A</td>
+                                <td th:text="${!#strings.isEmpty(p.referenceNo) ? p.referenceNo : '-'}">-</td>
+                                <td>
+                                    <span class="badge"
+                                          th:with="ps=${p.status != null ? p.status.name() : 'UNKNOWN'}"
+                                          th:classappend="${ps=='CAPTURED'} ? ' badge-success' :
+                                          (${ps=='PENDING'} ? ' badge-warning' :
+                                          (${ps=='FAILED'} ? ' badge-danger' :
+                                          (${ps=='REFUNDED'} ? ' badge-info' : ' badge-secondary')))"
+                                          th:text="${ps}">STATUS</span>
+                                </td>
+                                <td class="text-right no-print">
+                                    <a class="btn btn-sm btn-outline-secondary"
+                                       th:href="@{'/admin-branch/invoices/payments/' + ${p.paymentId} + '/edit'}">Sửa</a>
+                                    <a class="btn btn-sm btn-outline-danger ml-1"
+                                       th:href="@{'/admin-branch/invoices/payments/' + ${p.paymentId} + '/delete'}"
+                                       onclick="return confirm('Xóa bản ghi thanh toán này?')">Xóa</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="mt-3 no-print d-flex justify-content-end">
+            <a class="btn btn-outline-secondary" th:href="@{/admin-branch/invoices}">
+                <i class="fas fa-list"></i> Danh sách hóa đơn
+            </a>
+            <a class="btn btn-primary ml-2"
+               th:href="@{'/admin-branch/invoices/' + ${invoice != null ? invoice.invoiceId : 0} + '/edit'}">
+                <i class="fas fa-edit"></i> Sửa hóa đơn
+            </a>
+        </div>
+
+        <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+        <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    </body>
+</html>

@@ -12,62 +12,97 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "Users")
 public class Users implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
+    // ----- Primary key -----
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
 
-    @NotBlank
-    @Size(max = 100)
-    @Column(nullable = false, unique = true)
+    // ----- Basic fields -----
+    @NotBlank(message = "Username is required")
+    @Size(max = 100, message = "Username must be less than 100 characters")
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @NotBlank
-    @Size(min = 6, max = 255)
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, max = 255, message = "Password must be between 6 and 255 characters")
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @NotBlank
-    @Size(max = 255)
+    @NotBlank(message = "Full name is required")
+    @Size(max = 255, message = "Full name must be less than 255 characters")
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @NotBlank
-    @Email
-    @Column(nullable = false, unique = true)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    @Size(max = 255)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Pattern(regexp = "^(\\+?\\d{9,15})$")
+    @Pattern(regexp = "^(\\+?\\d{9,15})$", message = "Invalid phone number")
+    @Column(name = "phone")
     private String phone;
 
+    @NotBlank(message = "Gender is required")
+    @Column(name = "gender")
     private String gender;
 
-    @NotNull
+    @NotNull(message = "Date of birth is required")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(nullable = false)
-    private String role = "PATIENT";
+    @Column(name = "role", nullable = false)
+    private String role = "PATIENT"; // default role
 
+    @Column(name = "enabled")
     private Boolean enabled = false;
 
+    // ----- OTP -----
     @Column(name = "otp_code")
     private String otpCode;
 
-    @Column(name = "otp_expiry")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "otp_expiry")
     private Date otpExpiry;
 
-    @Column(name = "created_at")
+    // ----- Audit fields -----
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
     private Date createdAt = new Date();
 
-    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at")
     private Date updatedAt = new Date();
 
-    public Users() {}
+    /* ====== NEW: Branch/Clinic relation ====== */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "clinic_id")  // cột FK trong bảng Users
+    private Clinics clinic;
 
+    // ----- Constructors -----
+    public Users() {
+    }
+
+    public Users(Long userId, String username, String passwordHash, String role) {
+        this.userId = userId;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.role = role;
+    }
+
+    public Clinics getClinic() {
+        return clinic;
+    }
+
+    public void setClinic(Clinics clinic) {
+        this.clinic = clinic;
+    }
+
+    // ----- Getters & Setters -----
     public Long getUserId() {
         return userId;
     }
@@ -179,6 +214,10 @@ public class Users implements Serializable {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
-    
+
+    // trong class Users
+    @javax.persistence.Transient
+    public Long getClinicId() {
+        return clinic != null ? clinic.getClinicId() : null;
+    }
 }

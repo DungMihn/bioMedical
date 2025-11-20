@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hỗ trợ trực tuyến</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"/>
+
+    <!-- CSS chung của giao diện public -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- CSS chat riêng -->
+    <link rel="stylesheet" th:href="@{/css/chat.css}">
+</head>
+<style>
+/* ====== NAVBAR ICON CHO TRANG CHAT FULL ====== */
+
+.chat-full-navbar {
+    width: 100%;
+    height: 60px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.chat-full-navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-full-navbar li {
+    display: flex;
+}
+
+.chat-full-navbar a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px; 
+    color: #4b5563;
+    transition: color .2s ease;
+}
+
+.chat-full-navbar a:hover {
+    color: #2563eb;
+}
+
+/* Màu icon đang active */
+.chat-full-navbar a.active {
+    color: #2563eb;
+}
+</style>
+
+<body>
+<!-- ===== NAVBAR ICON ===== -->
+<nav class="chat-full-navbar">
+    <ul>
+        <li><a th:href="@{/user/index}" title="Home">
+            <i class="fas fa-home"></i>
+        </a></li>
+
+        <li><a th:href="@{/user/about}" title="About">
+            <i class="fas fa-info-circle"></i>
+        </a></li>
+
+        <li><a th:href="@{/user/departments}" title="Departments">
+            <i class="fas fa-hospital"></i>
+        </a></li>
+
+        <li><a th:href="@{/user/doctor}" title="Doctors">
+            <i class="fas fa-user-md"></i>
+        </a></li>
+
+        <li><a th:href="@{/user/blog}" title="Blog">
+            <i class="fas fa-newspaper"></i>
+        </a></li>
+
+        <li><a th:href="@{/user/contact}" title="Contact">
+            <i class="fas fa-envelope"></i>
+        </a></li>
+    </ul>
+</nav>
+<!-- ===== END NAVBAR ICON ===== -->
+
+
+<main style="background:#f3f4f6; min-height:100vh;">
+    <div class="container py-2">
+        <h3 class="mb-4 text-center">Trợ lý ảo Doctor+ – Hỗ trợ bệnh nhân</h3>
+
+        <div class="chat-container">
+            <!-- Sidebar gợi ý -->
+            <div class="chat-sidebar">
+                <h5>Gợi ý câu hỏi</h5>
+
+                <div class="chat-suggestion" onclick="sendSuggestion('Tôi muốn đặt lịch khám mới thì làm sao?')">
+                    Đặt lịch khám
+                </div>
+                <div class="chat-suggestion" onclick="sendSuggestion('Bác sĩ chuyên khoa da liễu rảnh ngày nào?')">
+                    Hỏi lịch bác sĩ
+                </div>
+                <div class="chat-suggestion" onclick="sendSuggestion('Tôi muốn xem hóa đơn khám gần nhất của tôi.')">
+                    Xem hóa đơn khám
+                </div>
+                <div class="chat-suggestion" onclick="sendSuggestion('Các dịch vụ khám tổng quát hiện có là gì?')">
+                    Dịch vụ khám
+                </div>
+            </div>
+
+            <!-- Phần chính -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <div>
+                        <div class="chat-header-title">Chat với Trợ lý ảo Doctor+</div>
+                        <div class="chat-header-sub">
+                            Hỏi về lịch khám, bác sĩ, dịch vụ, invoice, thanh toán...
+                        </div>
+                    </div>
+                    <div class="chat-status" id="chatStatus">Sẵn sàng hỗ trợ</div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- JS sẽ load lịch sử; nếu không có lịch sử thì mới chèn lời chào mặc định -->
+                </div>
+
+                <div class="chat-input-area">
+                    <textarea id="chatInput" class="form-control" placeholder="Nhập câu hỏi của bạn..."
+                              onkeypress="if(event.key === 'Enter' && !event.shiftKey){ event.preventDefault(); sendMessage(); }"></textarea>
+                    <button class="btn btn-primary chat-send-btn" type="button" onclick="sendMessage()">
+                        Gửi
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ===== JS ===== -->
+<script>
+    const apiUrl = '/api/chat';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadHistory();
+    });
+
+    function appendMessage(text, sender) {
+        const container = document.getElementById('chatMessages');
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('chat-message', sender);
+
+        const bubble = document.createElement('div');
+        bubble.classList.add('chat-bubble');
+        bubble.innerText = text;
+
+        wrapper.appendChild(bubble);
+        container.appendChild(wrapper);
+
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function setStatus(text) {
+        document.getElementById('chatStatus').textContent = text;
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        if (!message) return;
+
+        appendMessage(message, 'user');
+        input.value = '';
+
+        setStatus('Đang xử lý...');
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message})
+            });
+
+            if (!response.ok) {
+                appendMessage('Xin lỗi, có lỗi khi kết nối tới máy chủ.', 'bot');
+                setStatus('Có lỗi kết nối');
+                return;
+            }
+
+            const data = await response.json();
+            const reply = data.reply || 'Xin lỗi, tôi chưa có câu trả lời phù hợp.';
+            appendMessage(reply, 'bot');
+            setStatus('Sẵn sàng hỗ trợ');
+        } catch (e) {
+            appendMessage('Lỗi kết nối tới server.', 'bot');
+            setStatus('Lỗi');
+        }
+    }
+
+    function sendSuggestion(text) {
+        const input = document.getElementById('chatInput');
+        input.value = text;
+        sendMessage();
+    }
+
+    // Load lịch sử từ /api/chat/history
+    async function loadHistory() {
+        const container = document.getElementById('chatMessages');
+        container.innerHTML = '';
+
+        try {
+            const res = await fetch(apiUrl + '/history', {
+                method: 'GET',
+                headers: {'Content-Type': 'application/json'}
+            });
+
+            if (!res.ok) {
+                renderWelcome();
+                return;
+            }
+
+            const data = await res.json();
+
+            if (!data || data.length === 0) {
+                renderWelcome();
+                return;
+            }
+
+            data.forEach(m => {
+                appendMessage(m.message, m.sender);
+            });
+
+        } catch (e) {
+            console.error('Không load được lịch sử chat', e);
+            renderWelcome();
+        }
+    }
+
+    function renderWelcome() {
+        const text = `Xin chào 👋, tôi là trợ lý ảo Doctor+.
+Bạn có thể hỏi tôi về:
+- Cách đặt lịch khám
+- Lịch làm việc của bác sĩ
+- Các dịch vụ khám, chi phí tham khảo
+- Thông tin hóa đơn / thanh toán (nếu đã đăng nhập)`;
+        appendMessage(text, 'bot');
+    }
+</script>
+
+<!-- JS của template (nếu cần dùng hiệu ứng navbar, dropdown...) -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+
+</body>
+</html>

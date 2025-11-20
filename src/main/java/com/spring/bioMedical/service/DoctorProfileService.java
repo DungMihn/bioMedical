@@ -33,10 +33,10 @@ public class DoctorProfileService {
     private SpecialtyService specialtyService;
 
     @Autowired
-    private ClinicService clinicService;
+    private ClinicServiceImplementation clinicService;
 
     public Doctors getDoctorProfile(Long userId) {
-        return doctorsRepository.findByUserId(userId)
+        return doctorsRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
     }
 

@@ -31,8 +31,8 @@ public class BookingService {
         }
 
         Appointments appointment = new Appointments();
-        appointment.setSlotIdd(slot);
-        appointment.setUserIdd(user);
+        appointment.setSlot(slot);
+        appointment.setUser(user);
         appointment.setStatus("PENDING");
         appointment.setNotes(req.getNotes());
         appointment.setCreatedAt(new Date());
@@ -96,8 +96,8 @@ public class BookingService {
                     .orElseThrow(() -> new RuntimeException("Time slot not found."));
 
             Appointments app = new Appointments();
-            app.setUserIdd(guest);
-            app.setSlotIdd(slot);
+            app.setUser(guest);
+            app.setSlot(slot);
             app.setStatus("PENDING");
             app.setNotes(req.getNotes());
             app.setCreatedAt(new Date());
@@ -193,7 +193,7 @@ public void confirmAppointment(String email, String otp) {
         app.setStatus("CANCELLED");
         appointmentRepo.save(app);
 
-        AppointmentSlots slot = app.getSlotIdd();
+        AppointmentSlots slot = app.getSlot();
         slot.setStatus("AVAILABLE");
         slotRepo.save(slot);
         return app;

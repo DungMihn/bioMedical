@@ -66,7 +66,7 @@ public ModelAndView resendOtp(@RequestParam("email") String email) {
             throw new RuntimeException("No pending appointment found to resend OTP.");
         }
 
-        AppointmentSlots slot = pendingApp.getSlotIdd();
+        AppointmentSlots slot = pendingApp.getSlot();
         if (!"AVAILABLE".equalsIgnoreCase(slot.getStatus())) {
             // If slot already booked by another, cancel appointment and stop
             pendingApp.setStatus("CANCELLED");

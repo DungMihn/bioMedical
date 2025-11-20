@@ -13,87 +13,113 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointments, Long> {
 
-    // ✅ Sửa lại query để phù hợp với SQL Server
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId) "
-            + "ORDER BY a.created_at DESC", nativeQuery = true)
+    // ✅ SỬA: Dùng JPQL với relationship thay vì native query
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.doctor.doctorId = :doctorId "
+            + "ORDER BY a.createdAt DESC")
     List<Appointments> findByDoctorId(@Param("doctorId") Long doctorId);
 
-    // ✅ Sửa query pending appointments
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId) "
-            + "AND a.status = 'PENDING'", nativeQuery = true)
-    List<Appointments> findPendingAppointmentsByDoctorId(@Param("doctorId") Long doctorId);
-
-    // ✅ Sửa query today appointments - DÙNG GETDATE() thay vì CURRENT_DATE
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId "
-            + "AND CAST(s.slot_date AS DATE) = CAST(GETDATE() AS DATE)) "
-            + "ORDER BY a.slot_id", nativeQuery = true)
+    // ✅ SỬA: Dùng JPQL cho query today appointments
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.doctor.doctorId = :doctorId "
+            + "AND a.slot.slotDate = CURRENT_DATE "
+            + // ← SỬA Ở ĐÂY
+            "ORDER BY a.slot.slotTime ASC")
     List<Appointments> findTodayAppointmentsByDoctorId(@Param("doctorId") Long doctorId);
 
-    // ✅ THÊM MỚI: Tìm appointments có slot_date trước ngày chỉ định và status cụ thể
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "INNER JOIN AppointmentSlots s ON a.slot_id = s.slot_id "
-            + "WHERE CAST(s.slot_date AS DATE) < CAST(:date AS DATE) "
-            + "AND a.status = :status", nativeQuery = true)
-    List<Appointments> findBySlot_SlotDateBeforeAndStatus(@Param("date") Date date, @Param("status") String status);
+    // ✅ SỬA: Dùng JPQL cho pending appointments
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.doctor.doctorId = :doctorId "
+            + "AND a.status = 'PENDING' "
+            + "ORDER BY a.createdAt DESC")
+    List<Appointments> findPendingAppointmentsByDoctorId(@Param("doctorId") Long doctorId);
 
-    // ✅ THÊM MỚI: Tìm appointments theo patient (user_id)
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.user_id = :userId "
-            + "ORDER BY a.created_at DESC", nativeQuery = true)
+    // ✅ SỬA: Dùng JPQL cho confirmed appointments
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.doctor.doctorId = :doctorId "
+            + "AND a.status = 'CONFIRMED' "
+            + "ORDER BY a.slot.slotDate ASC, a.slot.slotTime ASC")
+    List<Appointments> findConfirmedAppointmentsByDoctorId(@Param("doctorId") Long doctorId);
+
+    // ✅ SỬA: Dùng JPQL cho completed appointments
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.doctor.doctorId = :doctorId "
+            + "AND a.status = 'COMPLETED' "
+            + "ORDER BY a.createdAt DESC")
+    List<Appointments> findCompletedAppointmentsByDoctorId(@Param("doctorId") Long doctorId);
+
+    // ✅ SỬA: Dùng JPQL cho slot date before và status
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.slotDate < :date "
+            + "AND a.status = :status")
+    List<Appointments> findBySlotDateBeforeAndStatus(@Param("date") Date date, @Param("status") String status);
+
+    // ✅ SỬA: Dùng relationship user thay vì user_id
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.user.userId = :userId "
+            + "ORDER BY a.createdAt DESC")
     List<Appointments> findByUserId(@Param("userId") Long userId);
 
-    // ✅ THÊM MỚI: Tìm appointments theo slot_id
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.slot_id = :slotId", nativeQuery = true)
+    // ✅ SỬA: Dùng relationship slot thay vì slot_id
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.slotId = :slotId")
     List<Appointments> findBySlotId(@Param("slotId") Long slotId);
 
-    // ✅ THÊM MỚI: Tìm appointments theo khoảng thời gian
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "INNER JOIN AppointmentSlots s ON a.slot_id = s.slot_id "
-            + "WHERE CAST(s.slot_date AS DATE) BETWEEN CAST(:startDate AS DATE) AND CAST(:endDate AS DATE) "
-            + "AND a.status = :status", nativeQuery = true)
+    // ✅ SỬA: Dùng JPQL cho slot date between
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.slotDate BETWEEN :startDate AND :endDate "
+            + "AND a.status = :status")
     List<Appointments> findBySlotDateBetweenAndStatus(@Param("startDate") Date startDate,
             @Param("endDate") Date endDate,
             @Param("status") String status);
 
-    // ✅ THÊM MỚI: Đếm số appointments theo status
-    @Query(value = "SELECT COUNT(*) FROM Appointments a "
-            + "WHERE a.status = :status", nativeQuery = true)
+    // ✅ SỬA: Dùng JPQL cho count by status
+    @Query("SELECT COUNT(a) FROM Appointments a WHERE a.status = :status")
     Long countByStatus(@Param("status") String status);
 
-    // ✅ THÊM MỚI: Tìm appointments sắp tới (trong 7 ngày tới)
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "INNER JOIN AppointmentSlots s ON a.slot_id = s.slot_id "
-            + "WHERE CAST(s.slot_date AS DATE) BETWEEN CAST(GETDATE() AS DATE) AND CAST(DATEADD(day, 7, GETDATE()) AS DATE) "
+    // ✅ SỬA: Dùng JPQL cho upcoming appointments
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.slotDate BETWEEN CURRENT_DATE AND FUNCTION('DATEADD', day, 7, CURRENT_DATE) "
             + "AND a.status IN ('PENDING', 'CONFIRMED') "
-            + "ORDER BY s.slot_date, s.slot_time", nativeQuery = true)
+            + "ORDER BY a.slot.slotDate, a.slot.slotTime")
     List<Appointments> findUpcomingAppointments();
 
-    @Query("SELECT a FROM Appointments a WHERE a.status = 'PENDING' AND EXISTS "
-            + "(SELECT s FROM AppointmentSlots s WHERE s.slotId = a.slotId AND s.slotDate < CURRENT_DATE)")
+    // ✅ SỬA: Dùng JPQL cho expired pending appointments
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.status = 'PENDING' AND a.slot.slotDate < CURRENT_DATE")
     List<Appointments> findExpiredPendingAppointments();
 
-    // ✅ THÊM MỚI: Tìm appointments theo doctorId và status
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId) "
+    // ✅ SỬA: Dùng JPQL cho doctorId và status
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE a.slot.doctor.doctorId = :doctorId "
             + "AND a.status = :status "
-            + "ORDER BY a.created_at DESC", nativeQuery = true)
+            + "ORDER BY a.createdAt DESC")
     List<Appointments> findByDoctorIdAndStatus(@Param("doctorId") Long doctorId, @Param("status") String status);
 
-    // ✅ THÊM MỚI: Đếm appointments theo status và doctorId
-    @Query(value = "SELECT COUNT(*) FROM Appointments a "
-            + "WHERE a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId) "
-            + "AND a.status = :status", nativeQuery = true)
+    // ✅ SỬA: Dùng JPQL cho count by doctorId và status
+    @Query("SELECT COUNT(a) FROM Appointments a "
+            + "WHERE a.slot.doctor.doctorId = :doctorId "
+            + "AND a.status = :status")
     Long countByDoctorIdAndStatus(@Param("doctorId") Long doctorId, @Param("status") String status);
 
-    // ✅ THÊM MỚI: Tìm appointments có medical record
-    @Query(value = "SELECT a.* FROM Appointments a "
-            + "WHERE a.appointment_id IN (SELECT mr.appointment_id FROM MedicalRecords mr) "
-            + "AND a.slot_id IN (SELECT s.slot_id FROM AppointmentSlots s WHERE s.doctor_id = :doctorId)", nativeQuery = true)
+    // ✅ SỬA: Dùng JPQL cho appointments với medical records
+    @Query("SELECT a FROM Appointments a "
+            + "WHERE EXISTS (SELECT mr FROM MedicalRecords mr WHERE mr.appointment = a) "
+            + "AND a.slot.doctor.doctorId = :doctorId")
     List<Appointments> findAppointmentsWithMedicalRecords(@Param("doctorId") Long doctorId);
 
-    List<Appointments> findByUserId(Users user);
+    // ✅ THÊM MỚI: Tìm appointments theo user entity (dùng trong service)
+    List<Appointments> findByUserAndStatusOrderByCreatedAtDesc(Users user, String status);
+
+    // ✅ THÊM MỚI: Tìm appointments theo status
+    List<Appointments> findByStatusOrderByCreatedAtDesc(String status);
+
+    // ✅ THÊM MỚI: Tìm appointments theo user
+    List<Appointments> findByUserOrderByCreatedAtDesc(Users user);
+
+    // ✅ THÊM MỚI: Tìm first appointment theo user và status
+    default Appointments findFirstByUserAndStatusOrderByCreatedAtDesc(Users user, String status) {
+        List<Appointments> appointments = findByUserAndStatusOrderByCreatedAtDesc(user, status);
+        return appointments.isEmpty() ? null : appointments.get(0);
+    }
 }

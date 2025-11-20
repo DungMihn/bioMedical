@@ -1,19 +1,26 @@
 package com.spring.bioMedical.service;
 
+import com.spring.bioMedical.entity.Clinics;
+import com.spring.bioMedical.entity.Doctors;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.spring.bioMedical.entity.Users;
+import com.spring.bioMedical.repository.DoctorRepository;
 import com.spring.bioMedical.repository.UsersRepository;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    
-       @Autowired
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
+    @Autowired
     public UsersService(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
     }
@@ -37,7 +44,8 @@ public class UsersService {
     public List<Users> findAll() {
         return usersRepository.findAll();
     }
-     public Users findByOtpCode(String otpCode) {
+
+    public Users findByOtpCode(String otpCode) {
         return usersRepository.findByOtpCode(otpCode);
     }
 
@@ -112,6 +120,46 @@ public class UsersService {
             System.err.println("Error in searchPatients: " + e.getMessage());
             return new ArrayList<>();
         }
+    }
+
+    //LONG
+    public List<Users> findDoctorsByClinic(Long clinicId) {
+        if (clinicId == null) {
+            return usersRepository.findByRole("DOCTOR");
+        }
+        return usersRepository.findByRoleAndClinicClinicId("DOCTOR", clinicId);
+    }
+
+    // ✅ KHÔI PHỤC assign methods
+    public void assignClinic(Users user, Clinics clinic) {
+        user.setClinic(clinic);
+        usersRepository.save(user); // ✅ THÊM save()
+    }
+
+    @Transactional
+    public void assignClinic(Long userId, Clinics clinic) {
+        Users u = usersRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        u.setClinic(clinic);
+        // ✅ @Transactional sẽ tự save
+    }
+
+    // ✅ THÊM method lấy clinic của user hiện tại
+    public Clinics getCurrentUserClinic(Users user) {
+        return user.getClinic();
+    }
+
+    public Long getCurrentUserClinicId(Users user) {
+        return user.getClinic() != null ? user.getClinic().getClinicId() : null;
+    }
+
+
+    public boolean usernameTaken(String username) {
+        return username != null && usersRepository.existsByUsername(username.trim());
+    }
+
+    public boolean emailTaken(String email) {
+        return email != null && usersRepository.existsByEmail(email.trim());
     }
 
 }

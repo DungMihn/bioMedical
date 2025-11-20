@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <title>Invoices - Admin Branch</title>
+
+        <!-- CSS -->
+        <link th:href="@{/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+        <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet">
+        <link th:href="@{/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+        <link th:href="@{/vendor/css/sb-admin.css}" rel="stylesheet">
+        <link th:href="@{/css/admin-theme.css}" rel="stylesheet">
+    </head>
+    <body id="page-top">
+
+        <nav class="navbar navbar-expand navbar-dark bg-gradient-theme static-top">
+            <a class="navbar-brand mr-1" href="#">Doctor+ Admin Branch</a>
+        </nav>
+
+        <div id="wrapper">
+            <ul class="sidebar navbar-nav">
+                <li class="nav-item" th:classappend="${activePage}=='appointments' ? ' active'">
+                    <a class="nav-link" th:href="@{/admin-branch/appointments}">
+                        <i class="fas fa-fw fa-calendar"></i><span>Appointments</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage}=='doctor-details' ? ' active'">
+                    <a class="nav-link" th:href="@{/admin-branch/doctor-details}">
+                        <i class="fas fa-fw fa-user-md"></i><span>Doctor Details</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage}=='add-doctor' ? ' active'">
+                    <a class="nav-link" th:href="@{/admin-branch/add-doctor}">
+                        <i class="fas fa-fw fa-plus"></i><span>Add Doctor</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage}=='invoices' ? ' active'">
+                    <a class="nav-link" th:href="@{/admin-branch/invoices}">
+                        <i class="fas fa-fw fa-file-invoice-dollar"></i><span>Invoices</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage}=='schedule' ? ' active'">
+                    <a class="nav-link" th:href="@{/admin-branch/schedule}">
+                        <i class="fas fa-fw fa-calendar-alt"></i><span>Schedule</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage}=='add-user' ? ' active'">
+                    <a class="nav-link" th:href="@{/admin-branch/add-user}">
+                        <i class="fas fa-fw fa-user-plus"></i><span>Add Patient</span>
+                    </a>
+                </li>
+                <li class="nav-item" th:classappend="${activePage}=='my-profile' ? ' active'">
+                    <a class="nav-link" th:href="@{/admin-branch/edit-my-profile}">
+                        <i class="fas fa-fw fa-user"></i><span>My Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div id="content-wrapper">
+                <div class="container-fluid">
+
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/admin-branch/invoices}">Invoices</a></li>
+                        <li class="breadcrumb-item active">Danh sách</li>
+                    </ol>
+
+                    <div class="card mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-list"></i> Danh sách hoá đơn</span>
+                            <a class="btn btn-primary btn-sm" th:href="@{/admin-branch/invoices/new(appointmentId=1)}">
+                                <i class="fas fa-plus"></i> Tạo từ Appointment (demo)
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <!-- bảng -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Số HĐ</th>
+                                            <th>Ngày</th>
+                                            <th>Clinic</th>
+                                            <th>Patient</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Trạng thái</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="inv,iter : ${invoices}">
+                                            <td th:text="${iter.index + 1}">1</td>
+                                            <td th:text="${inv.invoiceNo}">INV-0001</td>
+                                            <td th:text="${#temporals.format(inv.invoiceDate,'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                                            <td th:text="${inv.clinic != null ? inv.clinic.name : '—'}">Clinic A</td>
+                                            <td th:text="${inv.patient != null ? inv.patient.fullName : '—'}">Nguyễn Văn A</td>
+                                            <td class="text-right"
+                                                th:text="${#numbers.formatDecimal(inv.totalAmount,0,'POINT',2,'COMMA')}">0.00</td>
+                                            <td th:text="${inv.status}">ISSUED</td>
+                                            <td>
+                                                <a class="btn btn-sm btn-outline-primary"
+                                                   th:href="@{'/admin-branch/invoices/' + ${inv.invoiceId}}">
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- nếu rỗng -->
+                            <div th:if="${#lists.isEmpty(invoices)}" class="text-center text-muted mt-3">
+                                Chưa có hoá đơn.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- JS -->
+        <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+        <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+        <script th:src="@{/vendor/datatables/jquery.dataTables.js}"></script>
+        <script th:src="@{/vendor/datatables/dataTables.bootstrap4.js}"></script>
+        <script>
+            $(function () {
+                $('#dataTable').DataTable();
+            });
+        </script>
+    </body>
+</html>

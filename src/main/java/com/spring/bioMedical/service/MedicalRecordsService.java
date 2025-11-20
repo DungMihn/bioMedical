@@ -45,8 +45,8 @@ public class MedicalRecordsService {
                 return new ArrayList<>();
             }
 
-            // Lấy medical records từ appointment ids
-            List<MedicalRecords> records = medicalRecordsRepository.findByAppointmentIdIn(appointmentIds);
+            // ✅ SỬA: Dùng method mới findByAppointmentAppointmentIdIn
+            List<MedicalRecords> records = medicalRecordsRepository.findByAppointmentAppointmentIdIn(appointmentIds);
             records.forEach(this::enrichMedicalRecordData);
             return records;
 
@@ -120,8 +120,6 @@ public class MedicalRecordsService {
 //
 //        return nameMatch || phoneMatch || emailMatch;
 //    }
-
-
     public void updateMedicalRecord(MedicalRecords medicalRecord) {
         MedicalRecords existingRecord = medicalRecordsRepository.findById(medicalRecord.getRecordId()).orElse(null);
         if (existingRecord != null) {

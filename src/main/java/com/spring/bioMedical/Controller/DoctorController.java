@@ -57,29 +57,42 @@ public class DoctorController {
         try {
             String username = getCurrentUsername();
             Users currentUser = usersService.findByUsername(username);
+            System.out.println("[DEBUG] =========== DOCTOR DASHBOARD DEBUG ===========");
             System.out.println("[DEBUG] Current username: " + username);
-            System.out.println("[DEBUG] Current user: " + (currentUser != null ? currentUser.getFullName() : "null"));
+            System.out.println("[DEBUG] Current user ID: " + (currentUser != null ? currentUser.getUserId() : "null"));
 
             if (currentUser != null) {
-                currentUser.setUpdatedAt(new Date());
-                usersService.save(currentUser);
-
                 Optional<Doctors> doctorOpt = doctorService.getDoctorByUserId(currentUser.getUserId());
                 System.out.println("[DEBUG] Doctor found: " + doctorOpt.isPresent());
+
                 if (doctorOpt.isPresent()) {
                     Doctors doctor = doctorOpt.get();
                     Long doctorId = doctor.getDoctorId();
-
-                    // Lấy tên chuyên khoa
-                    String specialtyName = getDoctorSpecialtyName(doctor);
-                    System.out.println("[DEBUG] Specialty name: " + specialtyName);
                     System.out.println("[DEBUG] Doctor ID: " + doctorId);
-                    System.out.println("[DEBUG] Specialty ID: " + doctor.getSpecialtyId());
 
-                    // Lấy TẤT CẢ appointments để tính toán thống kê chính xác
+                    // CHỈ DEBUG - không ảnh hưởng logic chính
+                    try {
+                        List<AppointmentSlots> slots = appointmentService.getSlotsByDoctorId(doctorId);
+                        
+                        
+                        System.out.println("[DEBUG] Total slots for doctor: " + slots.size());
+                    } catch (Exception e) {
+                        System.out.println("[DEBUG] Could not get slots: " + e.getMessage());
+                    }
+
+                    // Lấy appointments - QUAN TRỌNG
                     List<Appointments> allAppointments = appointmentService.getAppointmentsByDoctorId(doctorId);
+                    System.out.println("[DEBUG] Total appointments found: " + allAppointments.size());
 
-                    // Lấy các danh sách appointments với logic đồng bộ
+                    // DEBUG chi tiết từng appointment
+                    for (Appointments appt : allAppointments) {
+                        System.out.println("[DEBUG] Appointment " + appt.getAppointmentId()
+                                + " - Status: " + appt.getStatus()
+                                + " - Slot ID: " + appt.getSlotId()
+                                + " - User ID: " + appt.getUserId());
+                    }
+
+                    // GIỮ NGUYÊN LOGIC CỦA BẠN - không thay đổi
                     List<Appointments> todayAppointments = getTodayAppointmentsWithExpiredCheck(allAppointments);
                     List<Appointments> pendingAppointments = getPendingAppointmentsWithExpiredCheck(allAppointments);
                     List<Appointments> confirmedAppointments = getConfirmedAppointments(allAppointments);
@@ -91,12 +104,12 @@ public class DoctorController {
                     List<Appointments> recentAutoActions = getRecentAutoActions(doctorId);
 
                     model.addAttribute("doctor", doctor);
-                    model.addAttribute("specialtyName", specialtyName);
+                    model.addAttribute("specialtyName", getDoctorSpecialtyName(doctor));
                     model.addAttribute("todayAppointments", todayAppointments);
                     model.addAttribute("pendingAppointments", pendingAppointments);
                     model.addAttribute("confirmedAppointments", confirmedAppointments);
                     model.addAttribute("completedAppointments", completedAppointments);
-                    model.addAttribute("expiredAppointments", expiredAppointments); // Thêm expired appointments
+                    model.addAttribute("expiredAppointments", expiredAppointments);
                     model.addAttribute("upcomingNotifications", upcomingNotifications);
                     model.addAttribute("recentAutoActions", recentAutoActions);
 
@@ -120,6 +133,7 @@ public class DoctorController {
             model.addAttribute("email", currentUser != null ? currentUser.getEmail() : "");
             model.addAttribute("user", currentUser);
 
+            System.out.println("[DEBUG] =========== END DEBUG ===========");
             return "doctor/index";
 
         } catch (Exception e) {

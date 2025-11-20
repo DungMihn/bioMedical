@@ -17,7 +17,7 @@ public class DoctorService {
     private SpecialtyService specialtyService;
 
     public Optional<Doctors> getDoctorByUserId(Long userId) {
-        return doctorRepository.findByUserId(userId);
+        return doctorRepository.findByUserUserId(userId);
     }
     
     public Doctors getDoctorById(Long doctorId) {
