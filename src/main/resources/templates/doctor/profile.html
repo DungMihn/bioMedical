@@ -2,36 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Hồ sơ Bác sĩ - Remedic</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Remedic theme CSS -->
-        <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
-        <link rel="stylesheet" href="../css/open-iconic-bootstrap.min.css">
-        <link rel="stylesheet" href="../css/animate.css">
-        <link rel="stylesheet" href="../css/owl.carousel.min.css">
-        <link rel="stylesheet" href="../css/owl.theme.default.min.css">
-        <link rel="stylesheet" href="../css/magnific-popup.css">
-        <link rel="stylesheet" href="../css/aos.css">
-        <link rel="stylesheet" href="../css/ionicons.min.css">
-        <link rel="stylesheet" href="../css/bootstrap-datepicker.css">
-        <link rel="stylesheet" href="../css/jquery.timepicker.css">
-        <link rel="stylesheet" href="../css/flaticon.css">
-        <link rel="stylesheet" href="../css/icomoon.css">
-        <link rel="stylesheet" href="../css/style.css">
+        <!-- Bootstrap & Font Awesome -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-        <!-- Custom styles -->
         <style>
             :root {
                 --sidebar-width: 250px;
+                --primary-color: #1089ff;
+                --primary-dark: #0c6ed4;
+                --success-color: #198754;
+                --warning-color: #ffc107;
+                --light-bg: #f8fbff;
+                --card-shadow: 0 10px 30px -10px rgba(0,0,0,.1);
+                --card-hover-shadow: 0 14px 36px -12px rgba(0,0,0,.12);
             }
+
+            * {
+                box-sizing: border-box;
+            }
+
             body {
-                background-color: #f8fbff;
+                margin: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: var(--light-bg);
+                color: #333;
+                line-height: 1.6;
             }
+
             /* Sidebar */
             .rm-sidebar {
                 position: fixed;
@@ -40,11 +42,13 @@
                 bottom: 0;
                 width: var(--sidebar-width);
                 z-index: 1000;
-                background: linear-gradient(180deg, #1089ff 0%, #0c6ed4 100%);
+                background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
                 color: #fff;
                 box-shadow: 2px 0 12px rgba(0,0,0,.08);
                 padding-top: 70px;
+                overflow-y: auto;
             }
+
             .rm-sidebar .brand {
                 position: fixed;
                 top: 0;
@@ -57,12 +61,22 @@
                 background: rgba(0,0,0,.08);
                 font-weight: 700;
                 letter-spacing: .5px;
+                font-size: 1.2rem;
+                z-index: 1001;
+                gap: 8px;
             }
+
+            .rm-sidebar .brand i {
+                font-size: 1.1rem;
+                color: #e0f2fe;
+            }
+
             .rm-sidebar .menu {
                 list-style: none;
-                margin: 0;
                 padding: 10px 0;
+                margin: 0;
             }
+
             .rm-sidebar .menu li a {
                 display: flex;
                 align-items: center;
@@ -72,411 +86,695 @@
                 padding: 12px 18px;
                 transition: .2s;
                 border-left: 4px solid transparent;
+                font-size: 0.9rem;
             }
+
+            .rm-sidebar .menu li a i {
+                width: 22px;
+                text-align: center;
+                font-size: 0.95rem;
+            }
+
             .rm-sidebar .menu li a:hover,
             .rm-sidebar .menu li a.active {
                 background: rgba(255,255,255,.12);
                 border-left-color: #fff;
                 color: #fff;
+                transform: translateX(2px);
             }
-            .rm-badge {
-                margin-left: auto;
-                background: #ff4757;
-                color: #fff;
-                border-radius: 999px;
-                font-size: 12px;
-                padding: 2px 8px;
+
+            .rm-sidebar::-webkit-scrollbar {
+                width: 6px;
             }
+            .rm-sidebar::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,.4);
+                border-radius: 3px;
+            }
+            .rm-sidebar::-webkit-scrollbar-thumb:hover {
+                background: rgba(255,255,255,.6);
+            }
+
             /* Content */
             .rm-content {
                 margin-left: var(--sidebar-width);
                 min-height: 100vh;
+                padding-bottom: 32px;
             }
-            /* Cards */
-            .rm-card {
-                background: #fff;
-                border-radius: 6px;
-                border: none;
-                box-shadow: 0 10px 30px -10px rgba(0,0,0,.1);
-                transition: transform .2s, box-shadow .2s;
+
+            /* Header */
+            .rm-header {
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                color: #fff;
+                padding: 1.8rem 0 1.4rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,.1);
+                position: relative;
+                overflow: hidden;
             }
-            .rm-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 14px 36px -12px rgba(0,0,0,.12);
+
+            .rm-header::before {
+                content: '';
+                position: absolute;
+                top: -40px;
+                right: -80px;
+                width: 260px;
+                height: 260px;
+                background: radial-gradient(circle at center, rgba(255,255,255,0.25), transparent 60%);
             }
-            .status-badge {
-                padding: 6px 10px;
-                border-radius: 999px;
-                font-size: 12px;
+
+            .rm-header-inner {
+                max-width: 1180px;
+                margin: 0 auto;
+                padding: 0 16px;
+            }
+
+            .doctor-header {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 16px;
+                justify-content: space-between;
+            }
+
+            .doctor-header-left {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+
+            .doctor-avatar-xl {
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #fff, #cce4ff);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--primary-dark);
+                font-size: 2rem;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            }
+
+            .doctor-header-text .title {
+                font-size: 1.35rem;
                 font-weight: 700;
             }
-            .status-PENDING {
-                background: #ffe08a;
-                color: #7a5e00;
-            }
-            .status-CONFIRMED {
-                background: #c6f6d5;
-                color: #0f5132;
-            }
-            .status-COMPLETED {
-                background: #b6e0fe;
-                color: #084298;
-            }
-            .status-CANCELLED {
-                background: #f8d7da;
-                color: #842029;
-            }
-            .status-EXPIRED {
-                background: #6c757d;
-                color: white;
-            }
-            .status-AUTO_CANCELLED {
-                background: #6c757d;
-                color: white;
-            }
-            .status-NO_SHOW {
-                background: #ff6b6b;
-                color: white;
+
+            .doctor-header-text .subtitle {
+                font-size: 0.95rem;
+                opacity: 0.97;
             }
 
-            /* Stats cards improvements */
-            .stat-card {
-                transition: all 0.3s ease;
-                cursor: pointer;
-                border-left: 4px solid transparent;
-            }
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 35px -10px rgba(0,0,0,.15);
-            }
-            .stat-card.today {
-                border-left-color: #17a2b8;
-            }
-            .stat-card.pending {
-                border-left-color: #ffc107;
-            }
-            .stat-card.confirmed {
-                border-left-color: #28a745;
-            }
-            .stat-card.completed {
-                border-left-color: #007bff;
-            }
-            .stat-card.expired {
-                border-left-color: #dc3545;
+            .doctor-header-text .meta {
+                margin-top: 4px;
+                font-size: 0.85rem;
             }
 
-            /* Alert improvements */
-            .alert-custom {
-                border-left: 4px solid;
-                border-radius: 6px;
-            }
-            .alert-warning-custom {
-                border-left-color: #ffc107;
-                background: #fffbf0;
-            }
-            .alert-danger-custom {
-                border-left-color: #dc3545;
-                background: #fdf2f2;
-            }
-            .alert-info-custom {
-                border-left-color: #17a2b8;
-                background: #f0f9ff;
+            .doctor-header-text .meta span {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 3px 10px;
+                border-radius: 999px;
+                background: rgba(0,0,0,0.08);
+                border: 1px solid rgba(255,255,255,0.35);
+                font-size: 0.8rem;
             }
 
-            /* Appointment card improvements */
-            .appointment-card {
-                border-left: 4px solid #e9ecef;
-                transition: all 0.2s;
-            }
-            .appointment-card:hover {
-                background-color: #f8fbff;
-                transform: translateX(5px);
-            }
-            .appointment-card.PENDING {
-                border-left-color: #ffc107;
-            }
-            .appointment-card.CONFIRMED {
-                border-left-color: #28a745;
-            }
-            .appointment-card.COMPLETED {
-                border-left-color: #007bff;
-            }
-            .appointment-card.EXPIRED {
-                border-left-color: #6c757d;
-                opacity: 0.7;
-            }
-            .appointment-card.CANCELLED {
-                border-left-color: #dc3545;
-                opacity: 0.7;
+            .doctor-header-right {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: flex-end;
             }
 
-            /* Quick actions */
-            .quick-action-btn {
-                transition: all 0.3s ease;
-                border: none;
-                border-radius: 8px;
-                padding: 15px;
+            .btn-header {
+                border-radius: 999px;
+                font-size: 0.82rem;
+                padding: 6px 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border: 1px solid rgba(255,255,255,0.65);
+                background: rgba(0,0,0,0.06);
+                color: #fff;
+                text-decoration: none;
+            }
+
+            .btn-header:hover {
+                background: rgba(0,0,0,0.14);
+            }
+
+            /* Page body */
+            .page-body {
+                max-width: 1180px;
+                margin: 0 auto;
+                padding: 0 16px 24px;
+            }
+
+            /* Card */
+            .rm-card {
+                background: #fff;
+                border-radius: 14px;
+                border: 1px solid #e9ecef;
+                box-shadow: var(--card-shadow);
+                transition: transform .2s, box-shadow .2s;
+                margin-bottom: 1.5rem;
+                overflow: hidden;
+            }
+
+            .rm-card:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--card-hover-shadow);
+            }
+
+            .rm-card-header {
+                padding: 1rem 1.4rem;
+                border-bottom: 1px solid rgba(0,0,0,.04);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                background: #fff;
+            }
+
+            .rm-card-header h5 {
+                margin: 0;
+                font-size: 0.98rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #0f172a;
+            }
+
+            .rm-card-header h5 i {
+                color: var(--primary-color);
+            }
+
+            .rm-card-header small {
+                display: block;
+                font-size: 0.78rem;
+                color: #6b7280;
+            }
+
+            .rm-card-body {
+                padding: 1.2rem 1.4rem 1.3rem;
+            }
+
+            /* Info */
+            .info-label {
+                font-weight: 600;
+                color: #495057;
+                margin-bottom: 0.25rem;
+                font-size: 0.85rem;
+            }
+
+            .info-value {
+                color: #495057;
+                margin-bottom: 0.8rem;
+                font-size: 0.95rem;
+                font-weight: 500;
+            }
+
+            .info-muted {
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+
+            .profile-row + .profile-row {
+                margin-top: 10px;
+                padding-top: 10px;
+                border-top: 1px dashed #e5e7eb;
+            }
+
+            /* Bio */
+            .bio-block {
+                background: #f8f9fa;
+                border-radius: 10px;
+                padding: 0.9rem 1rem;
+                border: 1px solid #e9ecef;
+                font-size: 0.95rem;
+                color: #374151;
+            }
+
+            .bio-empty {
                 text-align: center;
-                color: white;
+                padding: 24px 12px;
+                color: #6b7280;
+            }
+
+            .bio-empty i {
+                font-size: 2rem;
+                color: #cbd5f5;
+                margin-bottom: 8px;
+            }
+
+            /* Right column summary */
+            .profile-summary-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-size: 1.6rem;
+                box-shadow: 0 4px 15px rgba(16, 137, 255, 0.3);
+                flex-shrink: 0;
+            }
+
+            .status-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 10px;
+                border-radius: 999px;
+                background: #ecfdf5;
+                color: #166534;
+                font-size: 0.78rem;
                 font-weight: 600;
             }
-            .quick-action-btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 25px -8px rgba(0,0,0,.3);
+
+            .status-chip i {
+                font-size: 0.8rem;
             }
-            .quick-action-btn.primary {
-                background: linear-gradient(135deg, #1089ff 0%, #0c6ed4 100%);
+
+            .quick-link {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 10px;
+                border-radius: 10px;
+                background: #f8fafc;
+                border: 1px solid #e5e7eb;
+                font-size: 0.88rem;
+                text-decoration: none;
+                color: #111827;
+                transition: all 0.16s ease;
             }
-            .quick-action-btn.info {
-                background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+
+            .quick-link i {
+                width: 20px;
+                text-align: center;
+                color: var(--primary-color);
             }
-            .quick-action-btn.success {
-                background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+
+            .quick-link:hover {
+                background: #e8f2ff;
+                border-color: #bfdbfe;
+                transform: translateY(-1px);
+            }
+
+            .rm-btn {
+                border-radius: 8px;
+                font-size: 0.88rem;
+                font-weight: 500;
+                padding: 0.55rem 1.1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.4rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                width: 100%;
+            }
+
+            .rm-btn i {
+                font-size: 0.9rem;
+            }
+
+            .rm-btn-primary {
+                background: var(--primary-color);
+                color: #fff;
+            }
+
+            .rm-btn-warning {
+                background: var(--warning-color);
+                color: #212529;
+            }
+
+            .rm-btn-success {
+                background: var(--success-color);
+                color: #fff;
+            }
+
+            .rm-btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+            }
+
+            .alert-success-custom {
+                border-radius: 10px;
+                padding: 10px 12px;
+                border: 1px solid #bbf7d0;
+                background: #ecfdf5;
+                color: #166534;
+                font-size: 0.9rem;
             }
 
             /* Responsive */
             @media (max-width: 991.98px) {
                 .rm-sidebar {
                     transform: translateX(-100%);
-                    transition: .3s;
+                    transition: transform 0.3s ease;
                 }
-                .rm-sidebar.show {
+
+                .rm-sidebar.show,
+                .rm-sidebar.active {
                     transform: translateX(0);
                 }
+
                 .rm-content {
                     margin-left: 0;
                 }
+
+                .doctor-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+
+                .doctor-header-right {
+                    justify-content: flex-start;
+                }
             }
 
-            /* Loading overlay */
-            .loading-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
-                display: none;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
+            @media (max-width: 768px) {
+                .rm-card-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
             }
-            .loading-spinner {
-                background: white;
-                padding: 2rem;
-                border-radius: 10px;
-                text-align: center;
-            }
-
         </style>
-
     </head>
     <body>
+        <!-- Sidebar -->
         <div class="rm-sidebar">
             <div class="brand">
-                <i class="fas fa-hospital me-2"></i> REMEDIC
+                <i class="fas fa-hospital"></i>
+                <span>REMEDIC</span>
             </div>
             <ul class="menu">
                 <li>
                     <a th:href="@{/doctor/index}" class="active">
-                        <i class="fas fa-home"></i> Dashboard
+                        <i class="fas fa-home"></i>Dashboard
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/doctor/appointments}">
-                        <i class="fas fa-calendar"></i> Quản lý Lịch hẹn
-                        <span th:if="${pendingAppointmentsCount > 0}" class="rm-badge" 
-                              th:text="${pendingAppointmentsCount}">0</span>
-                    </a>
-                </li>
-                <li>
-                    <a th:href="@{/doctor/appointments/confirmed}">
-                        <i class="fas fa-calendar-check"></i> Lịch hẹn Đã XN
-                        <span th:if="${confirmedAppointmentsCount > 0}" class="rm-badge" 
-                              th:text="${confirmedAppointmentsCount}">0</span>
+                        <i class="fas fa-calendar"></i>Quản lý Lịch hẹn
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/doctor/appointments/history}">
-                        <i class="fas fa-history"></i> Lịch sử Lịch hẹn
+                        <i class="fas fa-history"></i>Lịch sử Lịch hẹn
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/doctor/medical-records}">
-                        <i class="fas fa-file-medical"></i> Hồ sơ bệnh án
+                        <i class="fas fa-file-medical"></i>Hồ sơ bệnh án
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/doctor/profile}">
-                        <i class="fas fa-user-md"></i> Hồ sơ bác sĩ
+                        <i class="fas fa-user-md"></i>Hồ sơ bác sĩ
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/logout}">
-                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        <i class="fas fa-sign-out-alt"></i>Đăng xuất
                     </a>
                 </li>
             </ul>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main content -->
         <div class="rm-content">
             <!-- Header -->
             <div class="rm-header">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1 class="display-6 fw-bold">
-                                <i class="fas fa-user-md me-2"></i> Hồ sơ Bác sĩ
-                            </h1>
-                            <p class="lead mb-0">Thông tin cá nhân và chuyên môn</p>
+                <div class="rm-header-inner">
+                    <div class="doctor-header">
+                        <div class="doctor-header-left">
+                            <div class="doctor-avatar-xl">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="doctor-header-text">
+                                <div class="title" th:text="${user.fullName} ?: 'Bác sĩ'">Bác sĩ</div>
+                                <div class="subtitle" th:text="${specialtyName} ?: 'Chuyên khoa chưa cập nhật'">
+                                    Chuyên khoa
+                                </div>
+                                <div class="meta mt-1">
+                                    <span>
+                                        <i class="fas fa-hospital"></i>
+                                        <span th:text="${clinicName} ?: 'Phòng khám chưa cập nhật'">Phòng khám</span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <a th:href="@{/doctor/profile/edit}" class="btn btn-light">
-                                <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                        <div class="doctor-header-right">
+                            <a th:href="@{/doctor/profile/edit}" class="btn-header">
+                                <i class="fas fa-edit"></i> Chỉnh sửa hồ sơ
+                            </a>
+                            <a th:href="@{/doctor/appointments}" class="btn-header">
+                                <i class="fas fa-calendar-alt"></i> Lịch hẹn
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="container mt-4">
-                <!-- Success Message -->
-                <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show">
-                    <i class="fas fa-check-circle me-2"></i>
-                    Cập nhật thông tin thành công!
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <!-- Page body -->
+            <div class="page-body">
+                <!-- Thông báo cập nhật thành công -->
+                <div th:if="${param.success}">
+                    <div class="alert-success-custom mb-3 d-flex align-items-center gap-2">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Cập nhật thông tin hồ sơ thành công.</span>
+                    </div>
                 </div>
 
-                <div class="row">
-                    <!-- Left Column -->
+                <div class="row g-3">
+                    <!-- LEFT COLUMN -->
                     <div class="col-lg-8">
-                        <!-- Basic Information -->
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white">
-                                <h5 class="card-title mb-0">
-                                    <i class="fas fa-id-card me-2"></i> Thông tin Cá nhân
-                                </h5>
+                        <!-- Thông tin cá nhân -->
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5>
+                                        <i class="fas fa-id-card"></i> Thông tin cá nhân
+                                    </h5>
+                                    <small>Thông tin cơ bản của tài khoản bác sĩ.</small>
+                                </div>
                             </div>
-                            <div class="card-body">
+                            <div class="rm-card-body">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted small">Họ và tên</label>
-                                        <p class="fs-5 fw-bold" th:text="${user.fullName}"></p>
+                                    <div class="col-md-6 profile-row">
+                                        <div class="info-label">Họ và tên</div>
+                                        <div class="info-value" th:text="${user.fullName}">Tên bác sĩ</div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted small">Email</label>
-                                        <p th:text="${user.email}"></p>
+                                    <div class="col-md-6 profile-row">
+                                        <div class="info-label">Email</div>
+                                        <div class="info-value" th:text="${user.email}">email@example.com</div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted small">Số điện thoại</label>
-                                        <p th:text="${user.phone} ?: 'Chưa cập nhật'"></p>
+                                    <div class="col-md-6 profile-row">
+                                        <div class="info-label">Số điện thoại</div>
+                                        <div class="info-value"
+                                             th:text="${user.phone} ?: 'Chưa cập nhật'">Chưa cập nhật</div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted small">Giới tính</label>
-                                        <p th:text="${user.gender} ?: 'Chưa cập nhật'"></p>
+                                    <div class="col-md-6 profile-row">
+                                        <div class="info-label">Giới tính</div>
+                                        <div class="info-value"
+                                             th:text="${user.gender} ?: 'Chưa cập nhật'">Chưa cập nhật</div>
+                                    </div>
+                                    <div class="col-md-6 profile-row" th:if="${user.dateOfBirth != null}">
+                                        <div class="info-label">Ngày sinh</div>
+                                        <div class="info-value"
+                                             th:text="${#temporals.format(user.dateOfBirth, 'dd/MM/yyyy')}">01/01/1990</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Professional Information -->
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white">
-                                <h5 class="card-title mb-0">
-                                    <i class="fas fa-briefcase-medical me-2"></i> Thông tin Chuyên môn
-                                </h5>
+                        <!-- Thông tin chuyên môn -->
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5>
+                                        <i class="fas fa-briefcase-medical"></i> Thông tin chuyên môn
+                                    </h5>
+                                    <small>Chuyên khoa, phòng khám và mã bác sĩ trong hệ thống.</small>
+                                </div>
                             </div>
-                            <div class="card-body">
+                            <div class="rm-card-body">
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted small">Chuyên khoa</label>
-                                        <p class="text-primary fw-semibold" th:text="${specialtyName}"></p>
+                                    <div class="col-md-6 profile-row">
+                                        <div class="info-label">Chuyên khoa</div>
+                                        <div class="info-value text-primary"
+                                             th:text="${specialtyName} ?: 'Chưa cập nhật'">Chưa cập nhật</div>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="fw-semibold text-muted small">Phòng khám</label>
-                                        <p th:text="${clinicName}"></p>
+                                    <div class="col-md-6 profile-row">
+                                        <div class="info-label">Phòng khám</div>
+                                        <div class="info-value"
+                                             th:text="${clinicName} ?: 'Chưa cập nhật'">Chưa cập nhật</div>
                                     </div>
-                                    <div class="col-12 mb-3">
-                                        <label class="fw-semibold text-muted small">Mã bác sĩ</label>
-                                        <p class="text-muted" th:text="${doctor.doctorId}"></p>
+                                    <div class="col-md-6 profile-row">
+                                        <div class="info-label">Mã bác sĩ</div>
+                                        <div class="info-value text-muted"
+                                             th:text="${doctor.doctorId}">ID</div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="alert alert-info d-flex align-items-center gap-2 mb-0"
+                                         style="font-size: 0.85rem;">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>
+                                            Thông tin chuyên khoa và phòng khám được quản lý bởi hệ thống.
+                                            Vui lòng liên hệ quản trị viên nếu cần thay đổi.
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bio Information -->
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-white">
-                                <h5 class="card-title mb-0">
-                                    <i class="fas fa-file-alt me-2"></i> Giới thiệu
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <div th:if="${doctor.bio}" class="bg-light p-3 rounded">
-                                    <p class="mb-0" th:text="${doctor.bio}"></p>
+                        <!-- Giới thiệu -->
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5>
+                                        <i class="fas fa-file-alt"></i> Giới thiệu
+                                    </h5>
+                                    <small>Giới thiệu về bản thân, kinh nghiệm và định hướng chuyên môn.</small>
                                 </div>
-                                <div th:unless="${doctor.bio}" class="text-center py-4 text-muted">
-                                    <i class="fas fa-file-alt fa-2x mb-3"></i>
-                                    <p class="mb-0">Chưa có thông tin giới thiệu</p>
-                                    <small>Hãy thêm thông tin giới thiệu về bản thân</small>
+                                <a th:href="@{/doctor/profile/edit}" class="btn-header">
+                                    <i class="fas fa-pen"></i> Chỉnh sửa
+                                </a>
+                            </div>
+                            <div class="rm-card-body">
+                                <div th:if="${doctor.bio}" class="bio-block">
+                                    <p class="mb-0" th:text="${doctor.bio}">
+                                        Nội dung giới thiệu...
+                                    </p>
+                                </div>
+                                <div th:unless="${doctor.bio}" class="bio-empty">
+                                    <i class="fas fa-file-alt mb-2"></i>
+                                    <p class="mb-1">Chưa có thông tin giới thiệu</p>
+                                    <small>Hãy thêm một đoạn mô tả ngắn về kinh nghiệm, thế mạnh và phong cách làm việc.</small>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column -->
+                    <!-- RIGHT COLUMN -->
                     <div class="col-lg-4">
-                        <!-- Quick Actions -->
-                        <div class="card shadow-sm mb-4">
-                            <div class="card-header bg-white">
-                                <h6 class="card-title mb-0">
-                                    <i class="fas fa-bolt me-2"></i> Thao tác nhanh
-                                </h6>
+                        <!-- Tóm tắt hồ sơ -->
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5>
+                                        <i class="fas fa-user-circle"></i> Tóm tắt hồ sơ
+                                    </h5>
+                                    <small>Thông tin nhanh của hồ sơ bác sĩ.</small>
+                                </div>
                             </div>
-                            <div class="card-body">
+                            <div class="rm-card-body">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div class="profile-summary-avatar">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold" th:text="${user.fullName}">Tên bác sĩ</div>
+                                        <div class="info-muted" th:text="${specialtyName} ?: 'Chuyên khoa'"></div>
+                                        <div class="mt-2">
+                                            <span class="status-chip">
+                                                <i class="fas fa-shield-heart"></i> Bác sĩ Remedic
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <div class="info-label">Liên hệ</div>
+                                    <div class="info-muted">
+                                        <i class="fas fa-envelope me-2 text-primary"></i>
+                                        <span th:text="${user.email}">email@example.com</span>
+                                    </div>
+                                    <div class="info-muted mt-1" th:if="${user.phone}">
+                                        <i class="fas fa-phone me-2 text-success"></i>
+                                        <span th:text="${user.phone}">0123456789</span>
+                                    </div>
+                                    <div class="info-muted mt-1" th:if="${user.dateOfBirth}">
+                                        <i class="fas fa-birthday-cake me-2 text-warning"></i>
+                                        <span th:text="${#temporals.format(user.dateOfBirth, 'dd/MM/yyyy')}">01/01/1990</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thao tác nhanh -->
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5>
+                                        <i class="fas fa-bolt"></i> Thao tác nhanh
+                                    </h5>
+                                    <small>Đi tới các chức năng thường dùng.</small>
+                                </div>
+                            </div>
+                            <div class="rm-card-body">
                                 <div class="d-grid gap-2">
-                                    <a th:href="@{/doctor/profile/edit}" class="btn btn-warning">
-                                        <i class="fas fa-edit me-2"></i> Chỉnh sửa hồ sơ
+                                    <a th:href="@{/doctor/profile/edit}" class="rm-btn rm-btn-warning">
+                                        <i class="fas fa-edit"></i> Chỉnh sửa hồ sơ
                                     </a>
-                                    <a th:href="@{/doctor/appointments}" class="btn btn-primary">
-                                        <i class="fas fa-calendar me-2"></i> Quản lý lịch hẹn
+                                    <a th:href="@{/doctor/appointments}" class="rm-btn rm-btn-primary">
+                                        <i class="fas fa-calendar-alt"></i> Quản lý lịch hẹn
                                     </a>
-                                    <a th:href="@{/doctor/medical-records}" class="btn btn-success">
-                                        <i class="fas fa-file-medical me-2"></i> Hồ sơ bệnh án
+                                    <a th:href="@{/doctor/medical-records}" class="rm-btn rm-btn-success">
+                                        <i class="fas fa-file-medical"></i> Hồ sơ bệnh án
                                     </a>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Contact Info -->
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-white">
-                                <h6 class="card-title mb-0">
-                                    <i class="fas fa-address-book me-2"></i> Liên hệ
-                                </h6>
+                        <!-- Liên kết nhanh -->
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5>
+                                        <i class="fas fa-link"></i> Liên kết hữu ích
+                                    </h5>
+                                    <small>Truy cập nhanh một số trang quản lý.</small>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <i class="fas fa-envelope text-primary me-2"></i>
-                                    <span th:text="${user.email}"></span>
-                                </div>
-                                <div class="mb-3" th:if="${user.phone}">
-                                    <i class="fas fa-phone text-success me-2"></i>
-                                    <span th:text="${user.phone}"></span>
-                                </div>
-                                <div th:if="${user.dateOfBirth}">
-                                    <i class="fas fa-birthday-cake text-info me-2"></i>
-                                    <span th:text="${#dates.format(user.dateOfBirth, 'dd/MM/yyyy')}"></span>
-                                </div>
+                            <div class="rm-card-body">
+                                <a th:href="@{/doctor/appointments?filter=today}" class="quick-link mb-2">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <div>
+                                        <div class="fw-semibold">Lịch hẹn hôm nay</div>
+                                        <small class="text-muted">Xem toàn bộ lịch hẹn trong ngày</small>
+                                    </div>
+                                </a>
+                                <a th:href="@{/doctor/appointments/history}" class="quick-link mb-2">
+                                    <i class="fas fa-clock-rotate-left"></i>
+                                    <div>
+                                        <div class="fw-semibold">Lịch sử khám</div>
+                                        <small class="text-muted">Theo dõi lịch sử các cuộc hẹn</small>
+                                    </div>
+                                </a>
+                                <a th:href="@{/doctor/index}" class="quick-link">
+                                    <i class="fas fa-chart-line"></i>
+                                    <div>
+                                        <div class="fw-semibold">Dashboard bác sĩ</div>
+                                        <small class="text-muted">Tổng quan hoạt động của bạn</small>
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> <!-- row -->
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

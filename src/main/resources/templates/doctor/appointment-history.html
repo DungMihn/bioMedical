@@ -8,7 +8,8 @@
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         <!-- Custom styles -->
         <style>
@@ -20,16 +21,17 @@
                 --warning-color: #ffc107;
                 --danger-color: #dc3545;
                 --info-color: #0dcaf0;
+                --soft-bg: #f3f6fb;
             }
 
             body {
-                background-color: #f8fbff;
+                background-color: var(--soft-bg);
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 margin: 0;
                 padding: 0;
             }
 
-            /* Sidebar Styles */
+            /* Sidebar */
             .rm-sidebar {
                 position: fixed;
                 top: 0;
@@ -39,7 +41,7 @@
                 z-index: 1000;
                 background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
                 color: #fff;
-                box-shadow: 2px 0 12px rgba(0,0,0,.08);
+                box-shadow: 2px 0 12px rgba(15,23,42,.12);
                 padding-top: 70px;
             }
 
@@ -52,7 +54,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: rgba(0,0,0,.08);
+                background: rgba(15,23,42,.12);
                 font-weight: 700;
                 letter-spacing: .5px;
                 font-size: 1.2rem;
@@ -69,16 +71,17 @@
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                color: rgba(255,255,255,.95);
+                color: rgba(255,255,255,.94);
                 text-decoration: none;
                 padding: 12px 18px;
                 transition: .2s;
                 border-left: 4px solid transparent;
+                font-size: 14px;
             }
 
             .rm-sidebar .menu li a:hover,
             .rm-sidebar .menu li a.active {
-                background: rgba(255,255,255,.12);
+                background: rgba(15,23,42,.25);
                 border-left-color: #fff;
                 color: #fff;
             }
@@ -94,20 +97,36 @@
                 text-align: center;
             }
 
-            /* Content Area */
+            /* Content */
             .rm-content {
                 margin-left: var(--sidebar-width);
                 min-height: 100vh;
-                background-color: #f8fbff;
+                background-color: var(--soft-bg);
             }
 
-            /* Header Styles */
+            /* Header */
             .rm-header {
-                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                background: radial-gradient(circle at top left, #38bdf8 0, var(--primary-dark) 45%, #0f172a 100%);
                 color: white;
-                padding: 2rem 0;
+                padding: 2.2rem 0 1.8rem;
                 margin-bottom: 2rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,.1);
+                box-shadow: 0 12px 30px -18px rgba(15,23,42,.7);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .rm-header::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at bottom right, rgba(15,23,42,.25), transparent 55%);
+                opacity: .9;
+                pointer-events: none;
+            }
+
+            .rm-header-inner {
+                position: relative;
+                z-index: 1;
             }
 
             .rm-header h1 {
@@ -116,30 +135,40 @@
             }
 
             .rm-header .lead {
-                opacity: 0.9;
+                opacity: 0.95;
                 margin: 0.5rem 0 0 0;
             }
 
-            /* Card Styles */
+            .rm-header-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                background: rgba(15,23,42,.25);
+                font-size: 12px;
+            }
+
+            /* Card */
             .rm-card {
                 background: #fff;
                 border-radius: 12px;
                 border: none;
-                box-shadow: 0 4px 20px rgba(0,0,0,.08);
-                transition: all 0.3s ease;
+                box-shadow: 0 18px 35px -18px rgba(15,23,42,.3);
+                transition: transform .18s ease, box-shadow .18s ease;
                 margin-bottom: 1.5rem;
                 overflow: hidden;
             }
 
             .rm-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 30px rgba(0,0,0,.12);
+                transform: translateY(-2px);
+                box-shadow: 0 22px 45px -20px rgba(15,23,42,.32);
             }
 
             .rm-card .card-header {
                 background: #fff;
-                border-bottom: 1px solid #f1f5f9;
-                padding: 1.25rem 1.5rem;
+                border-bottom: 1px solid #e5e7eb;
+                padding: 1rem 1.5rem;
                 font-weight: 600;
             }
 
@@ -147,14 +176,14 @@
                 padding: 1.5rem;
             }
 
-            /* Status Badges */
+            /* Status badges */
             .status-badge {
-                padding: 6px 12px;
-                border-radius: 20px;
-                font-size: 12px;
+                padding: 4px 10px;
+                border-radius: 999px;
+                font-size: 11px;
                 font-weight: 700;
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
+                letter-spacing: .05em;
             }
 
             .status-COMPLETED {
@@ -199,58 +228,177 @@
                 border: 1px solid #ffeaa7;
             }
 
-            /* Button Styles */
+            /* Buttons */
             .btn {
                 border-radius: 8px;
                 font-weight: 500;
-                transition: all 0.2s;
+                transition: all 0.18s;
                 padding: 0.5rem 1rem;
             }
 
             .btn-sm {
-                padding: 0.375rem 0.75rem;
-                font-size: 0.875rem;
+                padding: 0.35rem 0.75rem;
+                font-size: 0.85rem;
             }
 
-            /* Stats Cards */
-            .stat-card {
+            .btn:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 18px rgba(15,23,42,.18);
+            }
+
+            /* Stats KPI row */
+            .kpi-row .stat-card {
                 text-align: center;
-                padding: 1.5rem;
+                padding: 1.3rem 1rem;
                 border-radius: 12px;
-                background: white;
-                box-shadow: 0 4px 20px rgba(0,0,0,.08);
-                transition: all 0.3s ease;
+                background: #fff;
+                box-shadow: 0 12px 30px -18px rgba(15,23,42,.25);
+                transition: all 0.18s ease;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                width: 100%;
             }
 
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 30px rgba(0,0,0,.12);
+            .kpi-row .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 20px 40px -22px rgba(15,23,42,.28);
             }
 
-            .stat-card .stat-number {
-                font-size: 2.5rem;
+            .stat-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 10px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 6px;
+                background: rgba(15,23,42,.06);
+                font-size: 16px;
+            }
+
+            .stat-number {
+                font-size: 1.9rem;
                 font-weight: 700;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0;
             }
 
-            .stat-card .stat-label {
-                color: #6c757d;
-                font-size: 0.875rem;
+            .stat-label {
+                color: #6c7280;
+                font-size: 0.8rem;
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
+                letter-spacing: .08em;
             }
 
-            /* Filter Section */
+            .stat-sub {
+                font-size: 0.75rem;
+                color: #9ca3af;
+            }
+
+            /* Filter section */
             .filter-section {
-                background: #f8f9fa;
+                background: #f8fafc;
                 border-radius: 12px;
-                padding: 1.5rem;
-                margin-bottom: 2rem;
+                padding: 1.3rem 1.5rem 1.1rem;
             }
 
-            /* Empty State */
+            .filter-pill {
+                display: inline-flex;
+                align-items: center;
+                border-radius: 999px;
+                border: 1px dashed #cbd5e1;
+                padding: 4px 10px;
+                font-size: 11px;
+                margin-left: 6px;
+                color: #475569;
+                background: #f9fafb;
+            }
+
+            /* Search box */
+            .search-box {
+                position: relative;
+            }
+
+            .search-box .search-icon {
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #6c757d;
+            }
+
+            .search-box input {
+                padding-left: 36px;
+                font-size: 0.9rem;
+            }
+
+            /* History list */
+            .rm-history-item {
+                border-radius: 10px;
+                border: 1px solid #e5e7eb;
+                padding: 1rem 1.1rem;
+                margin-bottom: 1rem;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                gap: .4rem;
+                border-left: 4px solid #e5e7eb;
+                transition: background .15s, transform .15s, box-shadow .15s, border-color .15s;
+            }
+
+            .rm-history-item:hover {
+                background: #f9fafb;
+                transform: translateY(-1px);
+                box-shadow: 0 8px 22px -16px rgba(15,23,42,.28);
+            }
+
+            .rm-history-item.status-COMPLETED {
+                border-left-color: #16a34a;
+            }
+
+            .rm-history-item.status-CONFIRMED {
+                border-left-color: #0ea5e9;
+            }
+
+            .rm-history-item.status-CANCELLED,
+            .rm-history-item.status-AUTO_CANCELLED {
+                border-left-color: #ef4444;
+            }
+
+            .rm-history-item.status-EXPIRED {
+                border-left-color: #6b7280;
+            }
+
+            .rm-history-item.status-NO_SHOW {
+                border-left-color: #f97316;
+            }
+
+            .rm-history-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: .75rem;
+            }
+
+            .rm-history-meta {
+                font-size: 0.83rem;
+                color: #6b7280;
+            }
+
+            .rm-history-meta i {
+                width: 14px;
+                text-align: center;
+            }
+
+            .time-ago {
+                font-size: 0.8rem;
+                color: #9ca3af;
+                font-style: italic;
+            }
+
+            /* Empty state */
             .empty-state {
-                padding: 4rem 2rem;
+                padding: 3.5rem 2rem;
                 text-align: center;
             }
 
@@ -260,11 +408,26 @@
                 opacity: 0.5;
             }
 
-            /* Time Ago */
-            .time-ago {
-                font-size: 0.875rem;
-                color: #6c757d;
-                font-style: italic;
+            /* Loading overlay */
+            .loading-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(15,23,42,0.55);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            }
+
+            .loading-spinner {
+                background: white;
+                padding: 1.7rem 2.1rem;
+                border-radius: 12px;
+                text-align: center;
+                box-shadow: 0 18px 40px -22px rgba(15,23,42,.75);
             }
 
             /* Responsive */
@@ -281,45 +444,10 @@
                 .rm-content {
                     margin-left: 0;
                 }
-            }
 
-            /* Loading overlay */
-            .loading-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
-                display: none;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            }
-
-            .loading-spinner {
-                background: white;
-                padding: 2rem;
-                border-radius: 10px;
-                text-align: center;
-                box-shadow: 0 10px 30px rgba(0,0,0,.2);
-            }
-
-            /* Search Box */
-            .search-box {
-                position: relative;
-            }
-
-            .search-box .search-icon {
-                position: absolute;
-                left: 12px;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #6c757d;
-            }
-
-            .search-box input {
-                padding-left: 40px;
+                .rm-header {
+                    padding: 1.8rem 0 1.4rem;
+                }
             }
         </style>
     </head>
@@ -351,11 +479,6 @@
                     </a>
                 </li>
                 <li>
-                    <a th:href="@{/doctor/appointments/confirmed}">
-                        <i class="fas fa-calendar-check"></i> Lịch hẹn Đã XN
-                    </a>
-                </li>
-                <li>
                     <a th:href="@{/doctor/appointments/history}" class="active">
                         <i class="fas fa-history"></i> Lịch sử Lịch hẹn
                     </a>
@@ -382,19 +505,33 @@
         <div class="rm-content">
             <!-- Header -->
             <div class="rm-header">
-                <div class="container">
+                <div class="container rm-header-inner">
                     <div class="row align-items-center">
                         <div class="col-md-8">
                             <h1 class="display-6 fw-bold mb-2">
                                 <i class="fas fa-history me-2"></i> Lịch sử Lịch hẹn
                             </h1>
-                            <p class="lead mb-0">Theo dõi và quản lý lịch sử lịch hẹn của bệnh nhân</p>
+                            <p class="lead mb-2">
+                                Theo dõi lịch sử khám và xử lý các trạng thái lịch hẹn trong quá khứ.
+                            </p>
+                            <div class="rm-header-pill mt-1">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>
+                                    Đang xem trong
+                                    <strong th:text="${days}">30</strong> ngày gần đây
+                                </span>
+                            </div>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <span class="badge bg-info fs-6 p-3">
-                                <i class="fas fa-chart-line me-2"></i>
-                                <span th:text="${totalCount ?: 0}">0</span> lịch hẹn
-                            </span>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <div class="d-inline-flex flex-column align-items-md-end align-items-start gap-2">
+                                <span class="badge bg-info fs-6 p-3">
+                                    <i class="fas fa-chart-line me-2"></i>
+                                    <span th:text="${totalCount ?: 0}">0</span> lịch hẹn
+                                </span>
+                                <small class="text-light-50">
+                                    Dữ liệu dùng cho thống kê hiệu suất khám & tỷ lệ hủy.
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -403,47 +540,87 @@
             <!-- Main Content -->
             <div class="container">
                 <!-- Stats Overview -->
-                <div class="row mb-4">
-                    <div class="col-md-3 mb-3">
-                        <div class="stat-card">
-                            <div class="stat-number text-primary" th:text="${stats?.total ?: 0}">0</div>
-                            <div class="stat-label">Tổng số lịch hẹn</div>
+                <div class="row mb-4 kpi-row">
+                    <div class="col-md-3 mb-3 d-flex">
+                        <div class="stat-card flex-fill">
+                            <div>
+                                <div class="stat-icon text-primary">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div class="stat-number text-primary" th:text="${stats?.total ?: 0}">0</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Tổng lịch hẹn</div>
+                                <div class="stat-sub">Trong khoảng thời gian đã chọn</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="stat-card">
-                            <div class="stat-number text-success" th:text="${stats?.completed ?: 0}">0</div>
-                            <div class="stat-label">Đã hoàn thành</div>
+                    <div class="col-md-3 mb-3 d-flex">
+                        <div class="stat-card flex-fill">
+                            <div>
+                                <div class="stat-icon text-success">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-number text-success" th:text="${stats?.completed ?: 0}">0</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Đã hoàn thành</div>
+                                <div class="stat-sub">Có bệnh nhân đến khám & hoàn tất</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="stat-card">
-                            <div class="stat-number text-danger" th:text="${stats?.cancelled ?: 0}">0</div>
-                            <div class="stat-label">Đã hủy</div>
+                    <div class="col-md-3 mb-3 d-flex">
+                        <div class="stat-card flex-fill">
+                            <div>
+                                <div class="stat-icon text-danger">
+                                    <i class="fas fa-times-circle"></i>
+                                </div>
+                                <div class="stat-number text-danger" th:text="${stats?.cancelled ?: 0}">0</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Đã hủy / Không đến</div>
+                                <div class="stat-sub">Bao gồm hủy, tự hủy, no-show</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <div class="stat-card">
-                            <div class="stat-number text-info" th:text="${stats?.completionRate ?: 0}">0%</div>
-                            <div class="stat-label">Tỷ lệ hoàn thành</div>
+                    <div class="col-md-3 mb-3 d-flex">
+                        <div class="stat-card flex-fill">
+                            <div>
+                                <div class="stat-icon text-info">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="stat-number text-info" th:text="${stats?.completionRate ?: 0}">0%</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Tỷ lệ hoàn thành</div>
+                                <div class="stat-sub">Hoàn thành / tổng lịch hẹn</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Filter Section -->
                 <div class="rm-card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">
-                            <i class="fas fa-filter me-2 text-primary"></i> Bộ lọc & Tìm kiếm
-                        </h5>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">
+                                <i class="fas fa-filter me-2 text-primary"></i> Bộ lọc & Tìm kiếm
+                            </h5>
+                            <small class="text-muted">
+                                Tùy chỉnh khoảng thời gian, trạng thái và từ khóa để thu hẹp danh sách.
+                            </small>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="refreshPage()">
+                            <i class="fas fa-rotate-right me-1"></i> Làm mới
+                        </button>
                     </div>
                     <div class="card-body">
-                        <form th:action="@{/doctor/appointments/history}" method="get" class="row g-3">
+                        <form th:action="@{/doctor/appointments/history}" method="get" class="row g-3 filter-section">
                             <div class="col-md-3">
                                 <label class="form-label">Khoảng thời gian</label>
-                                <select name="days" class="form-select" onchange="this.form.submit()">
-                                    <option th:each="day : ${dayOptions}" 
-                                            th:value="${day}" 
+                                <select name="days" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option th:each="day : ${dayOptions}"
+                                            th:value="${day}"
                                             th:text="${day + ' ngày'}"
                                             th:selected="${days == day}">
                                     </option>
@@ -451,7 +628,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Trạng thái</label>
-                                <select name="status" class="form-select" onchange="this.form.submit()">
+                                <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="all" th:selected="${status == 'all'}">Tất cả trạng thái</option>
                                     <option value="COMPLETED" th:selected="${status == 'COMPLETED'}">Đã hoàn thành</option>
                                     <option value="CONFIRMED" th:selected="${status == 'CONFIRMED'}">Đã xác nhận</option>
@@ -459,22 +636,47 @@
                                     <option value="NO_SHOW" th:selected="${status == 'NO_SHOW'}">Không đến</option>
                                     <option value="AUTO_CANCELLED" th:selected="${status == 'AUTO_CANCELLED'}">Tự động hủy</option>
                                     <option value="EXPIRED" th:selected="${status == 'EXPIRED'}">Hết hạn</option>
-                                    <option value="PENDING" th:selected="${status == 'PENDING'}">Chờ xác nhận</option>
+                                    <option value="PENDING" th:selected="${status == 'PENDING'}">Chờ xác nhận (cũ)</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Tìm kiếm bệnh nhân</label>
                                 <div class="search-box">
                                     <i class="fas fa-search search-icon"></i>
-                                    <input type="text" name="search" class="form-control" 
-                                           th:value="${search}" 
-                                           placeholder="Tìm theo tên hoặc email...">
+                                    <input type="text" name="search" class="form-control form-control-sm"
+                                           th:value="${search}"
+                                           placeholder="Nhập tên, email hoặc SĐT bệnh nhân...">
                                 </div>
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-search me-1"></i> Tìm kiếm
+                                <button type="submit" class="btn btn-primary w-100 btn-sm">
+                                    <i class="fas fa-magnifying-glass me-1"></i> Tìm kiếm
                                 </button>
+                            </div>
+
+                            <!-- Summary of current filters -->
+                            <div class="col-12 mt-2">
+                                <small class="text-muted">
+                                    Đang áp dụng:
+                                    <span class="filter-pill">
+                                        <i class="fas fa-calendar-day me-1"></i>
+                                        <span th:text="${days}">30</span> ngày gần nhất
+                                    </span>
+                                    <span class="filter-pill">
+                                        <i class="fas fa-toggle-on me-1"></i>
+                                        Trạng thái:
+                                        <span class="ms-1"
+                                              th:text="${status == 'all' ? 'Tất cả' : status}">Tất cả</span>
+                                    </span>
+                                    <span class="filter-pill" th:if="${search != null and !#strings.isEmpty(search)}">
+                                        <i class="fas fa-search me-1"></i>
+                                        Từ khóa:
+                                        "<span th:text="${search}">abc</span>"
+                                    </span>
+                                    <span class="filter-pill" th:if="${search == null or #strings.isEmpty(search)}">
+                                        <i class="fas fa-search me-1"></i> Không có từ khóa
+                                    </span>
+                                </small>
                             </div>
                         </form>
                     </div>
@@ -483,82 +685,83 @@
                 <!-- Appointments List -->
                 <div class="rm-card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-list me-2 text-primary"></i> Danh sách Lịch hẹn
-                        </h5>
+                        <div>
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2 text-primary"></i> Danh sách Lịch hẹn
+                            </h5>
+                            <small class="text-muted">
+                                Kết quả được sắp xếp theo thời gian (mới → cũ).
+                            </small>
+                        </div>
                         <span class="badge bg-primary fs-6">
                             <span th:text="${totalCount}">0</span> kết quả
                         </span>
                     </div>
                     <div class="card-body">
-                        <!-- Appointments List -->
+                        <!-- Có dữ liệu -->
                         <div th:if="${appointments != null and not #lists.isEmpty(appointments)}">
                             <div class="row">
-                                <div th:each="appointmentDTO : ${appointments}" class="col-12 mb-4">
-                                    <div class="rm-card border-left-primary h-100">
-                                        <div class="card-body">
-                                            <div class="row align-items-center">
-                                                <div class="col-md-8">
-                                                    <div class="d-flex align-items-start mb-3">
-                                                        <div class="flex-grow-1">
-                                                            <div class="d-flex align-items-center mb-2">
-                                                                <h6 class="mb-0 me-3" th:text="${appointmentDTO.appointment.patientName ?: 'Bệnh nhân ẩn danh'}">Bệnh nhân</h6>
-                                                                <span class="status-badge" 
-                                                                      th:classappend="${appointmentDTO.statusBadgeClass}"
-                                                                      th:text="${appointmentDTO.appointment.status}">
-                                                                </span>
-                                                            </div>
-                                                            <div class="row text-muted">
-                                                                <div class="col-sm-4 mb-2">
-                                                                    <i class="fas fa-calendar me-2"></i>
-                                                                    <span th:text="${appointmentDTO.appointment.appointmentDate ?: 'N/A'}"></span>
-                                                                </div>
-                                                                <div class="col-sm-4 mb-2">
-                                                                    <i class="fas fa-clock me-2"></i>
-                                                                    <span th:text="${appointmentDTO.appointment.appointmentTime ?: 'N/A'}"></span>
-                                                                </div>
-                                                                <div class="col-sm-4 mb-2">
-                                                                    <i class="fas fa-envelope me-2"></i>
-                                                                    <span th:text="${appointmentDTO.appointment.patientEmail ?: 'N/A'}"></span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="time-ago">
-                                                                <i class="fas fa-clock me-1"></i>
-                                                                <span th:text="${appointmentDTO.timeAgo}"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                <div th:each="appointmentDTO : ${appointments}" class="col-12">
+                                    <div class="rm-history-item"
+                                         th:classappend="' status-' + ${appointmentDTO.appointment.status}">
+                                        <div class="rm-history-header">
+                                            <div>
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <h6 class="mb-0 me-2"
+                                                        th:text="${appointmentDTO.appointment.patientName ?: 'Bệnh nhân ẩn danh'}">
+                                                        Bệnh nhân</h6>
+                                                    <span class="status-badge"
+                                                          th:classappend="${appointmentDTO.statusBadgeClass}"
+                                                          th:text="${appointmentDTO.appointment.status}">
+                                                    </span>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <div class="d-grid gap-2">
-                                                        <a th:href="@{/doctor/appointments/{id}(id=${appointmentDTO.appointment.appointmentId})}" 
-                                                           class="btn btn-outline-primary btn-sm">
-                                                            <i class="fas fa-eye me-1"></i> Chi tiết
-                                                        </a>
+                                                <div class="rm-history-meta">
+                                                    <span class="me-3">
+                                                        <i class="fas fa-calendar"></i>
+                                                        <span th:text="${appointmentDTO.appointment.appointmentDate ?: 'N/A'}"></span>
+                                                    </span>
+                                                    <span class="me-3">
+                                                        <i class="fas fa-clock"></i>
+                                                        <span th:text="${appointmentDTO.appointment.appointmentTime ?: 'N/A'}"></span>
+                                                    </span>
+                                                    <span>
+                                                        <i class="fas fa-envelope"></i>
+                                                        <span th:text="${appointmentDTO.appointment.patientEmail ?: 'N/A'}"></span>
+                                                    </span>
+                                                </div>
+                                                <div class="time-ago mt-1">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    <span th:text="${appointmentDTO.timeAgo}"></span>
+                                                </div>
+                                                <div th:if="${appointmentDTO.appointment.notes}"
+                                                     class="mt-2">
+                                                    <span class="badge bg-warning text-dark">
+                                                        <i class="fas fa-sticky-note me-1"></i> Ghi chú
+                                                    </span>
+                                                    <small class="ms-1 text-muted"
+                                                           th:text="${appointmentDTO.appointment.notes}"></small>
+                                                </div>
+                                            </div>
+                                            <div class="text-end" style="min-width: 180px;">
+                                                <div class="d-grid gap-2">
+                                                    <a th:href="@{/doctor/appointments/{id}(id=${appointmentDTO.appointment.appointmentId})}"
+                                                       class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-eye me-1"></i> Chi tiết
+                                                    </a>
 
-                                                        <!-- Xem hồ sơ bệnh án -->
-                                                        <a th:if="${appointmentDTO.canViewMedicalRecord}" 
-                                                           th:href="@{/doctor/medical-record/{id}(id=${appointmentDTO.appointment.appointmentId})}"
-                                                           class="btn btn-info btn-sm text-white">
-                                                            <i class="fas fa-file-medical me-1"></i> Xem HSBA
-                                                        </a>
+                                                    <!-- Xem HSBA -->
+                                                    <a th:if="${appointmentDTO.canViewMedicalRecord}"
+                                                       th:href="@{/doctor/medical-record/{id}(id=${appointmentDTO.appointment.appointmentId})}"
+                                                       class="btn btn-info btn-sm text-white">
+                                                        <i class="fas fa-file-medical me-1"></i> Xem HSBA
+                                                    </a>
 
-                                                        <!-- Tạo hồ sơ bệnh án -->
-                                                        <a th:if="${appointmentDTO.canCreateMedicalRecord}" 
-                                                           th:href="@{/doctor/medical-record/create?appointmentId={id}(id=${appointmentDTO.appointment.appointmentId})}"
-                                                           class="btn btn-success btn-sm">
-                                                            <i class="fas fa-plus-circle me-1"></i> Tạo HSBA
-                                                        </a>
-
-                                                        <!-- Ghi chú -->
-                                                        <div th:if="${appointmentDTO.appointment.notes}" 
-                                                             class="alert alert-warning p-2 mt-2">
-                                                            <small>
-                                                                <i class="fas fa-sticky-note me-1"></i>
-                                                                <span th:text="${appointmentDTO.appointment.notes}"></span>
-                                                            </small>
-                                                        </div>
-                                                    </div>
+                                                    <!-- Tạo HSBA -->
+                                                    <a th:if="${appointmentDTO.canCreateMedicalRecord}"
+                                                       th:href="@{/doctor/medical-record/create?appointmentId={id}(id=${appointmentDTO.appointment.appointmentId})}"
+                                                       class="btn btn-success btn-sm">
+                                                        <i class="fas fa-plus-circle me-1"></i> Tạo HSBA
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -572,12 +775,12 @@
                             <i class="fas fa-calendar-times text-muted"></i>
                             <h3 class="text-muted mb-3">Không tìm thấy lịch hẹn nào</h3>
                             <p class="text-muted mb-4">
-                                Không có lịch hẹn nào phù hợp với tiêu chí tìm kiếm của bạn trong 
+                                Không có lịch hẹn nào phù hợp với tiêu chí tìm kiếm của bạn trong
                                 <span th:text="${days}">30</span> ngày qua.
                             </p>
-                            <a th:href="@{/doctor/appointments/history(days=30, status='all', search='')}" 
+                            <a th:href="@{/doctor/appointments/history(days=30, status='all', search='')}"
                                class="btn btn-primary btn-lg">
-                                <i class="fas fa-refresh me-2"></i> Xem tất cả
+                                <i class="fas fa-rotate-left me-2"></i> Xem tất cả 30 ngày gần nhất
                             </a>
                         </div>
                     </div>
@@ -589,19 +792,15 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
         <script>
-                                    // Hiển thị loading
                                     function showLoading() {
                                         document.getElementById('loadingOverlay').style.display = 'flex';
                                     }
 
-                                    // Ẩn loading
                                     function hideLoading() {
                                         document.getElementById('loadingOverlay').style.display = 'none';
                                     }
 
-                                    // Tự động submit form khi thay đổi filter
                                     document.addEventListener('DOMContentLoaded', function () {
-                                        // Thêm loading khi submit form
                                         const forms = document.querySelectorAll('form');
                                         forms.forEach(form => {
                                             form.addEventListener('submit', function () {
@@ -610,12 +809,12 @@
                                         });
                                     });
 
-                                    // Làm mới trang
                                     function refreshPage() {
                                         showLoading();
-                                        setTimeout(() => {
-                                            location.reload();
-                                        }, 500);
+                                        const url = new URL(window.location.href);
+                                        // reset search nhưng giữ days & status
+                                        url.searchParams.set('search', '');
+                                        window.location.href = url.toString();
                                     }
         </script>
     </body>

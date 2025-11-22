@@ -151,21 +151,49 @@ public class MedicalRecordsService {
     }
 
     public MedicalRecords getMedicalRecordByAppointmentId(Long appointmentId) {
-        return medicalRecordsRepository.findByAppointmentId(appointmentId);
-    }
-
-    @Transactional
-    public MedicalRecords saveMedicalRecord(MedicalRecords medicalRecord, List<Prescriptions> prescriptions) {
-        MedicalRecords savedRecord = medicalRecordsRepository.save(medicalRecord);
-
-        // Save prescriptions
-        if (prescriptions != null) {
-            prescriptions.forEach(p -> p.setRecordId(savedRecord.getRecordId()));
-            prescriptionsRepository.saveAll(prescriptions);
+        MedicalRecords record = medicalRecordsRepository.findByAppointmentId(appointmentId);
+        if (record != null) {
+            enrichMedicalRecordData(record);   // ⬅️ load thêm appointment + patient + prescriptions
         }
-
-        return savedRecord;
+        return record;
     }
+
+    
+    @Transactional
+public MedicalRecords saveMedicalRecord(MedicalRecords record,
+                                        List<Prescriptions> prescriptions) {
+
+    // Gán quan hệ 2 chiều prescriptions -> record
+    if (prescriptions != null) {
+        for (Prescriptions p : prescriptions) {
+            p.setMedicalRecord(record);
+        }
+        record.setPrescriptions(prescriptions);
+    }
+
+    // Nếu chỉ có appointmentId thì load lại full appointment
+    if (record.getAppointment() != null
+            && record.getAppointment().getAppointmentId() != null) {
+        Appointments fullAppt = appointmentService
+                .getAppointmentById(record.getAppointment().getAppointmentId());
+        record.setAppointment(fullAppt);
+    }
+
+    // lưu MedicalRecords (cascade sẽ lưu luôn Prescriptions nếu đã set CascadeType.ALL)
+    return medicalRecordsRepository.save(record);
+}
+//    @Transactional
+//    public MedicalRecords saveMedicalRecord(MedicalRecords medicalRecord, List<Prescriptions> prescriptions) {
+//        MedicalRecords savedRecord = medicalRecordsRepository.save(medicalRecord);
+//
+//        // Save prescriptions
+//        if (prescriptions != null) {
+//            prescriptions.forEach(p -> p.setRecordId(savedRecord.getRecordId()));
+//            prescriptionsRepository.saveAll(prescriptions);
+//        }
+//
+//        return savedRecord;
+//    }
 
     @Transactional
     public void updateMedicalRecord(Long recordId, MedicalRecords medicalRecord, List<Prescriptions> prescriptions) {
@@ -204,6 +232,27 @@ public class MedicalRecordsService {
 
     public List<Prescriptions> getPrescriptionsByRecordId(Long recordId) {
         return prescriptionsRepository.findByRecordId(recordId);
+    }
+
+    public MedicalRecords saveRecord(MedicalRecords record) {
+
+        // Set created_at nếu chưa có
+        if (record.getCreatedAt() == null) {
+            record.setCreatedAt(new Date());
+        }
+
+        // Nếu chỉ có appointmentId được submit, phải load full appointment
+        if (record.getAppointment() != null
+                && record.getAppointment().getAppointmentId() != null) {
+
+            record.setAppointment(
+                    appointmentService.getAppointmentById(
+                            record.getAppointment().getAppointmentId()
+                    )
+            );
+        }
+
+        return medicalRecordsRepository.save(record);
     }
 
 }

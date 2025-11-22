@@ -2,405 +2,750 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Chỉnh sửa Hồ sơ - Remedic</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Bootstrap CSS -->
+        <!-- Bootstrap & Font Awesome -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 
         <style>
             :root {
                 --sidebar-width: 250px;
                 --primary-color: #1089ff;
                 --primary-dark: #0c6ed4;
-                --success-color: #198754;
-                --warning-color: #ffc107;
-                --danger-color: #dc3545;
-                --info-color: #0dcaf0;
+                --accent-color: #0dcaf0;
+                --bg-soft: #f8fbff;
+                --card-radius: 14px;
+                --shadow-soft: 0 10px 30px -10px rgba(0,0,0,.12);
+            }
+
+            * {
+                box-sizing: border-box;
             }
 
             body {
-                background-color: #f8fbff;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                background-color: var(--bg-soft);
+                color: #333;
+                line-height: 1.6;
             }
 
-            /* Autocomplete styles */
-            .cursor-pointer {
-                cursor: pointer;
-            }
-
-            .patient-suggestion:hover,
-            .patient-suggestion.active {
-                background-color: #f8f9fa;
-            }
-
-            .patient-quick-search:hover {
-                background-color: #e9ecef !important;
-                transform: translateY(-1px);
-                transition: all 0.2s;
-            }
-
-            .dropdown-item:active {
-                background-color: #e9ecef;
-            }
-
-            /* Sidebar Styles */
+            /* Sidebar */
             .rm-sidebar {
                 position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
+                inset: 0 auto 0 0;
                 width: var(--sidebar-width);
-                z-index: 1000;
                 background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-dark) 100%);
                 color: #fff;
-                box-shadow: 2px 0 12px rgba(0,0,0,.08);
-                padding-top: 70px;
+                z-index: 1000;
+                padding-top: 68px;
+                box-shadow: 2px 0 12px rgba(0,0,0,.1);
+                overflow-y: auto;
             }
 
             .rm-sidebar .brand {
                 position: fixed;
-                top: 0;
-                left: 0;
+                inset: 0 auto auto 0;
                 width: var(--sidebar-width);
-                height: 70px;
+                height: 68px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                gap: 8px;
                 background: rgba(0,0,0,.08);
                 font-weight: 700;
                 letter-spacing: .5px;
-                font-size: 1.2rem;
+                font-size: 1.05rem;
+                border-bottom: 1px solid rgba(255,255,255,.25);
+                text-transform: none;
+            }
+
+            .rm-sidebar .brand i {
+                color: #e0f2fe;
             }
 
             .rm-sidebar .menu {
                 list-style: none;
+                padding: 10px 0 18px;
                 margin: 0;
-                padding: 10px 0;
             }
 
             .rm-sidebar .menu li a {
                 display: flex;
                 align-items: center;
                 gap: 10px;
+                padding: 10px 18px;
                 color: rgba(255,255,255,.95);
                 text-decoration: none;
-                padding: 12px 18px;
-                transition: .2s;
+                font-size: 0.9rem;
                 border-left: 4px solid transparent;
+                transition: all .2s ease;
+                opacity: 0.98;
+            }
+
+            .rm-sidebar .menu li a i {
+                width: 22px;
+                text-align: center;
+                font-size: 0.95rem;
+            }
+
+            .rm-sidebar .menu li a .rm-badge {
+                margin-left: auto;
+                background: #fff;
+                color: var(--primary-color);
+                border-radius: 999px;
+                font-size: 0.7rem;
+                padding: 2px 8px;
+                font-weight: 600;
             }
 
             .rm-sidebar .menu li a:hover,
             .rm-sidebar .menu li a.active {
-                background: rgba(255,255,255,.12);
+                background: rgba(255,255,255,.14);
                 border-left-color: #fff;
                 color: #fff;
+                transform: translateX(2px);
             }
 
-            /* Content Area */
+            .rm-sidebar::-webkit-scrollbar {
+                width: 6px;
+            }
+            .rm-sidebar::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,.4);
+                border-radius: 3px;
+            }
+            .rm-sidebar::-webkit-scrollbar-thumb:hover {
+                background: rgba(255,255,255,.6);
+            }
+
+            /* Content */
             .rm-content {
                 margin-left: var(--sidebar-width);
                 min-height: 100vh;
+                padding-bottom: 40px;
             }
 
-            /* Header Styles */
+            /* Top header / hero */
             .rm-header {
+                padding: 18px 0 0;
                 background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-                color: white;
-                padding: 2rem 0;
-                margin-bottom: 2rem;
-                box-shadow: 0 4px 12px rgba(0,0,0,.1);
-            }
-
-            /* Card Styles */
-            .rm-card {
-                background: #fff;
-                border-radius: 8px;
-                border: none;
-                box-shadow: 0 10px 30px -10px rgba(0,0,0,.1);
-                transition: transform .2s, box-shadow .2s;
+                color: #fff;
+                box-shadow: 0 4px 12px rgba(0,0,0,.12);
+                position: relative;
                 margin-bottom: 1.5rem;
+                overflow: hidden;
             }
 
-            .rm-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 14px 36px -12px rgba(0,0,0,.12);
+            .rm-header::before {
+                content: "";
+                position: absolute;
+                top: -40px;
+                right: -80px;
+                width: 260px;
+                height: 260px;
+                background: radial-gradient(circle at center, rgba(255,255,255,0.25), transparent 60%);
             }
 
-            .rm-card .card-header {
-                background: #fff;
-                border-bottom: 1px solid rgba(0,0,0,.05);
-                padding: 1.25rem;
-                font-weight: 600;
+            .rm-header-inner {
+                max-width: 1180px;
+                margin: 0 auto;
+                padding: 16px 20px 18px;
+                position: relative;
+                z-index: 1;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 18px;
+                justify-content: space-between;
             }
 
-            /* Button Styles */
-            .rm-btn {
-                border-radius: 6px;
-                font-weight: 500;
-                transition: all 0.2s;
+            .rm-header-left,
+            .rm-header-right {
+                position: relative;
+                z-index: 1;
             }
 
-            /* Table Styles */
-            .rm-table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            .rm-table th {
-                background-color: #f8f9fa;
-                font-weight: 600;
-                color: #495057;
-                padding: 1rem;
-                border-bottom: 2px solid #e9ecef;
-            }
-
-            .rm-table td {
-                padding: 1rem;
-                border-bottom: 1px solid #e9ecef;
-                vertical-align: top;
-            }
-
-            .rm-table tbody tr:hover {
-                background-color: #f8fbff;
-            }
-
-            /* Badge Styles */
-            .rm-badge {
-                font-size: 0.75rem;
-                padding: 0.35em 0.65em;
+            .doctor-avatar {
+                width: 64px;
+                height: 64px;
                 border-radius: 999px;
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.6rem;
+                color: #fff;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+                flex-shrink: 0;
+            }
+
+            .doctor-heading {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+
+            .doctor-name {
+                font-size: 1.15rem;
                 font-weight: 600;
+                margin-bottom: 2px;
             }
 
-            /* Search Box */
-            .rm-search-box {
-                border-radius: 8px;
+            .doctor-sub {
+                font-size: 0.86rem;
+                color: rgba(255,255,255,.85);
+            }
+
+            .doctor-tags {
+                margin-top: 8px;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .doctor-tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border-radius: 999px;
+                padding: 3px 10px;
+                font-size: 0.78rem;
+                background: rgba(0,0,0,0.12);
+                border: 1px solid rgba(255,255,255,0.3);
+                color: #f9fafb;
+            }
+
+            .doctor-tag i {
+                font-size: 0.75rem;
+                color: #fffbeb;
+            }
+
+            .rm-header-right {
+                text-align: right;
+                min-width: 220px;
+            }
+
+            .rm-header-right .small-label {
+                font-size: 0.74rem;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                color: rgba(255,255,255,.8);
+            }
+
+            .kpi-pills {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-top: 4px;
+            }
+
+            .kpi-pill {
+                border-radius: 999px;
+                padding: 4px 10px;
+                font-size: 0.78rem;
+                background: rgba(0,0,0,0.12);
+                border: 1px solid rgba(255,255,255,0.3);
+                color: #f9fafb;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+
+            .kpi-pill span.value {
+                font-weight: 600;
+                color: #fffbeb;
+            }
+
+            .header-actions {
+                margin-top: 8px;
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .btn-header {
+                border-radius: 999px;
+                font-size: 0.82rem;
+                padding: 6px 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border: 1px solid rgba(255,255,255,0.7);
+                background: rgba(0,0,0,0.08);
+                color: #fff;
+                text-decoration: none;
+            }
+
+            .btn-header:hover {
+                background: rgba(0,0,0,0.16);
+            }
+
+            /* Page body */
+            .page-body {
+                max-width: 1180px;
+                margin: 0 auto;
+                padding: 0 16px 24px;
+            }
+
+            .rm-card {
+                border-radius: var(--card-radius);
+                background: #fff;
+                box-shadow: var(--shadow-soft);
                 border: 1px solid #e9ecef;
-                padding: 0.75rem 1rem;
-                transition: all 0.2s;
+                margin-bottom: 18px;
+                overflow: hidden;
             }
 
-            .rm-search-box:focus {
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 0.2rem rgba(16, 137, 255, 0.25);
+            .rm-card-header {
+                padding: 14px 18px 10px;
+                border-bottom: 1px solid rgba(0,0,0,.05);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                background: #fff;
             }
 
-            /* Patient Info */
-            .patient-avatar {
-                width: 50px;
-                height: 50px;
-                background: var(--primary-color);
-                border-radius: 50%;
+            .rm-card-header h5 {
+                margin: 0;
+                font-size: 0.98rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #0f172a;
+            }
+
+            .rm-card-header h5 i {
+                color: var(--primary-color);
+            }
+
+            .rm-card-header small {
+                display: block;
+                font-size: 0.78rem;
+                color: #6b7280;
+            }
+
+            .rm-card-body {
+                padding: 16px 18px 18px;
+            }
+
+            .rm-card-footer {
+                padding: 12px 18px 14px;
+                border-top: 1px solid #e9ecef;
+                background: #f8f9fa;
+            }
+
+            /* Summary tiles */
+            .summary-tile {
+                padding: 10px 12px;
+                border-radius: 12px;
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                margin-bottom: 10px;
+            }
+
+            .summary-title {
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: #6b7280;
+                margin-bottom: 2px;
+            }
+
+            .summary-value {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #0f172a;
+            }
+
+            .summary-icon {
+                width: 32px;
+                height: 32px;
+                border-radius: 999px;
+                background: #e7f1ff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--primary-color);
+                font-size: 0.9rem;
+            }
+
+            /* Buttons */
+            .rm-btn {
+                border-radius: 999px;
+                font-size: 0.88rem;
+                font-weight: 500;
+                padding: 8px 16px;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                color: white;
+                gap: 8px;
+                border: none;
+                cursor: pointer;
+                transition: all 0.18s ease;
+            }
+
+            .rm-btn i {
+                font-size: 0.9rem;
+            }
+
+            .rm-btn-primary {
+                background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+                color: #fff;
+            }
+
+            .rm-btn-primary:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 10px 22px rgba(16, 137, 255, 0.35);
+            }
+
+            .rm-btn-secondary {
+                background: #e5e7eb;
+                color: #111827;
+            }
+
+            .rm-btn-secondary:hover {
+                background: #d4d4d8;
+            }
+
+            .rm-btn-outline {
+                background: #ffffff;
+                border: 1px solid #d1d5db;
+                color: #111827;
+            }
+
+            .rm-btn-outline:hover {
+                background: #f9fafb;
+            }
+
+            /* Textarea & helper */
+            .bio-textarea {
+                border-radius: 12px;
+                border: 1px solid #d1d5db;
+                padding: 10px 12px;
+                font-size: 0.92rem;
+                min-height: 180px;
+                resize: vertical;
+                transition: border-color 0.18s ease, box-shadow 0.18s ease;
+                background: #ffffff;
+            }
+
+            .bio-textarea:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.12rem rgba(16, 137, 255, 0.2);
+                outline: none;
+            }
+
+            .textarea-helper {
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.78rem;
+                color: #6b7280;
+                margin-top: 4px;
+            }
+
+            .char-counter {
+                font-variant-numeric: tabular-nums;
+            }
+
+            .char-counter.too-long {
+                color: #b91c1c;
                 font-weight: 600;
             }
 
-            /* Empty State */
-            .empty-state {
-                padding: 3rem 1rem;
-                text-align: center;
-                color: #6c757d;
+            /* Alert info */
+            .info-strip {
+                border-radius: 12px;
+                padding: 10px 12px;
+                background: #e7f1ff;
+                border: 1px dashed #60a5fa;
+                font-size: 0.85rem;
+                color: #1e3a8a;
+                display: flex;
+                gap: 10px;
+                align-items: flex-start;
             }
 
-            .empty-state i {
-                font-size: 3rem;
-                margin-bottom: 1rem;
-                color: #dee2e6;
-            }
-
-            /* Search Suggestions */
-            .search-suggestions {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: white;
-                border: 1px solid #dee2e6;
-                border-radius: 0 0 8px 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,.1);
-                z-index: 1000;
-                max-height: 300px;
-                overflow-y: auto;
-                display: none;
-            }
-
-            .search-suggestions.show {
-                display: block;
-            }
-
-            .suggestion-item {
-                padding: 12px 16px;
-                border-bottom: 1px solid #f8f9fa;
-                cursor: pointer;
-                transition: background-color 0.2s;
-            }
-
-            .suggestion-item:hover,
-            .suggestion-item.active {
-                background-color: #f8f9fa;
-            }
-
-            .suggestion-item:last-child {
-                border-bottom: none;
-            }
-
-            .suggestion-empty {
-                padding: 12px 16px;
-                color: #6c757d;
-                text-align: center;
+            .info-strip i {
+                margin-top: 2px;
             }
 
             /* Responsive */
             @media (max-width: 991.98px) {
                 .rm-sidebar {
                     transform: translateX(-100%);
-                    transition: .3s;
+                    transition: .3s ease;
                 }
+
                 .rm-sidebar.show {
                     transform: translateX(0);
                 }
+
                 .rm-content {
                     margin-left: 0;
                 }
+
+                .rm-header-inner {
+                    margin-top: 72px;
+                }
+
+                .rm-header-right {
+                    text-align: left;
+                }
+
+                .kpi-pills {
+                    justify-content: flex-start;
+                }
+
+                .header-actions {
+                    justify-content: flex-start;
+                }
+            }
+
+            @media (max-width: 768px) {
+                .rm-card-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
             }
         </style>
+
     </head>
     <body>
+        <!-- Sidebar -->
         <div class="rm-sidebar">
             <div class="brand">
-                <i class="fas fa-hospital me-2"></i> REMEDIC
+                <i class="fas fa-hospital"></i>
+                <span>REMEDIC</span>
             </div>
             <ul class="menu">
                 <li>
-                    <a th:href="@{/doctor/index}" class="active">
-                        <i class="fas fa-home"></i> Dashboard
+                    <a th:href="@{/doctor/index}">
+                        <i class="fas fa-home"></i>Dashboard
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/doctor/appointments}">
-                        <i class="fas fa-calendar"></i> Quản lý Lịch hẹn
-                        <span th:if="${pendingAppointmentsCount > 0}" class="rm-badge" 
+                        <i class="fas fa-calendar"></i>Quản lý Lịch hẹn
+                        <span th:if="${pendingAppointmentsCount > 0}" class="rm-badge"
                               th:text="${pendingAppointmentsCount}">0</span>
                     </a>
                 </li>
                 <li>
-                    <a th:href="@{/doctor/appointments/confirmed}">
-                        <i class="fas fa-calendar-check"></i> Lịch hẹn Đã XN
-                        <span th:if="${confirmedAppointmentsCount > 0}" class="rm-badge" 
-                              th:text="${confirmedAppointmentsCount}">0</span>
-                    </a>
-                </li>
-                <li>
                     <a th:href="@{/doctor/appointments/history}">
-                        <i class="fas fa-history"></i> Lịch sử Lịch hẹn
+                        <i class="fas fa-history"></i>Lịch sử Lịch hẹn
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/doctor/medical-records}">
-                        <i class="fas fa-file-medical"></i> Hồ sơ bệnh án
+                        <i class="fas fa-file-medical"></i>Hồ sơ bệnh án
                     </a>
                 </li>
                 <li>
-                    <a th:href="@{/doctor/profile}">
-                        <i class="fas fa-user-md"></i> Hồ sơ bác sĩ
+                    <a th:href="@{/doctor/profile}" class="active">
+                        <i class="fas fa-user-md"></i>Hồ sơ bác sĩ
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/logout}">
-                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        <i class="fas fa-sign-out-alt"></i>Đăng xuất
                     </a>
                 </li>
             </ul>
         </div>
 
+        <!-- Content -->
         <div class="rm-content">
+            <!-- Header -->
             <div class="rm-header">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1 class="display-6 fw-bold">
-                                <i class="fas fa-edit me-2"></i> Chỉnh sửa Hồ sơ
-                            </h1>
-                            <p class="lead mb-0">Cập nhật thông tin cá nhân</p>
+                <div class="rm-header-inner">
+                    <div class="rm-header-left">
+                        <div class="doctor-heading">
+                            <div class="doctor-avatar">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div>
+                                <div class="doctor-name">
+                                    Hồ sơ bác sĩ
+                                </div>
+                                <div class="doctor-sub">
+                                    Cập nhật phần giới thiệu để bệnh nhân hiểu rõ hơn về chuyên môn của bạn.
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <a th:href="@{/doctor/profile}" class="btn btn-light">
-                                <i class="fas fa-arrow-left me-1"></i> Quay lại
+                        <div class="doctor-tags">
+                            <div class="doctor-tag">
+                                <i class="fas fa-stethoscope"></i>
+                                <span th:text="${specialtyName} ?: 'Chuyên khoa chưa cập nhật'">Nội tổng quát</span>
+                            </div>
+                            <div class="doctor-tag">
+                                <i class="fas fa-hospital"></i>
+                                <span th:text="${clinicName} ?: 'Phòng khám chưa cập nhật'">Remedic Clinic</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rm-header-right">
+                        <div class="small-label">Tổng quan lịch hẹn</div>
+                        <div class="kpi-pills">
+                            <div class="kpi-pill">
+                                <i class="fas fa-clock"></i>
+                                <span>Chờ xác nhận:</span>
+                                <span class="value" th:text="${pendingAppointmentsCount} ?: 0">0</span>
+                            </div>
+                            <div class="kpi-pill">
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Đã xác nhận:</span>
+                                <span class="value" th:text="${confirmedAppointmentsCount} ?: 0">0</span>
+                            </div>
+                        </div>
+                        <div class="header-actions">
+                            <a th:href="@{/doctor/profile}" class="btn-header">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Quay lại Hồ sơ</span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="container mt-4">
-                <form th:action="@{/doctor/profile/update-bio}" method="post">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-white">
-                            <h5 class="card-title mb-0">
-                                <i class="fas fa-file-alt me-2"></i> Chỉnh sửa Giới thiệu
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Giới thiệu về bản thân</label>
-                                <textarea class="form-control" name="bio" rows="6" 
-                                          placeholder="Giới thiệu về chuyên môn, kinh nghiệm, phương châm làm việc..."
-                                          th:text="${doctor.bio}"></textarea>
-                                <div class="form-text">
-                                    Viết một đoạn giới thiệu ngắn gọn về bản thân, chuyên môn và kinh nghiệm làm việc.
+            <!-- Body -->
+            <div class="page-body">
+                <div class="row g-3">
+                    <!-- LEFT: Info summary -->
+                    <div class="col-lg-4">
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5><i class="fas fa-id-card-clip"></i> Thông tin hệ thống</h5>
+                                    <small>Những thông tin này được quản lý bởi quản trị viên.</small>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-footer bg-white">
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-2"></i> Lưu thay đổi
-                                </button>
-                                <a th:href="@{/doctor/profile}" class="btn btn-secondary">
-                                    <i class="fas fa-times me-2"></i> Hủy bỏ
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                            <div class="rm-card-body">
+                                <div class="summary-tile d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <div class="summary-title">Chuyên khoa</div>
+                                        <div class="summary-value" th:text="${specialtyName} ?: '---'">---</div>
+                                    </div>
+                                    <div class="summary-icon">
+                                        <i class="fas fa-stethoscope"></i>
+                                    </div>
+                                </div>
 
-                <!-- Thông tin không thể chỉnh sửa -->
-                <div class="card shadow-sm mt-4">
-                    <div class="card-header bg-white">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-info-circle me-2"></i> Thông tin Hệ thống
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <label class="fw-semibold text-muted small">Chuyên khoa</label>
-                                <p th:text="${specialtyName}"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="fw-semibold text-muted small">Phòng khám</label>
-                                <p th:text="${clinicName}"></p>
-                            </div>
-                            <div class="col-12">
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    Thông tin chuyên khoa và phòng khám được quản lý bởi hệ thống. 
-                                    Liên hệ quản trị viên để thay đổi.
+                                <div class="summary-tile d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <div class="summary-title">Phòng khám</div>
+                                        <div class="summary-value" th:text="${clinicName} ?: '---'">---</div>
+                                    </div>
+                                    <div class="summary-icon">
+                                        <i class="fas fa-hospital"></i>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 info-strip">
+                                    <i class="fas fa-circle-info"></i>
+                                    <div>
+                                        Thông tin chuyên khoa và phòng khám do hệ thống quản lý.
+                                        Vui lòng liên hệ <strong>Admin</strong> nếu cần thay đổi.
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div class="rm-card">
+                            <div class="rm-card-header">
+                                <div>
+                                    <h5><i class="fas fa-lightbulb"></i> Gợi ý viết giới thiệu</h5>
+                                    <small>Giúp hồ sơ của bạn rõ ràng và chuyên nghiệp hơn.</small>
+                                </div>
+                            </div>
+                            <div class="rm-card-body">
+                                <ul class="mb-0" style="font-size: 0.86rem; color: #4b5563;">
+                                    <li>Nêu ngắn gọn <strong>chuyên môn chính</strong> và lĩnh vực quan tâm.</li>
+                                    <li>Thêm <strong>kinh nghiệm làm việc</strong>, bệnh viện/ phòng khám từng công tác.</li>
+                                    <li>Giải thích <strong>phương châm làm việc</strong> với bệnh nhân.</li>
+                                    <li>Ưu tiên văn phong <strong>thân thiện, dễ hiểu</strong>, tránh quá dài dòng.</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                </div>
+
+                    <!-- RIGHT: Edit form -->
+                    <div class="col-lg-8">
+                        <form th:action="@{/doctor/profile/update-bio}" method="post">
+                            <div class="rm-card">
+                                <div class="rm-card-header">
+                                    <div>
+                                        <h5><i class="fas fa-file-pen"></i> Chỉnh sửa phần Giới thiệu</h5>
+                                        <small>Đây là nội dung mà bệnh nhân sẽ thấy trong hồ sơ của bạn.</small>
+                                    </div>
+                                </div>
+                                <div class="rm-card-body">
+                                    <div class="mb-2">
+                                        <label class="form-label mb-1 fw-semibold">
+                                            Giới thiệu về bản thân
+                                        </label>
+                                        <textarea
+                                            class="form-control bio-textarea"
+                                            name="bio"
+                                            id="bioTextarea"
+                                            rows="6"
+                                            maxlength="1000"
+                                            placeholder="Ví dụ: Tôi là bác sĩ chuyên khoa Nội tổng quát với hơn 10 năm kinh nghiệm trong chẩn đoán và điều trị các bệnh lý hô hấp, tim mạch, tiêu hóa... &#10;Phương châm làm việc của tôi là lắng nghe kỹ lưỡng, giải thích rõ ràng và đồng hành cùng bệnh nhân trong suốt quá trình điều trị."
+                                            th:text="${doctor != null and doctor.bio != null} ? ${doctor.bio} : ''">
+                                        </textarea>
+                                        <div class="textarea-helper">
+                                            <span>Gợi ý độ dài: 3–6 câu, tập trung vào chuyên môn và kinh nghiệm.</span>
+                                            <span class="char-counter" id="bioCounter">0 / 1000</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rm-card-footer d-flex flex-wrap gap-2">
+                                    <button type="submit" class="rm-btn rm-btn-primary">
+                                        <i class="fas fa-save"></i> Lưu thay đổi
+                                    </button>
+                                    <a th:href="@{/doctor/profile}" class="rm-btn rm-btn-secondary">
+                                        <i class="fas fa-xmark"></i> Hủy bỏ
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div> <!-- row -->
             </div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Cập nhật bộ đếm ký tự cho phần bio
+            (function () {
+                const textarea = document.getElementById('bioTextarea');
+                const counter = document.getElementById('bioCounter');
+                const maxLength = textarea ? textarea.getAttribute('maxlength') || 1000 : 1000;
+
+                if (!textarea || !counter)
+                    return;
+
+                function updateCounter() {
+                    const len = textarea.value.length;
+                    counter.textContent = `${len} / ${maxLength}`;
+                    if (len > maxLength) {
+                        counter.classList.add('too-long');
+                    } else {
+                        counter.classList.remove('too-long');
+                    }
+                }
+
+                textarea.addEventListener('input', updateCounter);
+                // khởi tạo
+                updateCounter();
+            })();
+        </script>
     </body>
 </html>

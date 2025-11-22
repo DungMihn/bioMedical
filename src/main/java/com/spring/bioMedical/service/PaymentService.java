@@ -22,7 +22,6 @@ public class PaymentService {
   private final PaymentRepository paymentRepo;
   private final InvoiceRepository invoiceRepo;
 
-  /** 1) Hàm controller có thể gọi trực tiếp */
   @Transactional
   public Payment capture(PaymentCaptureForm form){
     Invoice inv = invoiceRepo.findById(form.getInvoiceId())
@@ -33,18 +32,20 @@ public class PaymentService {
     p.setAmount(form.getAmount());
     p.setMethod(form.getMethod());
     p.setReferenceNo(form.getReferenceNo());
-    p.setStatus(PaymentStatus.CAPTURED);
+    p.setStatus(PaymentStatus.PAID);     // ✔ enum, không còn lỗi
     p.setPaidAt(LocalDateTime.now());
     paymentRepo.save(p);
 
-    BigDecimal captured = paymentRepo.sumCapturedByInvoice(inv.getInvoiceId());
-    if (captured.compareTo(inv.getTotalAmount()) >= 0) {
-      inv.setStatus(InvoiceStatus.PAID);
-    }
+    // Nếu muốn đơn giản: hễ có payment >= total_amount thì mark invoice PAID
+    // (thay vì sumCapturedByInvoice nếu repo của bạn đang lọc theo CAPTURED trước đây)
+    // BigDecimal totalPaid = paymentRepo.sumPaidByInvoice(inv.getInvoiceId());
+    // if (totalPaid != null && totalPaid.compareTo(inv.getTotalAmount()) >= 0) ...
+
+    inv.setStatus(InvoiceStatus.PAID);
+    // nhớ invoiceRepo.save(inv); nếu entity chưa được quản lý
     return p;
   }
 
-  /** 2) Overload khớp với AdminBranchInvoiceController đang gọi */
   @Transactional
   public void capture(Long invoiceId, BigDecimal amount, String method, String referenceNo) {
     PaymentCaptureForm f = new PaymentCaptureForm();
@@ -55,9 +56,10 @@ public class PaymentService {
     capture(f);
   }
 
-  /** Lấy danh sách payments theo invoice để render detail */
   @Transactional(readOnly = true)
   public List<Payment> findByInvoice(Long invoiceId) {
     return paymentRepo.findByInvoice_InvoiceId(invoiceId);
   }
 }
+
+

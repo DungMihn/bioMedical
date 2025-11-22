@@ -3,6 +3,7 @@ package com.spring.bioMedical.service;
 import com.spring.bioMedical.form.OllamaRequest;
 import com.spring.bioMedical.form.OllamaResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,8 +23,7 @@ public class ChatServiceImplementation implements ChatService {
         try {
 
             // ===============================
-            // SYSTEM PROMPT CHUẨN DÀNH CHO AI
-            // (Java 8-compatible string)
+            // SYSTEM PROMPT GIỮ NGUYÊN
             // ===============================
             String systemPrompt
                     = "Bạn là trợ lý ảo của hệ thống phòng khám Doctor+.\n\n"
@@ -54,7 +54,7 @@ public class ChatServiceImplementation implements ChatService {
                     + "Khi user nói chi nhánh bằng tên, hãy cố gắng điền đúng clinicId theo danh sách trên.";
 
             // ===============================
-            // GHÉP PROMPT
+            // GHÉP PROMPT — GIỮ NGUYÊN
             // ===============================
             String finalPrompt
                     = systemPrompt
@@ -62,25 +62,38 @@ public class ChatServiceImplementation implements ChatService {
                     + "Nội dung người dùng:\n"
                     + message + "\n";
 
-            // Chuẩn bị body request cho Ollama API
+            // Body request gửi lên Ollama
             OllamaRequest req = new OllamaRequest();
             req.setModel(model);
             req.setPrompt(finalPrompt);
             req.setStream(false);
 
-            // Gửi request
-            OllamaResponse response = restTemplate.postForObject(
-                    apiUrl,
-                    req,
+            // =====================================================
+            //  🔥 SỬA CHỖ NÀY: GỬI JSON ĐÚNG CHUẨN CHO OLLAMA
+            // =====================================================
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);   // Ép JSON
+
+            HttpEntity<OllamaRequest> entity = new HttpEntity<>(req, headers);
+
+            ResponseEntity<OllamaResponse> resp = restTemplate.exchange(
+                    apiUrl,                 // http://localhost:11434/api/generate
+                    HttpMethod.POST,
+                    entity,
                     OllamaResponse.class
             );
 
-            // Nếu AI trả JSON thì trả về thẳng cho Orchestrator
-            if (response != null && response.getResponse() != null) {
-                return response.getResponse().trim();
+            OllamaResponse body = resp.getBody();
+
+            // Ollama trả text ở "response"
+            if (body != null && body.getResponse() != null) {
+                return body.getResponse().trim();
+            }
+            if (body != null && body.getReply() != null) {
+                return body.getReply().trim();
             }
 
-            // Fallback: trả JSON mặc định
+            // fallback
             return "{ \"intent\": \"chitchat\", \"answer\": \"Hệ thống tạm thời không phản hồi, bạn thử lại sau nhé.\" }";
 
         } catch (Exception e) {

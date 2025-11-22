@@ -1,51 +1,270 @@
+<!-- /templates/layout/main.html -->
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
-  <title layout:title-pattern="$CONTENT_TITLE - Remedic">Remedic - Free Bootstrap 4 Template by Colorlib</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title layout:title-pattern="$CONTENT_TITLE - Remedic">
+        Remedic - Free Bootstrap 4 Template by Colorlib
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/open-iconic-bootstrap.min.css}">
-  <link rel="stylesheet" th:href="@{/css/animate.css}">
-  <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
-  <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
-  <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
-  <link rel="stylesheet" th:href="@{/css/aos.css}">
-  <link rel="stylesheet" th:href="@{/css/ionicons.min.css}">
-  <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
-  <link rel="stylesheet" th:href="@{/css/jquery.timepicker.css}">
-  <link rel="stylesheet" th:href="@{/css/flaticon.css}">
-  <link rel="stylesheet" th:href="@{/css/icomoon.css}">
-  <link rel="stylesheet" th:href="@{/css/style.css}">
-  <link rel="stylesheet" type="text/css" href="/login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
-<!--  <style>
-  /* Chừa không gian cho header cố định */
-/*  body {
-    padding-top: 75px;  tùy theo chiều cao header của bạn 
-  }*/
-</style>-->
+    <!-- CSS template gốc -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/open-iconic-bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/aos.css}">
+    <link rel="stylesheet" th:href="@{/css/ionicons.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datepicker.css}">
+    <link rel="stylesheet" th:href="@{/css/jquery.timepicker.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/icomoon.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 
+    <!-- ⭐⭐ CSS CHAT WIDGET ĐƯỢC NHÚNG TRỰC TIẾP Ở ĐÂY ⭐⭐ -->
+    <style>
+        /* Nút bubble tròn góc phải dưới */
+        #chatWidgetButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 58px;
+            height: 58px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #fff;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            box-shadow: 0 12px 25px rgba(15, 23, 42, 0.4);
+            cursor: pointer;
+            z-index: 9999;
+            padding: 0;
+        }
+
+        #chatWidgetButton:hover {
+            transform: translateY(-1px) scale(1.03);
+            box-shadow: 0 16px 30px rgba(15, 23, 42, 0.45);
+        }
+
+        /* Panel nhỏ */
+        #chatWidgetPanel {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 340px;
+            height: 460px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.45);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        /* Header */
+        .chat-widget-header {
+            padding: 10px 14px;
+            background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+            color: #e5f2ff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-widget-header-main {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .chat-widget-header-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chat-widget-header-sub {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        .chat-widget-close {
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 4px;
+            line-height: 1;
+        }
+
+        /* Menu xổ xuống */
+        .chat-widget-menu {
+            position: absolute;
+            top: 60px;
+            right: 24px;
+            min-width: 220px;
+            background: #111827;
+            color: #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.65);
+            padding: 6px 0;
+            font-size: 13px;
+            display: none;
+            z-index: 10000;
+        }
+
+        .chat-widget-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .chat-widget-menu-item:hover {
+            background: #1f2937;
+        }
+
+        /* Vùng tin nhắn */
+        .chat-widget-messages {
+            padding: 10px 12px;
+            background: #f9fafb;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .chat-widget-message {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .chat-widget-message.user {
+            justify-content: flex-end;
+        }
+
+        .chat-widget-bubble {
+            max-width: 80%;
+            padding: 8px 11px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .chat-widget-message.user .chat-widget-bubble {
+            background: #2563eb;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-widget-message.bot .chat-widget-bubble {
+            background: #e5e7eb;
+            color: #111827;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Status */
+        .chat-widget-status {
+            font-size: 11px;
+            color: #6b7280;
+            padding: 4px 12px 6px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Input */
+        .chat-widget-input-area {
+            padding: 8px 10px 10px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            background: #f3f4f6;
+        }
+
+        .chat-widget-textarea {
+            flex: 1;
+            resize: none;
+            overflow-y: hidden;
+            border-radius: 999px;
+            border: 1px solid #d1d5db;
+            padding: 6px 12px;
+            font-size: 13px;
+            line-height: 1.4;
+            min-height: 32px;
+            max-height: 96px;
+            background: #ffffff;
+        }
+
+        .chat-widget-textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+        }
+
+        .chat-widget-input-area button {
+            font-size: 13px;
+            border-radius: 999px;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            border: none;
+        }
+
+        /* Slot buttons */
+        .slot-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 4px 0 2px;
+        }
+
+        .slot-button {
+            padding: 6px 10px;
+            background: #4F46E5;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .slot-button:hover {
+            background: #4338CA;
+        }
+    </style>
 </head>
 
 <body>
-  <div th:replace="fragments/header :: header"></div>
 
-  <main layout:fragment="content"></main>
+<div th:replace="fragments/header :: header"></div>
 
-  <div th:replace="fragments/footer :: footer"></div>
-    <!-- JS chung -->
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://kit.fontawesome.com/a2d9b6c6d5.js" crossorigin="anonymous"></script>
+<main layout:fragment="content"></main>
 
-  <!-- ✅ Nếu trang con có script fragment, render nó ở đây -->
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- JS chung -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://kit.fontawesome.com/a2d9b6c6d5.js" crossorigin="anonymous"></script>
+
+<!-- JS widget -->
+<script th:src="@{/js/chat-widget.js}"></script>
+
+<!-- Nhúng widget -->
+<div th:replace="support/chat-widget :: chatWidget"></div>
+
 <th:block layout:fragment="extra-scripts"></th:block>
-<!-- ✅ Modal toàn cục (nếu trang con có fragment modal) -->
 <th:block layout:fragment="global-modal"></th:block>
+
 </body>
 </html>

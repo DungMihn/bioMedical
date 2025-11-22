@@ -12,18 +12,23 @@ public class DoctorService {
 
     @Autowired
     private DoctorRepository doctorRepository;
-    
+
     @Autowired
     private SpecialtyService specialtyService;
 
     public Optional<Doctors> getDoctorByUserId(Long userId) {
         return doctorRepository.findByUserUserId(userId);
     }
-    
+
     public Doctors getDoctorById(Long doctorId) {
         return doctorRepository.findById(doctorId).orElse(null);
     }
-    
+
+    public Doctors findByUserId(Long userId) {
+        return doctorRepository.findByUserUserId(userId)
+                .orElse(null);
+    }
+
 //    // Thêm method để lấy thông tin đầy đủ bao gồm tên chuyên khoa
 //    public String getDoctorSpecialtyName(Long doctorId) {
 //        Doctors doctor = getDoctorById(doctorId);

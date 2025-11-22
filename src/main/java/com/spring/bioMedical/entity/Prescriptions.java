@@ -1,5 +1,6 @@
 package com.spring.bioMedical.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -41,6 +42,7 @@ public class Prescriptions implements Serializable {
 
     // ✅ SỬA: Dùng relationship thay vì ID trực tiếp
     @ManyToOne(optional = false)
+    @JsonIgnore
     @JoinColumn(name = "record_id", referencedColumnName = "record_id")
     private MedicalRecords medicalRecord;
 
@@ -170,13 +172,4 @@ public class Prescriptions implements Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "Prescriptions{" + 
-               "prescriptionId=" + prescriptionId + 
-               ", medicationName='" + medicationName + '\'' +
-               ", dosage='" + dosage + '\'' +
-               ", medicalRecord=" + (medicalRecord != null ? medicalRecord.getRecordId() : "null") +
-               '}';
-    }
 }

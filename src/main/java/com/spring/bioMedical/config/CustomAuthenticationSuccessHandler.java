@@ -22,11 +22,17 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-
+        
+        String ctx = request.getContextPath();
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
-        if (roles.contains("ADMIN")) {
-            response.sendRedirect("/admin/user-details");
+        if (roles.contains("ADMIN_SUPER")) {
+            response.sendRedirect(ctx + "/admin-super/admin-branch-list");
+            return;
+        }
+        if (roles.contains("ADMIN_BRANCH")) {
+            // ĐƯỜNG DẪN TỒN TẠI trong AdminBranchInvoiceController
+            response.sendRedirect(ctx + "/admin-branch/doctor-details");
             return;
         }
 

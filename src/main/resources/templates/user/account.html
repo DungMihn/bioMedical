@@ -272,7 +272,8 @@
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <h5>
                                                 <span class="lnr lnr-apartment mr-2 text-primary"></span>
-                                                <span th:text="${a.slotId.clinicId.name}">Clinic Name</span>
+                                                <span th:text="${a.slot.clinic.name}">Clinic Name</span>
+
                                             </h5>
                                             <span class="badge px-3 py-2"
                                                   th:text="${a.status}"
@@ -287,10 +288,27 @@
 
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <p><b>Doctor:</b> <span th:text="${a.slotId.doctorId.userId.fullName}">Dr. Nguyen Van A</span></p>
-                                                <p><b>Date:</b> <span th:text="${#dates.format(a.slotId.slotDate,'dd/MM/yyyy')}"></span></p>
-                                                <p><b>Time:</b> <span th:text="${#dates.format(a.slotId.slotTime,'HH:mm')}"></span></p>
-                                                <p><b>Notes:</b> <span th:text="${a.notes}">None</span></p>
+                                                <p><b>Doctor:</b>
+                                                    <!-- Nếu Doctor có field user.fullName -->
+                                                    <span th:text="${a.slot.doctor.user.fullName}">Dr. Nguyen Van A</span>
+                                                    <!-- Hoặc nếu Doctor map trực tiếp fullName thì dùng:
+                                                    <span th:text="${a.slot.doctor.fullName}">Dr. Nguyen Van A</span>
+                                                    -->
+                                                </p>
+
+                                                <p><b>Date:</b>
+                                                    <span th:text="${#temporals.format(a.slot.slotDate, 'dd/MM/yyyy')}"></span>
+                                                </p>
+
+                                                <p><b>Time:</b>
+                                                    <span th:text="${#temporals.format(a.slot.slotTime, 'HH:mm')}"></span>
+                                                </p>
+
+                                                <p><b>Created on:</b>
+                                                    <span th:text="${#dates.format(a.createdAt, 'dd/MM/yyyy')}"></span>
+                                                </p>
+
+
                                             </div>
                                             <div class="col-md-4 text-right">
                                                 <p><b>Created on:</b> <span th:text="${#dates.format(a.createdAt,'dd/MM/yyyy')}"></span></p>

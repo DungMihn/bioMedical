@@ -62,7 +62,7 @@ public class Users implements Serializable {
     private Boolean enabled = false;
 
     // ----- OTP -----
-    @Column(name = "otp_code")
+    @Column(name = "otp_code", length = 50)
     private String otpCode;
 
     @Temporal(TemporalType.TIMESTAMP)

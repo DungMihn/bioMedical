@@ -3,6 +3,7 @@ package com.spring.bioMedical.Controller;
 import com.spring.bioMedical.dto.BookingRequest;
 import com.spring.bioMedical.dto.GuestBookingForm;
 import com.spring.bioMedical.entity.*;
+import com.spring.bioMedical.form.SlotDto;
 import com.spring.bioMedical.repository.*;
 import com.spring.bioMedical.service.BookingService;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Controller
@@ -134,17 +136,19 @@ public class AppointmentController {
     // === API: Lấy danh sách slot trống theo chi nhánh ===
     @GetMapping("/slots-by-clinic/{clinicId}")
     @ResponseBody
-    public List<AppointmentSlots> getAvailableSlots(
+    public List<SlotDto> getAvailableSlots(
             @PathVariable Long clinicId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        if (date != null) {
-            // ✅ Đơn giản: date đã là LocalDate rồi, dùng trực tiếp
-            return slotRepository.findByClinicIdAndDateAndStatus(clinicId, date, "AVAILABLE");
-        }
+        List<AppointmentSlots> slots
+                = slotRepository.findByClinicIdAndDateAndStatus(clinicId, date, "AVAILABLE");
 
-        // ✅ Nếu chưa có ngày (chưa chọn ngày) thì không trả gì cả
-        return List.of();
+        return slots.stream()
+                .map(s -> new SlotDto(
+                s.getSlotId(),
+                s.getSlotTime().toString().substring(0, 5)
+        ))
+                .collect(Collectors.toList());
     }
 
 // ✅ Hủy lịch hẹn

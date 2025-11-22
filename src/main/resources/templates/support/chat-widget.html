@@ -1,70 +1,65 @@
-<!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-    <body>
+<!-- /templates/support/chat-widget.html -->
+<div th:fragment="chatWidget">
 
-        <div th:fragment="chatWidget">
-
-            <!-- Nút tròn mở chat -->
-            <button id="chatWidgetButton"
-                    type="button"
-                    title="Chat AI"
-                    style="padding:0; border:none; background:none;">
-                <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
-                <defs>
+    <!-- Nút tròn mở chat -->
+    <button id="chatWidgetButton"
+            type="button"
+            title="Trợ lý ảo Doctor+">
+        <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+            <defs>
                 <linearGradient id="chatGradientPurple" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#A77BFF"/>
-                <stop offset="100%" stop-color="#FF7AC3"/>
+                    <stop offset="0%" stop-color="#A77BFF"/>
+                    <stop offset="100%" stop-color="#FF7AC3"/>
                 </linearGradient>
-                </defs>
-                <circle cx="28" cy="28" r="26" fill="url(#chatGradientPurple)"/>
-                <path d="M17 18H39C40.1 18 41 18.9 41 20V32C41 33.1 40.1 34 39 34H25L19 38V34H17C15.9 34 15 33.1 15 32V20C15 18.9 15.9 18 17 18Z"
-                      fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </button>
+            </defs>
+            <circle cx="28" cy="28" r="26" fill="url(#chatGradientPurple)"/>
+            <path d="M17 18H39C40.1 18 41 18.9 41 20V32C41 33.1 40.1 34 39 34H25L19 38V34H17C15.9 34 15 33.1 15 32V20C15 18.9 15.9 18 17 18Z"
+                  fill="none" stroke="white" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
 
-            <!-- PANEL WIDGET -->
-            <div id="chatWidgetPanel">
-                <!-- Header + menu -->
-                <div class="chat-widget-header">
-                    <div class="chat-widget-header-main" onclick="toggleChatWidgetMenu()">
-                        <div class="chat-widget-header-title">Trợ lý ảo Doctor+</div>
-                        <div class="chat-widget-header-sub">Bấm vào đây để mở menu</div>
-                    </div>
-
-                    <div class="chat-widget-header-actions">
-                        <span class="chat-widget-close" onclick="toggleChatWidget(false)">&times;</span>
-                    </div>
-                </div>
-
-                <!-- MENU TOOL -->
-                <div id="chatWidgetMenu" class="chat-widget-menu">
-                    <div class="chat-widget-menu-item" onclick="openFullChatPage()">
-                        💬 Mở trang chat đầy đủ
-                    </div>
-
-                </div>
-
-                <!-- Vùng tin nhắn -->
-                <div class="chat-widget-messages" id="chatWidgetMessages">
-                    <!-- JS sẽ load lịch sử, nếu không có thì có thể để trống hoặc lời chào -->
-                </div>
-
-                <!-- Input -->
-                <div class="chat-widget-input-area">
-                    <textarea id="chatWidgetInput"
-                              class="chat-widget-textarea"
-                              placeholder="Nhập câu hỏi..."
-                              rows="1"></textarea>
-
-                    <button class="btn btn-primary btn-sm"
-                            type="button"
-                            onclick="sendWidgetMessage()">
-                        Gửi
-                    </button>
-                </div>
+    <!-- Panel widget -->
+    <div id="chatWidgetPanel">
+        <!-- Header + menu -->
+        <div class="chat-widget-header">
+            <div class="chat-widget-header-main" onclick="toggleChatWidgetMenu()">
+                <div class="chat-widget-header-title">Trợ lý ảo Doctor+</div>
+                <div class="chat-widget-header-sub">Bấm vào đây để mở menu</div>
             </div>
 
+            <div class="chat-widget-header-actions">
+                <span class="chat-widget-close" onclick="toggleChatWidget(false)">&times;</span>
+            </div>
         </div>
 
-    </body>
-</html>
+        <!-- Menu xổ xuống -->
+        <div id="chatWidgetMenu" class="chat-widget-menu">
+            <div class="chat-widget-menu-item" onclick="openFullChatPage()">
+                💬 Mở trang chat đầy đủ
+            </div>
+        </div>
+
+        <!-- Vùng tin nhắn -->
+        <div class="chat-widget-messages" id="chatWidgetMessages"></div>
+
+        <!-- Status nhỏ -->
+        <div class="chat-widget-status" id="chatWidgetStatus">
+            Sẵn sàng hỗ trợ
+        </div>
+
+        <!-- Input -->
+        <div class="chat-widget-input-area">
+            <textarea id="chatWidgetInput"
+                      class="chat-widget-textarea"
+                      placeholder="Nhập câu hỏi..."
+                      rows="1"></textarea>
+
+            <button class="btn btn-primary btn-sm"
+                    type="button"
+                    onclick="sendWidgetMessage()">
+                Gửi
+            </button>
+        </div>
+    </div>
+</div>

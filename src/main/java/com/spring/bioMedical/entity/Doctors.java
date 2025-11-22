@@ -1,5 +1,6 @@
 package com.spring.bioMedical.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -36,8 +37,8 @@ public class Doctors implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    // ✅ Relationships
     @OneToMany(mappedBy = "doctor")
+    @JsonIgnore
     private Collection<AppointmentSlots> appointmentSlots;
 
     // Constructors
@@ -49,61 +50,61 @@ public class Doctors implements Serializable {
     }
 
     // Getters and Setters
-    public Long getDoctorId() { 
-        return doctorId; 
+    public Long getDoctorId() {
+        return doctorId;
     }
-    
-    public void setDoctorId(Long doctorId) { 
-        this.doctorId = doctorId; 
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
     }
 
     // ✅ QUAN TRỌNG: Đặt tên theo relationship
-    public Users getUser() { 
-        return user; 
-    }
-    
-    public void setUser(Users user) { 
-        this.user = user; 
+    public Users getUser() {
+        return user;
     }
 
-    public Clinics getClinic() { 
-        return clinic; 
-    }
-    
-    public void setClinic(Clinics clinic) { 
-        this.clinic = clinic; 
+    public void setUser(Users user) {
+        this.user = user;
     }
 
-    public Specialties getSpecialty() { 
-        return specialty; 
-    }
-    
-    public void setSpecialty(Specialties specialty) { 
-        this.specialty = specialty; 
+    public Clinics getClinic() {
+        return clinic;
     }
 
-    public String getBio() { 
-        return bio; 
-    }
-    
-    public void setBio(String bio) { 
-        this.bio = bio; 
+    public void setClinic(Clinics clinic) {
+        this.clinic = clinic;
     }
 
-    public Date getCreatedAt() { 
-        return createdAt; 
-    }
-    
-    public void setCreatedAt(Date createdAt) { 
-        this.createdAt = createdAt; 
+    public Specialties getSpecialty() {
+        return specialty;
     }
 
-    public Collection<AppointmentSlots> getAppointmentSlots() { 
-        return appointmentSlots; 
+    public void setSpecialty(Specialties specialty) {
+        this.specialty = specialty;
     }
-    
-    public void setAppointmentSlots(Collection<AppointmentSlots> appointmentSlots) { 
-        this.appointmentSlots = appointmentSlots; 
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Collection<AppointmentSlots> getAppointmentSlots() {
+        return appointmentSlots;
+    }
+
+    public void setAppointmentSlots(Collection<AppointmentSlots> appointmentSlots) {
+        this.appointmentSlots = appointmentSlots;
     }
 
     // ✅ Helper methods cho backward compatibility
@@ -169,20 +170,11 @@ public class Doctors implements Serializable {
             return false;
         }
         Doctors other = (Doctors) object;
-        if ((this.doctorId == null && other.doctorId != null) || 
-            (this.doctorId != null && !this.doctorId.equals(other.doctorId))) {
+        if ((this.doctorId == null && other.doctorId != null)
+                || (this.doctorId != null && !this.doctorId.equals(other.doctorId))) {
             return false;
         }
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "Doctors{" + 
-               "doctorId=" + doctorId + 
-               ", user=" + (user != null ? user.getUserId() : "null") +
-               ", clinic=" + (clinic != null ? clinic.getClinicId() : "null") +
-               ", specialty=" + (specialty != null ? specialty.getSpecialtyId() : "null") +
-               '}';
-    }
 }

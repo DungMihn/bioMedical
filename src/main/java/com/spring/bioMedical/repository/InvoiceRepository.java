@@ -22,7 +22,13 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     // truy vấn theo quan hệ, không phụ thuộc tên field id của Appointment trong HQL
     Invoice findByAppointment(Appointments appointment);
-    
-    @EntityGraph(attributePaths = {"items","clinic","patient","appointment"})
-  Optional<Invoice> findWithDetailByInvoiceId(@Param("id") Long id);
+
+    @EntityGraph(attributePaths = {"items", "clinic", "patient", "appointment"})
+    Optional<Invoice> findWithDetailByInvoiceId(@Param("id") Long id);
+
+    // Lấy invoice theo appointment
+    Invoice findByAppointment_AppointmentId(Long appointmentId);
+
+    // Kiểm tra invoice đã tồn tại
+    boolean existsByAppointment_AppointmentId(Long appointmentId);
 }

@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Chi tiết Lịch hẹn - Remedic</title>
+
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Font Awesome -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
         <style>
             :root {
                 --sidebar-width: 250px;
@@ -24,7 +26,7 @@
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
 
-            /* Sidebar Styles */
+            /* Sidebar */
             .rm-sidebar {
                 position: fixed;
                 top: 0;
@@ -77,13 +79,13 @@
                 color: #fff;
             }
 
-            /* Content Area */
+            /* Content */
             .rm-content {
                 margin-left: var(--sidebar-width);
                 min-height: 100vh;
             }
 
-            /* Header Styles */
+            /* Header */
             .rm-header {
                 background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
                 color: white;
@@ -92,7 +94,7 @@
                 box-shadow: 0 4px 12px rgba(0,0,0,.1);
             }
 
-            /* Card Styles */
+            /* Card */
             .rm-card {
                 background: #fff;
                 border-radius: 12px;
@@ -104,7 +106,7 @@
             }
 
             .rm-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-3px);
                 box-shadow: 0 8px 30px rgba(0,0,0,.12);
             }
 
@@ -127,9 +129,9 @@
                 border-left: 4px solid var(--warning-color);
             }
 
-            /* Status Badges */
+            /* Status badges */
             .status-badge {
-                padding: 8px 16px;
+                padding: 6px 14px;
                 border-radius: 20px;
                 font-size: 12px;
                 font-weight: 700;
@@ -179,64 +181,19 @@
                 border: 1px solid #5a6268;
             }
 
-            /* Button Styles */
+            /* Buttons */
             .rm-btn {
                 border-radius: 8px;
                 font-weight: 500;
                 transition: all 0.2s;
-                padding: 0.75rem 1.5rem;
+                padding: 0.6rem 1.3rem;
             }
 
             .action-btn {
-                margin-bottom: 0.5rem;
                 width: 100%;
             }
 
-            /* Timeline */
-            .timeline {
-                border-left: 3px solid var(--primary-color);
-                margin-left: 1rem;
-                padding-left: 2rem;
-            }
-
-            .timeline-item {
-                position: relative;
-                margin-bottom: 2rem;
-            }
-
-            .timeline-item:before {
-                content: '';
-                position: absolute;
-                left: -2.4rem;
-                top: 0.5rem;
-                width: 1rem;
-                height: 1rem;
-                background: var(--primary-color);
-                border-radius: 50%;
-            }
-
-            /* Loading Overlay */
-            .loading-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
-                display: none;
-                justify-content: center;
-                align-items: center;
-                z-index: 9999;
-            }
-
-            .loading-spinner {
-                background: white;
-                padding: 2rem;
-                border-radius: 10px;
-                text-align: center;
-            }
-
-            /* Patient Avatar */
+            /* Patient avatar */
             .patient-avatar {
                 width: 100px;
                 height: 100px;
@@ -249,7 +206,7 @@
                 box-shadow: 0 4px 15px rgba(16, 137, 255, 0.3);
             }
 
-            /* Info Grid */
+            /* Info grid */
             .info-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -275,7 +232,7 @@
                 color: #212529;
             }
 
-            /* Alert Styles */
+            /* Alerts */
             .status-alert {
                 border-radius: 8px;
                 border: none;
@@ -295,17 +252,11 @@
                 border-left: 4px solid #0dcaf0;
             }
 
-            .alert-success-custom {
-                background: #d4edda;
-                color: #155724;
-                border-left: 4px solid #198754;
-            }
-
-            /* Time Status */
+            /* Time status */
             .time-status {
-                padding: 0.5rem 1rem;
+                padding: 0.4rem 0.9rem;
                 border-radius: 20px;
-                font-size: 0.875rem;
+                font-size: 0.85rem;
                 font-weight: 600;
                 text-align: center;
             }
@@ -325,15 +276,58 @@
                 color: #721c24;
             }
 
+            /* Timeline */
+            .timeline {
+                border-left: 3px solid var(--primary-color);
+                margin-left: 1rem;
+                padding-left: 2rem;
+            }
+
+            .timeline-item {
+                position: relative;
+                margin-bottom: 1.6rem;
+            }
+
+            .timeline-item::before {
+                content: '';
+                position: absolute;
+                left: -2.35rem;
+                top: 0.35rem;
+                width: 0.9rem;
+                height: 0.9rem;
+                background: var(--primary-color);
+                border-radius: 50%;
+            }
+
+            /* Loading overlay */
+            .loading-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.35);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 9999;
+            }
+
+            .loading-spinner {
+                background: white;
+                padding: 1.5rem 2rem;
+                border-radius: 10px;
+                text-align: center;
+            }
+
             /* Responsive */
             @media (max-width: 991.98px) {
                 .rm-sidebar {
                     transform: translateX(-100%);
                     transition: .3s;
                 }
+
                 .rm-sidebar.show {
                     transform: translateX(0);
                 }
+
                 .rm-content {
                     margin-left: 0;
                 }
@@ -345,13 +339,14 @@
         </style>
     </head>
     <body>
+
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loadingOverlay">
             <div class="loading-spinner">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <p class="mt-2">Đang xử lý...</p>
+                <p class="mt-2 mb-0">Đang xử lý...</p>
             </div>
         </div>
 
@@ -369,11 +364,6 @@
                 <li>
                     <a th:href="@{/doctor/appointments}">
                         <i class="fas fa-calendar"></i> Quản lý Lịch hẹn
-                    </a>
-                </li>
-                <li>
-                    <a th:href="@{/doctor/appointments/confirmed}">
-                        <i class="fas fa-calendar-check"></i> Lịch hẹn Đã XN
                     </a>
                 </li>
                 <li>
@@ -409,21 +399,22 @@
                             <h1 class="display-6 fw-bold mb-2">
                                 <i class="fas fa-calendar-check me-2"></i> Chi tiết Lịch hẹn
                             </h1>
-                            <p class="lead mb-0">Quản lý và xem thông tin chi tiết lịch hẹn</p>
+                            <p class="lead mb-0">Xem và xử lý lịch hẹn của bệnh nhân</p>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <span th:class="${'status-badge status-' + appointment.status}" 
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <span th:class="${'status-badge status-' + appointment.status}"
                                   th:text="${appointment.status}">
+                                STATUS
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Content -->
             <div class="container">
+
                 <!-- Status Alerts -->
-                <div th:if="${appointment.status == 'PENDING' and isAppointmentExpired}" 
+                <div th:if="${appointment.status == 'PENDING' and isAppointmentExpired}"
                      class="alert alert-warning-custom status-alert">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
@@ -434,7 +425,7 @@
                     </div>
                 </div>
 
-                <div th:if="${appointment.status == 'CONFIRMED' and isAppointmentExpired}" 
+                <div th:if="${appointment.status == 'CONFIRMED' and isAppointmentExpired}"
                      class="alert alert-info-custom status-alert">
                     <div class="d-flex align-items-center">
                         <i class="fas fa-clock fa-2x me-3"></i>
@@ -446,9 +437,9 @@
                 </div>
 
                 <div class="row">
-                    <!-- Left Column - Patient Information & Actions -->
+                    <!-- LEFT: Patient & Actions -->
                     <div class="col-lg-4">
-                        <!-- Patient Information -->
+                        <!-- Patient info -->
                         <div class="rm-card patient-info-card">
                             <div class="card-header">
                                 <h5 class="card-title mb-0">
@@ -460,8 +451,14 @@
                                     <div class="patient-avatar">
                                         <i class="fas fa-user fa-3x text-white"></i>
                                     </div>
-                                    <h5 class="mb-1" th:text="${patient.fullName} ?: 'Bệnh nhân ẩn danh'">Bệnh nhân</h5>
-                                    <p class="text-muted mb-0" th:text="${patient.email} ?: 'Chưa có email'">Email</p>
+                                    <h5 class="mb-1"
+                                        th:text="${patient != null && patient.fullName != null ? patient.fullName : 'Bệnh nhân ẩn danh'}">
+                                        Bệnh nhân
+                                    </h5>
+                                    <p class="text-muted mb-0"
+                                       th:text="${patient != null && patient.email != null ? patient.email : 'Chưa có email'}">
+                                        Email
+                                    </p>
                                 </div>
 
                                 <div class="info-grid">
@@ -469,20 +466,27 @@
                                         <div class="info-label">
                                             <i class="fas fa-phone me-1"></i> Điện thoại
                                         </div>
-                                        <div class="info-value" th:text="${patient.phone} ?: 'N/A'">N/A</div>
+                                        <div class="info-value"
+                                             th:text="${patient != null && patient.phone != null ? patient.phone : 'N/A'}">
+                                            N/A
+                                        </div>
                                     </div>
-                                    <div class="info-item" th:if="${patient.gender}">
+                                    <div class="info-item" th:if="${patient != null && patient.gender != null}">
                                         <div class="info-label">
                                             <i class="fas fa-venus-mars me-1"></i> Giới tính
                                         </div>
                                         <div class="info-value" th:text="${patient.gender}">N/A</div>
                                     </div>
-                                    <div class="info-item" th:if="${patient.dateOfBirth}">
+                                    <div class="info-item" th:if="${patient != null}">
                                         <div class="info-label">
                                             <i class="fas fa-birthday-cake me-1"></i> Ngày sinh
                                         </div>
-                                        <div class="info-value" th:text="${#dates.format(patient.dateOfBirth, 'dd/MM/yyyy')}">N/A</div>
+                                        <div class="info-value"
+                                             th:text="${patient.dateOfBirth != null ? #temporals.format(patient.dateOfBirth, 'dd/MM/yyyy') : 'N/A'}">
+                                            N/A
+                                        </div>
                                     </div>
+
                                     <div class="info-item">
                                         <div class="info-label">
                                             <i class="fas fa-user-tag me-1"></i> Vai trò
@@ -493,7 +497,7 @@
                             </div>
                         </div>
 
-                        <!-- Quick Actions -->
+                        <!-- Quick actions -->
                         <div class="rm-card actions-card">
                             <div class="card-header">
                                 <h6 class="card-title mb-0">
@@ -501,142 +505,159 @@
                                 </h6>
                             </div>
                             <div class="card-body">
-                                <!-- Medical Record Actions -->
+
+                                <!-- Medical record actions -->
                                 <div class="mb-3">
-                                    <h6 class="text-muted mb-2">Hồ sơ bệnh án:</h6>
+                                    <h6 class="text-muted mb-2">Hồ sơ bệnh án</h6>
                                     <div class="d-grid gap-2">
                                         <!-- Tạo hồ sơ bệnh án -->
-                                        <a th:href="@{/doctor/medical-record/create?appointmentId={id}(id=${appointment.appointmentId})}" 
-                                           class="btn btn-success rm-btn action-btn"
-                                           th:if="${(appointment.status == 'CONFIRMED' or appointment.status == 'COMPLETED') and canCreateMedicalRecord}">
-                                            <i class="fas fa-file-medical me-1"></i> Tạo Hồ sơ Bệnh án
+                                        <a th:if="${appointment.status == 'CONFIRMED'}"
+                                           th:href="@{/doctor/medical-record/create(appointmentId=${appointment.appointmentId})}"
+                                           class="btn btn-success rm-btn action-btn">
+                                            <i class="fas fa-file-medical me-1"></i> Tạo Hồ sơ bệnh án
                                         </a>
+
+
+
 
                                         <!-- Xem hồ sơ bệnh án -->
-                                        <a th:href="@{/doctor/medical-record/appointment/{id}(id=${appointment.appointmentId})}" 
-                                           class="btn btn-info rm-btn action-btn text-white"
-                                           th:if="${appointment.status == 'COMPLETED'}">
-                                            <i class="fas fa-eye me-1"></i> Xem Hồ sơ Bệnh án
+                                        <a th:if="${appointment.status == 'COMPLETED' and !canCreateMedicalRecord}"
+                                           th:href="@{/doctor/medical-record/appointment/{id}(id=${appointment.appointmentId})}"
+                                           class="btn btn-info rm-btn action-btn text-white">
+                                            <i class="fas fa-eye me-1"></i> Xem Hồ sơ bệnh án
                                         </a>
                                     </div>
                                 </div>
 
-                                <!-- Contact Actions -->
+                                <!-- Contact -->
                                 <div class="mb-3">
-                                    <h6 class="text-muted mb-2">Liên hệ bệnh nhân:</h6>
+                                    <h6 class="text-muted mb-2">Liên hệ bệnh nhân</h6>
                                     <div class="d-grid gap-2">
-                                        <a th:href="@{'tel:' + ${patient.phone}}" 
-                                           class="btn btn-outline-primary rm-btn action-btn"
-                                           th:if="${patient != null and patient.phone != null}">
+                                        <a th:if="${patient != null && patient.phone != null}"
+                                           th:href="@{|tel:${patient.phone}|}"
+                                           class="btn btn-outline-primary rm-btn action-btn">
                                             <i class="fas fa-phone me-1"></i> Gọi điện
                                         </a>
-                                        <a th:href="@{'mailto:' + ${patient.email}}" 
-                                           class="btn btn-outline-info rm-btn action-btn"
-                                           th:if="${patient != null and patient.email != null}">
-                                            <i class="fas fa-envelope me-1"></i> Gửi Email
+                                        <a th:if="${patient != null && patient.email != null}"
+                                           th:href="@{|mailto:${patient.email}|}"
+                                           class="btn btn-outline-info rm-btn action-btn">
+                                            <i class="fas fa-envelope me-1"></i> Gửi email
                                         </a>
                                     </div>
                                 </div>
 
-                                <!-- Status Management -->
+                                <!-- Status management -->
                                 <div>
-                                    <h6 class="text-muted mb-2">Quản lý trạng thái:</h6>
+                                    <h6 class="text-muted mb-2">Quản lý trạng thái</h6>
                                     <div class="d-grid gap-2">
-                                        <!-- Xác nhận lịch hẹn -->
-                                        <button th:if="${appointment.status == 'PENDING' and !isAppointmentExpired}" 
-                                                class="btn btn-success rm-btn action-btn"
-                                                th:onclick="'confirmAppointment(' + ${appointment.appointmentId} + ')'">
-                                            <i class="fas fa-check me-1"></i> Xác nhận Lịch hẹn
-                                        </button>
 
-                                        <!-- Hủy lịch hẹn -->
-                                        <button th:if="${appointment.status == 'PENDING' or appointment.status == 'CONFIRMED'}" 
+                                        <!-- Hủy -->
+                                        <button th:if="${appointment.status == 'PENDING' or appointment.status == 'CONFIRMED'}"
                                                 class="btn btn-danger rm-btn action-btn"
-                                                th:onclick="'cancelAppointment(' + ${appointment.appointmentId} + ')'">
-                                            <i class="fas fa-times me-1"></i> Hủy Lịch hẹn
+                                                th:onclick="|cancelAppointment(${appointment.appointmentId})|">
+                                            <i class="fas fa-times me-1"></i> Hủy lịch hẹn
                                         </button>
 
-                                        <!-- Hoàn thành lịch hẹn -->
-                                        <button th:if="${appointment.status == 'CONFIRMED'}" 
+                                        <!-- Hoàn thành -->
+                                        <button th:if="${appointment.status == 'CONFIRMED'}"
                                                 class="btn btn-primary rm-btn action-btn"
-                                                th:onclick="'completeAppointment(' + ${appointment.appointmentId} + ')'">
+                                                th:onclick="|completeAppointment(${appointment.appointmentId})|">
                                             <i class="fas fa-check-circle me-1"></i> Hoàn thành
                                         </button>
 
-                                        <!-- Đánh dấu không đến -->
-                                        <button th:if="${appointment.status == 'CONFIRMED' and isAppointmentExpired}" 
+                                        <!-- Không đến -->
+                                        <button th:if="${appointment.status == 'CONFIRMED' and isAppointmentExpired}"
                                                 class="btn btn-warning rm-btn action-btn"
-                                                th:onclick="'markNoShow(' + ${appointment.appointmentId} + ')'">
+                                                th:onclick="|markNoShow(${appointment.appointmentId})|">
                                             <i class="fas fa-user-times me-1"></i> Không đến
                                         </button>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column - Appointment Details -->
+                    <!-- RIGHT: Appointment detail & timeline -->
                     <div class="col-lg-8">
-                        <!-- Appointment Information -->
+                        <!-- Appointment info -->
                         <div class="rm-card appointment-info-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0">
                                     <i class="fas fa-calendar-alt me-2"></i> Thông tin Lịch hẹn
                                 </h5>
-                                <div class="d-flex gap-2">
-                                    <!-- Time Status -->
-                                    <span th:class="${'time-status ' + timeStatusClass}" 
-                                          th:text="${timeStatusText}">
-                                    </span>
-                                </div>
+                                <span th:class="${'time-status ' + timeStatusClass}"
+                                      th:text="${timeStatusText}">
+                                    TRẠNG THÁI THỜI GIAN
+                                </span>
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <!-- Left -->
                                     <div class="col-md-6">
                                         <div class="info-item mb-3">
                                             <div class="info-label">Mã lịch hẹn</div>
-                                            <div class="info-value text-primary" th:text="${appointment.appointmentId}">N/A</div>
+                                            <div class="info-value text-primary"
+                                                 th:text="${appointment.appointmentId}">
+                                                N/A
+                                            </div>
                                         </div>
+
                                         <div class="info-item mb-3">
                                             <div class="info-label">Ngày hẹn</div>
-                                            <div class="info-value" th:text="${appointment.appointmentDate} ?: 'N/A'">N/A</div>
+                                            <div class="info-value"
+                                                 th:text="${appointment.appointmentDate} ?: 'N/A'">
+                                                N/A
+                                            </div>
                                         </div>
+
                                         <div class="info-item mb-3">
                                             <div class="info-label">Giờ hẹn</div>
-                                            <div class="info-value" th:text="${appointment.appointmentTime} ?: 'N/A'">N/A</div>
+                                            <div class="info-value"
+                                                 th:text="${appointment.appointmentTime} ?: 'N/A'">
+                                                N/A
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- Right -->
                                     <div class="col-md-6">
                                         <div class="info-item mb-3">
                                             <div class="info-label">Trạng thái</div>
                                             <div class="info-value">
                                                 <span th:class="${'status-badge status-' + appointment.status}"
                                                       th:text="${appointment.status}">
+                                                    STATUS
                                                 </span>
                                             </div>
                                         </div>
+
                                         <div class="info-item mb-3">
                                             <div class="info-label">Ngày tạo</div>
-                                            <div class="info-value" th:text="${#dates.format(appointment.createdAt, 'dd/MM/yyyy HH:mm')}">N/A</div>
-                                        </div>
-                                        <div class="info-item mb-3">
-                                            <div class="info-label">Cập nhật lần cuối</div>
-                                            <div class="info-value" th:text="${#dates.format(appointment.createdAt != null ? appointment.createdAt : appointment.createdAt, 'dd/MM/yyyy HH:mm')}">N/A</div>
+                                            <div class="info-value"
+                                                 th:text="${appointment.createdAt != null ? #dates.format(appointment.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}">
+                                                N/A
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Notes Section -->
-                                <div class="mb-3" th:if="${appointment.notes}">
-                                    <div class="info-label">Ghi chú</div>
+                                <!-- Triệu chứng / Notes -->
+                                <div class="mt-3" th:if="${appointment.notes}">
+                                    <div class="info-label">
+                                        <i class="fas fa-notes-medical me-1"></i> Triệu chứng / ghi chú khi đặt lịch
+                                    </div>
                                     <div class="border rounded p-3 bg-light">
-                                        <p class="mb-0" th:text="${appointment.notes}"></p>
+                                        <p class="mb-1" th:text="${appointment.notes}"></p>
+                                        <p class="text-muted small mb-0">
+                                            Thông tin triệu chứng / lý do khám do bệnh nhân cung cấp khi đặt lịch hẹn.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Appointment Timeline -->
+                        <!-- Timeline -->
                         <div class="rm-card">
                             <div class="card-header">
                                 <h6 class="card-title mb-0">
@@ -645,81 +666,84 @@
                             </div>
                             <div class="card-body">
                                 <div class="timeline">
+                                    <!-- Created -->
                                     <div class="timeline-item">
                                         <h6 class="text-primary">Lịch hẹn được tạo</h6>
-                                        <p class="text-muted small mb-1" th:text="${#dates.format(appointment.createdAt, 'dd/MM/yyyy HH:mm')}"></p>
-                                        <p class="mb-0">Bệnh nhân đã đặt lịch hẹn qua hệ thống</p>
+                                        <p class="text-muted small mb-1"
+                                           th:text="${appointment.createdAt != null ? #dates.format(appointment.createdAt, 'dd/MM/yyyy HH:mm') : 'N/A'}">
+                                        </p>
+                                        <p class="mb-0">Bệnh nhân đã đặt lịch hẹn qua hệ thống.</p>
                                     </div>
 
-                                    <div class="timeline-item" th:if="${appointment.status != 'PENDING'}">
-                                        <h6 th:class="${appointment.status == 'CONFIRMED' ? 'text-success' : 
-                                            appointment.status == 'COMPLETED' ? 'text-info' :
-                                            appointment.status == 'CANCELLED' ? 'text-danger' : 'text-warning'}">
+                                    <!-- Status changed -->
+                                    <div class="timeline-item"
+                                         th:if="${appointment.status != 'PENDING'}">
+                                        <h6 th:class="${appointment.status == 'CONFIRMED' ? 'text-success'
+                                            : (appointment.status == 'COMPLETED' ? 'text-info'
+                                            : (appointment.status == 'CANCELLED' ? 'text-danger' : 'text-warning'))}">
                                             Trạng thái được cập nhật
                                         </h6>
-                                        <p class="text-muted small mb-1" 
-                                           th:text="${#dates.format(appointment.createdAt != null ? appointment.createdAt : appointment.createdAt, 'dd/MM/yyyy HH:mm')}">
-                                        </p>
                                         <p class="mb-0">
-                                            Lịch hẹn đã được chuyển sang trạng thái: 
+                                            Lịch hẹn đã được chuyển sang trạng thái:
                                             <span th:class="${'status-badge status-' + appointment.status}"
                                                   th:text="${appointment.status}">
                                             </span>
                                         </p>
                                     </div>
 
-                                    <div class="timeline-item" th:if="${appointment.status == 'COMPLETED'}">
+                                    <!-- Completed -->
+                                    <div class="timeline-item"
+                                         th:if="${appointment.status == 'COMPLETED'}">
                                         <h6 class="text-info">Đã hoàn thành</h6>
-                                        <p class="text-muted small mb-1">Hoàn thành khám bệnh</p>
-                                        <p class="mb-0">Bệnh nhân đã được khám và có thể tạo hồ sơ bệnh án</p>
+                                        <p class="text-muted small mb-1">Hoàn thành khám bệnh.</p>
+                                        <p class="mb-0">
+                                            Bệnh nhân đã được khám và có thể xem / cập nhật hồ sơ bệnh án.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Navigation -->
-                        <div class="d-flex justify-content-between">
+                        <div class="d-flex justify-content-between mt-2 mb-4">
                             <a th:href="@{/doctor/appointments}" class="btn btn-secondary rm-btn">
                                 <i class="fas fa-arrow-left me-1"></i> Quay lại Danh sách
                             </a>
-                            <div>
+                            <div class="text-end">
                                 <a th:href="@{/doctor/index}" class="btn btn-outline-primary rm-btn me-2">
                                     <i class="fas fa-home me-1"></i> Dashboard
                                 </a>
-                                <button class="btn btn-outline-info rm-btn" onclick="refreshPage()">
+                                <button type="button" class="btn btn-outline-info rm-btn" onclick="refreshPage()">
                                     <i class="fas fa-sync-alt me-1"></i> Làm mới
                                 </button>
                             </div>
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
 
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Custom JavaScript -->
         <script>
-                                    // Hiển thị loading
                                     function showLoading() {
                                         document.getElementById('loadingOverlay').style.display = 'flex';
                                     }
 
-                                    // Ẩn loading
                                     function hideLoading() {
                                         document.getElementById('loadingOverlay').style.display = 'none';
                                     }
 
-                                    // Làm mới trang
                                     function refreshPage() {
                                         showLoading();
-                                        setTimeout(() => {
+                                        setTimeout(function () {
                                             location.reload();
                                         }, 500);
                                     }
 
-                                    // Xác nhận lịch hẹn
                                     function confirmAppointment(appointmentId) {
                                         if (confirm('Bạn có chắc muốn xác nhận lịch hẹn này?')) {
                                             showLoading();
@@ -727,7 +751,6 @@
                                         }
                                     }
 
-                                    // Hủy lịch hẹn
                                     function cancelAppointment(appointmentId) {
                                         if (confirm('Bạn có chắc muốn hủy lịch hẹn này?')) {
                                             showLoading();
@@ -735,7 +758,6 @@
                                         }
                                     }
 
-                                    // Hoàn thành lịch hẹn
                                     function completeAppointment(appointmentId) {
                                         if (confirm('Bạn có chắc muốn đánh dấu lịch hẹn đã hoàn thành?\nSau khi hoàn thành, bạn có thể tạo hồ sơ bệnh án.')) {
                                             showLoading();
@@ -743,7 +765,6 @@
                                         }
                                     }
 
-                                    // Đánh dấu không đến
                                     function markNoShow(appointmentId) {
                                         if (confirm('Bạn có chắc chắn muốn đánh dấu bệnh nhân không đến khám?\nHành động này không thể hoàn tác.')) {
                                             showLoading();
@@ -751,14 +772,14 @@
                                         }
                                     }
 
-                                    // Cập nhật trạng thái lịch hẹn
                                     function updateAppointmentStatus(appointmentId, action) {
                                         const url = `/doctor/appointment/${appointmentId}/${action}`;
 
                                         fetch(url, {
                                             method: 'POST',
                                             headers: {
-                                                'Content-Type': 'application/json',
+                                                'Content-Type': 'application/json'
+                                                        // Nếu bật CSRF: thêm X-CSRF-TOKEN ở đây
                                             }
                                         })
                                                 .then(response => {
@@ -771,7 +792,7 @@
                                                     hideLoading();
                                                     if (data.status === 'SUCCESS') {
                                                         showNotification('success', data.message || 'Thao tác thành công!');
-                                                        setTimeout(() => {
+                                                        setTimeout(function () {
                                                             location.reload();
                                                         }, 1500);
                                                     } else {
@@ -785,7 +806,6 @@
                                                 });
                                     }
 
-                                    // Hiển thị thông báo
                                     function showNotification(type, message) {
                                         const toast = document.createElement('div');
                                         toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
@@ -796,18 +816,18 @@
                 `;
                                         document.body.appendChild(toast);
 
-                                        setTimeout(() => {
+                                        setTimeout(function () {
                                             if (toast.parentNode) {
                                                 toast.parentNode.removeChild(toast);
                                             }
                                         }, 5000);
                                     }
 
-                                    // Xử lý lỗi toàn cục
                                     window.addEventListener('error', function (e) {
                                         console.error('Global error:', e.error);
                                         hideLoading();
                                     });
         </script>
+
     </body>
 </html>

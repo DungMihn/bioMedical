@@ -836,4 +836,11 @@ public class AppointmentService {
         appointmentRepository.save(app);
     }
 
+    public void markCompleted(Long appointmentId) {
+        Appointments appt = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+
+        appt.setStatus("COMPLETED");
+        appointmentRepository.save(appt);
+    }
 }

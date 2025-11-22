@@ -533,83 +533,58 @@
                 display: none !important;
             }
 
-            /* Position Utilities */
-            .position-relative {
-                position: relative !important;
-            }
-
-            .position-absolute {
-                position: absolute !important;
-            }
-
             /* Spacing Utilities */
             .mt-3 {
                 margin-top: 1rem !important;
             }
-
             .mt-4 {
                 margin-top: 1.5rem !important;
             }
-
             .mt-5 {
                 margin-top: 3rem !important;
             }
-
             .mb-0 {
                 margin-bottom: 0 !important;
             }
-
             .mb-2 {
                 margin-bottom: 0.5rem !important;
             }
-
             .mb-3 {
                 margin-bottom: 1rem !important;
             }
-
             .mb-4 {
                 margin-bottom: 1.5rem !important;
             }
-
             .mb-5 {
                 margin-bottom: 3rem !important;
             }
-
             .me-2 {
                 margin-right: 0.5rem !important;
             }
-
             .me-3 {
                 margin-right: 1rem !important;
             }
-
             .me-4 {
                 margin-right: 1.5rem !important;
             }
-
             .ms-2 {
                 margin-left: 0.5rem !important;
             }
-
             .py-3 {
                 padding-top: 1rem !important;
                 padding-bottom: 1rem !important;
             }
-
             .py-5 {
                 padding-top: 3rem !important;
                 padding-bottom: 3rem !important;
             }
-
             .px-3 {
                 padding-left: 1rem !important;
                 padding-right: 1rem !important;
             }
-
             .gap-2 {
                 gap: 0.5rem !important;
             }
-
             .gap-3 {
                 gap: 1rem !important;
             }
@@ -618,31 +593,24 @@
             .flex-wrap {
                 flex-wrap: wrap !important;
             }
-
             .flex-grow-1 {
                 flex-grow: 1 !important;
             }
-
             .justify-content-between {
                 justify-content: space-between !important;
             }
-
             .justify-content-center {
                 justify-content: center !important;
             }
-
             .align-items-center {
                 align-items: center !important;
             }
-
             .align-items-end {
                 align-items: flex-end !important;
             }
-
             .text-center {
                 text-align: center !important;
             }
-
             .text-end {
                 text-align: right !important;
             }
@@ -674,15 +642,12 @@
                 .rm-header {
                     padding: 1.5rem 0;
                 }
-
                 .rm-card .card-body {
                     padding: 1rem;
                 }
-
                 .medication-item {
                     padding: 1rem;
                 }
-
                 .btn {
                     width: 100%;
                     margin-bottom: 0.5rem;
@@ -695,12 +660,11 @@
                     opacity: 0;
                     transform: translateY(10px);
                 }
-                to {
+                to   {
                     opacity: 1;
                     transform: translateY(0);
                 }
             }
-
             .fade-in {
                 animation: fadeIn 0.5s ease;
             }
@@ -709,22 +673,19 @@
             ::-webkit-scrollbar {
                 width: 6px;
             }
-
             ::-webkit-scrollbar-track {
                 background: #f1f1f1;
                 border-radius: 10px;
             }
-
             ::-webkit-scrollbar-thumb {
                 background: var(--primary-color);
                 border-radius: 10px;
             }
-
             ::-webkit-scrollbar-thumb:hover {
                 background: var(--primary-dark);
             }
 
-            /* Focus States for Accessibility */
+            /* Focus States */
             button:focus,
             input:focus,
             textarea:focus,
@@ -749,19 +710,15 @@
                 }
             }
 
-            /* Selection Styles */
             ::selection {
                 background: rgba(16, 137, 255, 0.2);
                 color: inherit;
             }
-
-            /* Placeholder Styles */
             ::placeholder {
                 color: #6c757d;
                 opacity: 0.7;
             }
 
-            /* Visually Hidden for Accessibility */
             .visually-hidden {
                 position: absolute !important;
                 width: 1px !important;
@@ -775,7 +732,8 @@
             }
         </style>
     </head>
-    <body>
+
+    <body th:attr="data-has-appointment=${appointment != null}">
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loadingOverlay">
             <div class="loading-spinner">
@@ -830,7 +788,12 @@
                             <h1 class="display-6 fw-bold mb-2">
                                 <i class="fas fa-file-medical me-3"></i> Tạo Hồ sơ Bệnh án
                             </h1>
-                            <p class="lead mb-0 opacity-90">Tạo hồ sơ bệnh án mới cho bệnh nhân</p>
+                            <p class="lead mb-0 opacity-90">
+                                Tạo hồ sơ bệnh án mới cho bệnh nhân
+                                <span th:if="${appointment != null}" class="badge bg-light text-primary ms-2">
+                                    Từ lịch hẹn #<span th:text="${appointment.appointmentId}">0</span>
+                                </span>
+                            </p>
                         </div>
                         <div class="col-md-4 text-end">
                             <a th:href="@{/doctor/medical-records}" class="btn btn-light rm-btn">
@@ -843,7 +806,7 @@
 
             <!-- Main Content -->
             <div class="container fade-in">
-                <!-- Patient Information Section -->
+                <!-- Patient Information Section (tạo từ lịch hẹn) -->
                 <div class="rm-card" th:if="${patient != null}">
                     <div class="card-header">
                         <h5 class="card-title mb-0">
@@ -896,13 +859,13 @@
                             <div class="col-md-8">
                                 <label class="form-label">Tìm bệnh nhân theo tên hoặc số điện thoại</label>
                                 <div class="position-relative">
-                                    <input type="text" 
-                                           class="form-control rm-form-control" 
+                                    <input type="text"
+                                           class="form-control rm-form-control"
                                            id="patientSearchInput"
                                            placeholder="Nhập tên hoặc số điện thoại bệnh nhân..."
                                            autocomplete="off">
                                     <div class="search-suggestions" id="searchSuggestions">
-                                        <!-- Search suggestions will be populated here -->
+                                        <!-- Search suggestions -->
                                     </div>
                                 </div>
 
@@ -922,7 +885,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button type="button" class="btn btn-sm btn-outline-danger rounded-circle" onclick="clearSelectedPatient()">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-danger rounded-circle"
+                                                    onclick="clearSelectedPatient()">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
@@ -940,21 +905,23 @@
                         <div class="mt-4">
                             <label class="form-label mb-3">Tìm nhanh theo tên phổ biến:</label>
                             <div class="d-flex flex-wrap gap-2">
-                                <span class="badge bg-primary text-white quick-search-tag cursor-pointer" 
+                                <span class="badge bg-primary text-white quick-search-tag cursor-pointer"
                                       data-search="Nguyễn">Nguyễn</span>
-                                <span class="badge bg-success text-white quick-search-tag cursor-pointer" 
+                                <span class="badge bg-success text-white quick-search-tag cursor-pointer"
                                       data-search="Trần">Trần</span>
-                                <span class="badge bg-info text-white quick-search-tag cursor-pointer" 
+                                <span class="badge bg-info text-white quick-search-tag cursor-pointer"
                                       data-search="Lê">Lê</span>
-                                <span class="badge bg-warning text-dark quick-search-tag cursor-pointer" 
+                                <span class="badge bg-warning text-dark quick-search-tag cursor-pointer"
                                       data-search="09">SĐT 09...</span>
                             </div>
                         </div>
 
-                        <!-- Hoặc chọn từ danh sách appointments gần đây -->
+                        <!-- Lịch hẹn gần đây -->
                         <div th:if="${recentAppointments != null and not recentAppointments.empty}" class="mt-4">
                             <label class="form-label mb-3">Hoặc chọn từ lịch hẹn gần đây</label>
-                            <select class="form-control rm-form-control" onchange="location = this.value;">
+                            <select class="form-control rm-form-control" onchange="if (this.value) {
+                                location = this.value;
+                            }">
                                 <option value="">-- Chọn lịch hẹn --</option>
                                 <option th:each="appt : ${recentAppointments}"
                                         th:value="@{'/doctor/medical-record/create?appointmentId=' + ${appt.appointmentId}}"
@@ -966,8 +933,13 @@
                 </div>
 
                 <form th:action="@{/doctor/medical-record/save}" method="post" id="medicalRecordForm">
+                    <!-- giữ cho backend nếu bạn đang binding medicalRecord -->
                     <input type="hidden" th:field="${medicalRecord.appointmentId}" />
-                    <input type="hidden" id="selectedPatientId" name="patientId" />
+                    <!-- patientId: set sẵn nếu đang tạo từ lịch hẹn -->
+                    <input type="hidden"
+                           id="selectedPatientId"
+                           name="patientId"
+                           th:value="${patient != null} ? ${patient.userId} : ''"/>
 
                     <!-- Medical Information -->
                     <div class="rm-card">
@@ -982,7 +954,7 @@
                                     <label for="symptoms" class="form-label">
                                         <i class="fas fa-notes-medical me-2 text-primary"></i> Triệu chứng
                                     </label>
-                                    <textarea class="form-control rm-form-control" id="symptoms" name="symptoms" rows="4" 
+                                    <textarea class="form-control rm-form-control" id="symptoms" name="symptoms" rows="4"
                                               placeholder="Mô tả chi tiết các triệu chứng của bệnh nhân..."></textarea>
                                 </div>
 
@@ -990,7 +962,7 @@
                                     <label for="diagnosis" class="form-label">
                                         <i class="fas fa-diagnoses me-2 text-success"></i> Chẩn đoán
                                     </label>
-                                    <textarea class="form-control rm-form-control" id="diagnosis" name="diagnosis" rows="4" 
+                                    <textarea class="form-control rm-form-control" id="diagnosis" name="diagnosis" rows="4"
                                               placeholder="Nhập chẩn đoán chính xác..."></textarea>
                                 </div>
 
@@ -998,7 +970,7 @@
                                     <label for="treatment" class="form-label">
                                         <i class="fas fa-hand-holding-medical me-2 text-info"></i> Phương pháp điều trị
                                     </label>
-                                    <textarea class="form-control rm-form-control" id="treatment" name="treatment" rows="4" 
+                                    <textarea class="form-control rm-form-control" id="treatment" name="treatment" rows="4"
                                               placeholder="Mô tả kế hoạch điều trị chi tiết..."></textarea>
                                 </div>
 
@@ -1006,7 +978,7 @@
                                     <label for="notes" class="form-label">
                                         <i class="fas fa-clipboard-list me-2 text-warning"></i> Ghi chú thêm
                                     </label>
-                                    <textarea class="form-control rm-form-control" id="notes" name="notes" rows="3" 
+                                    <textarea class="form-control rm-form-control" id="notes" name="notes" rows="3"
                                               placeholder="Các ghi chú bổ sung, lời khuyên..."></textarea>
                                 </div>
                             </div>
@@ -1029,32 +1001,33 @@
                                     <div class="row g-3">
                                         <div class="col-md-4">
                                             <label class="form-label">Tên thuốc <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control rm-form-control" name="medicationNames" 
-                                                   placeholder="Nhập tên thuốc" required>
+                                            <input type="text" class="form-control rm-form-control" name="medicationNames"
+                                                   placeholder="Nhập tên thuốc">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Liều dùng</label>
-                                            <input type="text" class="form-control rm-form-control" name="dosages" 
+                                            <input type="text" class="form-control rm-form-control" name="dosages"
                                                    placeholder="VD: 500mg">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Tần suất</label>
-                                            <input type="text" class="form-control rm-form-control" name="frequencies" 
+                                            <input type="text" class="form-control rm-form-control" name="frequencies"
                                                    placeholder="VD: 3 lần/ngày">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Thời gian</label>
-                                            <input type="text" class="form-control rm-form-control" name="durations" 
+                                            <input type="text" class="form-control rm-form-control" name="durations"
                                                    placeholder="VD: 7 ngày">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label">Ghi chú</label>
-                                            <input type="text" class="form-control rm-form-control" name="medicationNotes" 
+                                            <input type="text" class="form-control rm-form-control" name="medicationNotes"
                                                    placeholder="Ghi chú thêm">
                                         </div>
                                     </div>
                                     <div class="text-end mt-3">
-                                        <button type="button" class="btn btn-danger btn-sm rm-btn" onclick="removeMedication(this)">
+                                        <button type="button" class="btn btn-danger btn-sm rm-btn"
+                                                onclick="removeMedication(this)">
                                             <i class="fas fa-trash me-1"></i> Xóa
                                         </button>
                                     </div>
@@ -1075,12 +1048,15 @@
                     <!-- Action Buttons -->
                     <div class="row mt-4 mb-5">
                         <div class="col-md-6">
-                            <button type="submit" class="btn btn-primary rm-btn w-100 py-3 fs-5" onclick="validateForm(event)">
+                            <button type="submit"
+                                    class="btn btn-primary rm-btn w-100 py-3 fs-5"
+                                    onclick="validateForm(event)">
                                 <i class="fas fa-save me-2"></i> Lưu Hồ sơ Bệnh án
                             </button>
                         </div>
                         <div class="col-md-6">
-                            <a th:href="@{/doctor/medical-records}" class="btn btn-outline-secondary rm-btn w-100 py-3 fs-5">
+                            <a th:href="@{/doctor/medical-records}"
+                               class="btn btn-outline-secondary rm-btn w-100 py-3 fs-5">
                                 <i class="fas fa-times me-2"></i> Hủy bỏ
                             </a>
                         </div>
@@ -1089,81 +1065,87 @@
             </div>
         </div>
 
-
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
         <script>
-                                // Hiển thị loading
-                                function showLoading() {
-                                    document.getElementById('loadingOverlay').style.display = 'flex';
-                                }
+                                        // Hiển thị loading
+                                        function showLoading() {
+                                            document.getElementById('loadingOverlay').style.display = 'flex';
+                                        }
 
-                                // Ẩn loading
-                                function hideLoading() {
-                                    document.getElementById('loadingOverlay').style.display = 'none';
-                                }
+                                        // Ẩn loading
+                                        function hideLoading() {
+                                            document.getElementById('loadingOverlay').style.display = 'none';
+                                        }
 
-                                // Search patients function
-                                let searchTimeout;
-                                const searchInput = document.getElementById('patientSearchInput');
-                                const suggestionsContainer = document.getElementById('searchSuggestions');
+                                        // --- SEARCH PATIENT LOGIC ---
+                                        let searchTimeout;
+                                        const searchInput = document.getElementById('patientSearchInput');
+                                        const suggestionsContainer = document.getElementById('searchSuggestions');
 
-                                searchInput.addEventListener('input', function (e) {
-                                    const query = e.target.value.trim();
+                                        if (searchInput && suggestionsContainer) {
+                                            searchInput.addEventListener('input', function (e) {
+                                                const query = e.target.value.trim();
 
-                                    clearTimeout(searchTimeout);
+                                                clearTimeout(searchTimeout);
 
-                                    if (query.length === 0) {
-                                        hideSuggestions();
-                                        return;
-                                    }
+                                                if (query.length < 2) {
+                                                    hideSuggestions();
+                                                    return;
+                                                }
 
-                                    if (query.length < 2) {
-                                        hideSuggestions();
-                                        return;
-                                    }
-
-                                    searchTimeout = setTimeout(() => {
-                                        fetchPatientSuggestions(query);
-                                    }, 300);
-                                });
-
-                                // Hide suggestions when clicking outside
-                                document.addEventListener('click', function (e) {
-                                    if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
-                                        hideSuggestions();
-                                    }
-                                });
-
-                                function fetchPatientSuggestions(query) {
-                                    fetch(`/doctor/medical-records/search-suggestions?query=${encodeURIComponent(query)}`)
-                                            .then(response => response.json())
-                                            .then(patients => {
-                                                displayPatientSuggestions(patients, query);
-                                            })
-                                            .catch(error => {
-                                                console.error('Error fetching patient suggestions:', error);
-                                                hideSuggestions();
+                                                searchTimeout = setTimeout(() => {
+                                                    fetchPatientSuggestions(query);
+                                                }, 300);
                                             });
-                                }
 
-                                function displayPatientSuggestions(patients, query) {
-                                    if (patients.length === 0) {
-                                        suggestionsContainer.innerHTML = `
+                                            // Hide suggestions when clicking outside
+                                            document.addEventListener('click', function (e) {
+                                                if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+                                                    hideSuggestions();
+                                                }
+                                            });
+                                        }
+
+                                        function fetchPatientSuggestions(query) {
+                                            if (!suggestionsContainer)
+                                                return;
+
+                                            fetch(`/doctor/medical-records/search-suggestions?query=${encodeURIComponent(query)}`)
+                                                    .then(response => response.json())
+                                                    .then(patients => {
+                                                        displayPatientSuggestions(patients, query);
+                                                    })
+                                                    .catch(error => {
+                                                        console.error('Error fetching patient suggestions:', error);
+                                                        hideSuggestions();
+                                                    });
+                                        }
+
+                                        function displayPatientSuggestions(patients, query) {
+                                            if (!suggestionsContainer)
+                                                return;
+
+                                            if (!patients || patients.length === 0) {
+                                                suggestionsContainer.innerHTML = `
                         <div class="search-suggestion-item text-muted">
                             <i class="fas fa-search me-2"></i>
-                            Không tìm thấy bệnh nhân phù hợp
+                            Không tìm thấy bệnh nhân phù hợp cho "<strong>${query}</strong>"
                         </div>
                     `;
-                                    } else {
-                                        suggestionsContainer.innerHTML = patients.map(patient => `
-                        <div class="search-suggestion-item" onclick="selectPatient('${patient.name.replace(/'/g, "\\'")}', '${patient.phone || ''}', '${patient.email || ''}')">
+                                            } else {
+                                                suggestionsContainer.innerHTML = patients.map(patient => `
+                        <div class="search-suggestion-item"
+                             onclick="selectPatient('${patient.id || patient.userId || ''}',
+                                                    '${(patient.name || patient.fullName || '').replace(/'/g, "\\'")}',
+                                                    '${patient.phone || ''}',
+                                                    '${patient.email || ''}')">
                             <div class="suggestion-avatar">
                                 <i class="fas fa-user"></i>
                             </div>
                             <div>
-                                <div class="fw-semibold">${patient.name}</div>
+                                <div class="fw-semibold">${patient.name || patient.fullName || ''}</div>
                                 <div class="patient-info-small">
                                     ${patient.phone ? `<i class="fas fa-phone me-1"></i>${patient.phone}` : ''}
                                     ${patient.email ? `<br><i class="fas fa-envelope me-1"></i>${patient.email}` : ''}
@@ -1171,139 +1153,179 @@
                             </div>
                         </div>
                     `).join('');
-                                    }
+                                            }
 
-                                    suggestionsContainer.style.display = 'block';
-                                }
-
-                                function hideSuggestions() {
-                                    suggestionsContainer.style.display = 'none';
-                                }
-
-                                function selectPatient(name, phone, email) {
-                                    document.getElementById('selectedPatientName').textContent = name;
-                                    document.getElementById('selectedPatientPhone').textContent = phone ? ` • ${phone}` : '';
-                                    document.getElementById('selectedPatientEmail').textContent = email ? ` • ${email}` : '';
-
-                                    document.getElementById('selectedPatientInfo').style.display = 'block';
-                                    searchInput.value = name;
-
-                                    hideSuggestions();
-                                }
-
-                                function clearSelectedPatient() {
-                                    document.getElementById('selectedPatientInfo').style.display = 'none';
-                                    searchInput.value = '';
-                                    document.getElementById('selectedPatientId').value = '';
-                                }
-
-                                // Quick search tags
-                                document.querySelectorAll('.quick-search-tag').forEach(tag => {
-                                    tag.addEventListener('click', function () {
-                                        const searchValue = this.getAttribute('data-search');
-                                        searchInput.value = searchValue;
-                                        fetchPatientSuggestions(searchValue);
-                                    });
-                                });
-
-                                function searchPatients() {
-                                    const query = searchInput.value.trim();
-                                    if (query) {
-                                        fetchPatientSuggestions(query);
-                                    }
-                                }
-
-                                // Medication management functions
-                                function addMedication() {
-                                    const container = document.getElementById('medications-container');
-                                    const newItem = container.firstElementChild.cloneNode(true);
-
-                                    newItem.querySelectorAll('input').forEach(input => input.value = '');
-                                    newItem.classList.add('fade-in');
-
-                                    container.appendChild(newItem);
-                                    updateNoMedicationsMessage();
-                                }
-
-                                function removeMedication(button) {
-                                    const container = document.getElementById('medications-container');
-                                    if (container.children.length > 1) {
-                                        button.closest('.medication-item').remove();
-                                    }
-                                    updateNoMedicationsMessage();
-                                }
-
-                                function updateNoMedicationsMessage() {
-                                    const container = document.getElementById('medications-container');
-                                    const noMedications = document.getElementById('no-medications');
-
-                                    if (container.children.length === 0) {
-                                        noMedications.style.display = 'block';
-                                    } else {
-                                        noMedications.style.display = 'none';
-                                    }
-                                }
-
-                                // Form validation
-                                function validateForm(event) {
-                                    // Check if patient is selected (when no appointment)
-                                    const patientInfo = document.getElementById('selectedPatientInfo');
-                                    const appointmentId = document.querySelector('[th\\:field="${medicalRecord.appointmentId}"]').value;
-
-                                    if (!appointmentId && patientInfo.style.display === 'none') {
-                                        event.preventDefault();
-                                        alert('Vui lòng chọn bệnh nhân trước khi tạo hồ sơ');
-                                        return;
-                                    }
-
-                                    // Validate medical information
-                                    const symptoms = document.getElementById('symptoms').value.trim();
-                                    const diagnosis = document.getElementById('diagnosis').value.trim();
-
-                                    if (!symptoms && !diagnosis) {
-                                        event.preventDefault();
-                                        alert('Vui lòng nhập ít nhất triệu chứng hoặc chẩn đoán');
-                                        return;
-                                    }
-
-                                    // Validate medication names
-                                    const medicationNames = document.getElementsByName('medicationNames');
-                                    let hasValidMedication = false;
-
-                                    for (let i = 0; i < medicationNames.length; i++) {
-                                        if (medicationNames[i].value.trim()) {
-                                            hasValidMedication = true;
-                                            break;
+                                            suggestionsContainer.style.display = 'block';
                                         }
-                                    }
 
-                                    if (!hasValidMedication) {
-                                        if (!confirm('Bạn chưa thêm thuốc nào vào đơn. Bạn có muốn tiếp tục không?')) {
-                                            event.preventDefault();
-                                            return;
+                                        function hideSuggestions() {
+                                            if (suggestionsContainer) {
+                                                suggestionsContainer.style.display = 'none';
+                                            }
                                         }
-                                    }
 
-                                    showLoading();
-                                }
+                                        function selectPatient(id, name, phone, email) {
+                                            const nameEl = document.getElementById('selectedPatientName');
+                                            const phoneEl = document.getElementById('selectedPatientPhone');
+                                            const emailEl = document.getElementById('selectedPatientEmail');
+                                            const infoBlock = document.getElementById('selectedPatientInfo');
+                                            const hiddenId = document.getElementById('selectedPatientId');
 
-                                // Auto-resize textareas
-                                document.querySelectorAll('textarea').forEach(textarea => {
-                                    textarea.addEventListener('input', function () {
-                                        this.style.height = 'auto';
-                                        this.style.height = (this.scrollHeight) + 'px';
-                                    });
-                                });
+                                            if (nameEl)
+                                                nameEl.textContent = name || '';
+                                            if (phoneEl)
+                                                phoneEl.textContent = phone ? ` • ${phone}` : '';
+                                            if (emailEl)
+                                                emailEl.textContent = email ? ` • ${email}` : '';
+                                            if (infoBlock)
+                                                infoBlock.style.display = 'block';
+                                            if (searchInput)
+                                                searchInput.value = name || '';
 
-                                // Initialize
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    updateNoMedicationsMessage();
+                                            if (hiddenId)
+                                                hiddenId.value = id || '';
 
-                                    // Add animation to cards
-                                    document.querySelectorAll('.rm-card').forEach((card, index) => {
-                                        card.style.animationDelay = `${index * 0.1}s`;
-                                    });
-                                });
+                                            hideSuggestions();
+                                        }
+
+                                        function clearSelectedPatient() {
+                                            const infoBlock = document.getElementById('selectedPatientInfo');
+                                            const hiddenId = document.getElementById('selectedPatientId');
+
+                                            if (infoBlock)
+                                                infoBlock.style.display = 'none';
+                                            if (searchInput)
+                                                searchInput.value = '';
+                                            if (hiddenId)
+                                                hiddenId.value = '';
+                                        }
+
+                                        // Quick search tags
+                                        document.querySelectorAll('.quick-search-tag').forEach(tag => {
+                                            tag.addEventListener('click', function () {
+                                                if (!searchInput)
+                                                    return;
+                                                const searchValue = this.getAttribute('data-search');
+                                                searchInput.value = searchValue;
+                                                fetchPatientSuggestions(searchValue);
+                                            });
+                                        });
+
+                                        function searchPatients() {
+                                            if (!searchInput)
+                                                return;
+                                            const query = searchInput.value.trim();
+                                            if (query) {
+                                                fetchPatientSuggestions(query);
+                                            }
+                                        }
+
+                                        // Medication management
+                                        function addMedication() {
+                                            const container = document.getElementById('medications-container');
+                                            const firstItem = container.firstElementChild;
+                                            if (!firstItem)
+                                                return;
+
+                                            const newItem = firstItem.cloneNode(true);
+
+                                            newItem.querySelectorAll('input').forEach(input => {
+                                                input.value = '';
+                                            });
+
+                                            newItem.classList.add('fade-in');
+                                            container.appendChild(newItem);
+                                            updateNoMedicationsMessage();
+                                        }
+
+                                        function removeMedication(button) {
+                                            const container = document.getElementById('medications-container');
+                                            if (!container)
+                                                return;
+
+                                            const item = button.closest('.medication-item');
+                                            if (item) {
+                                                item.remove();
+                                            }
+
+                                            // Nếu không còn thuốc nào thì hiển thị khối "no-medications"
+                                            updateNoMedicationsMessage();
+                                        }
+
+                                        function updateNoMedicationsMessage() {
+                                            const container = document.getElementById('medications-container');
+                                            const noMedications = document.getElementById('no-medications');
+                                            if (!container || !noMedications)
+                                                return;
+
+                                            if (container.children.length === 0) {
+                                                noMedications.style.display = 'block';
+                                            } else {
+                                                noMedications.style.display = 'none';
+                                            }
+                                        }
+
+                                        // Form validation
+                                        function validateForm(event) {
+                                            const hasAppointment = document.body.getAttribute('data-has-appointment') === 'true';
+                                            const selectedPatientIdInput = document.getElementById('selectedPatientId');
+                                            const selectedPatientId = selectedPatientIdInput ? selectedPatientIdInput.value.trim() : '';
+
+                                            // Nếu không tạo từ lịch hẹn thì bắt buộc phải chọn bệnh nhân
+                                            if (!hasAppointment && !selectedPatientId) {
+                                                event.preventDefault();
+                                                alert('Vui lòng chọn bệnh nhân trước khi tạo hồ sơ.');
+                                                return;
+                                            }
+
+                                            const symptoms = document.getElementById('symptoms').value.trim();
+                                            const diagnosis = document.getElementById('diagnosis').value.trim();
+
+                                            if (!symptoms && !diagnosis) {
+                                                event.preventDefault();
+                                                alert('Vui lòng nhập ít nhất TRIỆU CHỨNG hoặc CHẨN ĐOÁN.');
+                                                return;
+                                            }
+
+                                            // Kiểm tra đơn thuốc: cho phép trống nhưng cảnh báo
+                                            const medicationNames = document.getElementsByName('medicationNames');
+                                            let hasValidMedication = false;
+                                            for (let i = 0; i < medicationNames.length; i++) {
+                                                if (medicationNames[i].value.trim()) {
+                                                    hasValidMedication = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (!hasValidMedication) {
+                                                const proceed = confirm('Bạn chưa thêm thuốc nào vào đơn. Bạn có muốn tiếp tục lưu hồ sơ không?');
+                                                if (!proceed) {
+                                                    event.preventDefault();
+                                                    return;
+                                                }
+                                            }
+
+                                            showLoading();
+                                        }
+
+                                        // Auto-resize textareas
+                                        document.querySelectorAll('textarea').forEach(textarea => {
+                                            textarea.addEventListener('input', function () {
+                                                this.style.height = 'auto';
+                                                this.style.height = (this.scrollHeight) + 'px';
+                                            });
+                                        });
+
+                                        // Initialize
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            updateNoMedicationsMessage();
+
+                                            // Add animation delay cho card
+                                            document.querySelectorAll('.rm-card').forEach((card, index) => {
+                                                card.style.animation = 'fadeIn 0.5s ease';
+                                                card.style.animationDelay = `${index * 0.05}s`;
+                                            });
+                                        });
         </script>
     </body>
 </html>

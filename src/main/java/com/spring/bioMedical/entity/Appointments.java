@@ -199,14 +199,4 @@ public class Appointments implements Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "Appointments{"
-                + "appointmentId=" + appointmentId
-                + ", user=" + (user != null ? user.getUserId() : "null")
-                + ", slot=" + (slot != null ? slot.getSlotId() : "null")
-                + ", status=" + status
-                + '}';
-    }
-
 }

@@ -21,15 +21,21 @@
         <link rel="stylesheet" href="../css/style.css">
 
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         <!-- Custom styles -->
         <style>
             :root {
                 --sidebar-width: 250px;
+                --brand-primary: #1089ff;
+                --brand-primary-dark: #0c6ed4;
+                --brand-soft-bg: #f5f9ff;
             }
+
             body {
-                background-color: #f8fbff;
+                background-color: #f3f6fb;
+                font-family: "Roboto", sans-serif;
             }
 
             /* Sidebar */
@@ -40,11 +46,12 @@
                 bottom: 0;
                 width: var(--sidebar-width);
                 z-index: 1000;
-                background: linear-gradient(180deg, #1089ff 0%, #0c6ed4 100%);
+                background: linear-gradient(180deg, var(--brand-primary) 0%, var(--brand-primary-dark) 100%);
                 color: #fff;
-                box-shadow: 2px 0 12px rgba(0,0,0,.08);
+                box-shadow: 2px 0 12px rgba(15, 23, 42, .12);
                 padding-top: 70px;
             }
+
             .rm-sidebar .brand {
                 position: fixed;
                 top: 0;
@@ -54,28 +61,32 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: rgba(0,0,0,.08);
+                background: rgba(15, 23, 42, .08);
                 font-weight: 700;
                 letter-spacing: .5px;
             }
+
             .rm-sidebar .menu {
                 list-style: none;
                 margin: 0;
                 padding: 10px 0;
             }
+
             .rm-sidebar .menu li a {
                 display: flex;
                 align-items: center;
                 gap: 10px;
-                color: rgba(255,255,255,.95);
+                color: rgba(255, 255, 255, .92);
                 text-decoration: none;
                 padding: 12px 18px;
                 transition: .2s;
                 border-left: 4px solid transparent;
+                font-size: 14px;
             }
+
             .rm-sidebar .menu li a:hover,
             .rm-sidebar .menu li a.active {
-                background: rgba(255,255,255,.12);
+                background: rgba(15, 23, 42, .18);
                 border-left-color: #fff;
                 color: #fff;
             }
@@ -86,176 +97,294 @@
                 min-height: 100vh;
             }
 
+            /* Hero */
+            .hero-wrap {
+                position: relative;
+                background-image: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-dark) 55%, #0ea5e9 100%);
+                height: 190px;
+                color: #fff;
+                overflow: hidden;
+            }
+
+            .hero-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(90deg, rgba(15, 23, 42, .45), transparent);
+            }
+
+            .hero-content {
+                position: relative;
+                z-index: 1;
+            }
+
+            .hero-pills span {
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 12px;
+                border-radius: 999px;
+                background: rgba(15, 23, 42, .25);
+                font-size: 12px;
+                margin-right: 6px;
+                margin-top: 4px;
+            }
+
             /* Cards */
             .rm-card {
                 background: #fff;
-                border-radius: 6px;
+                border-radius: 10px;
                 border: none;
-                box-shadow: 0 10px 30px -10px rgba(0,0,0,.1);
-                transition: transform .2s, box-shadow .2s;
+                box-shadow: 0 18px 35px -18px rgba(15, 23, 42, .25);
+                transition: transform .18s ease, box-shadow .18s ease;
             }
+
             .rm-card:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 14px 36px -12px rgba(0,0,0,.12);
+                box-shadow: 0 22px 45px -20px rgba(15, 23, 42, .3);
             }
 
             /* Status badges */
             .status-badge {
-                padding: 6px 12px;
+                padding: 5px 10px;
                 border-radius: 999px;
-                font-size: 12px;
-                font-weight: 700;
-            }
-            .status-PENDING {
-                background: #ffe08a;
-                color: #7a5e00;
-            }
-            .status-CONFIRMED {
-                background: #c6f6d5;
-                color: #0f5132;
-            }
-            .status-COMPLETED {
-                background: #b6e0fe;
-                color: #084298;
-            }
-            .status-CANCELLED {
-                background: #f8d7da;
-                color: #842029;
-            }
-            .status-EXPIRED {
-                background: #6c757d;
-                color: white;
-            }
-            .status-AUTO_CANCELLED {
-                background: #6c757d;
-                color: white;
-            }
-            .status-NO_SHOW {
-                background: #ff6b6b;
-                color: white;
+                font-size: 11px;
+                font-weight: 600;
+                letter-spacing: .02em;
             }
 
-            /* Expired appointment styling */
-            .appointment-expired {
-                opacity: 0.7;
-                background-color: #f8f9fa;
+            .status-PENDING {
+                background: #fff7e6;
+                color: #b7791f;
             }
-            .appointment-expired .btn-action {
-                opacity: 0.5;
-                cursor: not-allowed;
+
+            .status-CONFIRMED {
+                background: #e6fffa;
+                color: #047857;
+            }
+
+            .status-COMPLETED {
+                background: #e0f2fe;
+                color: #1d4ed8;
+            }
+
+            .status-CANCELLED {
+                background: #fee2e2;
+                color: #b91c1c;
+            }
+
+            .status-EXPIRED {
+                background: #e5e7eb;
+                color: #374151;
+            }
+
+            .status-AUTO_CANCELLED {
+                background: #e5e7eb;
+                color: #374151;
+            }
+
+            .status-NO_SHOW {
+                background: #fed7e2;
+                color: #be123c;
+            }
+
+            .appointment-expired {
+                opacity: 0.78;
+                background: #f9fafb;
+            }
+
+            /* KPI cards */
+            .stat-card {
+                padding: 16px 14px;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+
+                /* equal height */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+            }
+
+            .stat-card-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 12px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(15, 23, 42, .05);
+                margin-bottom: 8px;
+            }
+
+            .stat-card small {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: .08em;
+                color: #6b7280;
+            }
+
+            .stat-card h4 {
+                font-weight: 700;
+                margin-bottom: 0;
+            }
+
+            .stat-card.active {
+                box-shadow: 0 20px 40px -20px rgba(37, 99, 235, .65);
+                border: 1px solid rgba(37, 99, 235, .65);
+            }
+
+            .stat-card.active::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: radial-gradient(circle at top right, rgba(59, 130, 246, .18), transparent 55%);
+                pointer-events: none;
             }
 
             /* Filter tabs */
             .filter-tabs {
-                border-bottom: 1px solid #dee2e6;
-            }
-            .filter-tabs .nav-link {
-                border: none;
-                color: #6c757d;
-                font-weight: 500;
-                padding: 12px 20px;
-                position: relative;
-            }
-            .filter-tabs .nav-link.active {
-                color: #1089ff;
-                background: none;
-            }
-            .filter-tabs .nav-link.active:after {
-                content: '';
-                position: absolute;
-                bottom: -1px;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: #1089ff;
-            }
-            .filter-tabs .nav-link .badge {
-                font-size: 10px;
-                margin-left: 5px;
+                border-bottom: 1px solid #e5e7eb;
             }
 
-            /* Table styling */
-            .rm-table {
-                border-radius: 6px;
-                overflow: hidden;
-            }
-            .rm-table thead th {
-                background: #1089ff;
-                color: white;
+            .filter-tabs .nav-link {
                 border: none;
-                padding: 15px 12px;
-                font-weight: 600;
+                color: #6b7280;
+                font-weight: 500;
+                padding: 10px 16px;
+                position: relative;
+                font-size: 13px;
             }
+
+            .filter-tabs .nav-link .badge {
+                font-size: 10px;
+                margin-left: 4px;
+            }
+
+            .filter-tabs .nav-link.active {
+                color: var(--brand-primary);
+                background: transparent;
+            }
+
+            .filter-tabs .nav-link.active::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -1px;
+                height: 2px;
+                background: var(--brand-primary);
+            }
+
+            /* Table & wrapper */
+            .appointments-wrapper {
+                max-height: 520px;
+                overflow-y: auto;
+                border-radius: 10px;
+                border: 1px solid #e5e7eb;
+            }
+
+            .appointments-wrapper::-webkit-scrollbar {
+                width: 7px;
+            }
+
+            .appointments-wrapper::-webkit-scrollbar-track {
+                background: #f3f4f6;
+            }
+
+            .appointments-wrapper::-webkit-scrollbar-thumb {
+                background: #cbd5f5;
+                border-radius: 999px;
+            }
+
+            .rm-table {
+                margin-bottom: 0;
+            }
+
+            .rm-table thead th {
+                background: #f1f5f9;
+                color: #374151;
+                border: none;
+                padding: 12px 10px;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: .04em;
+                font-weight: 700;
+                position: sticky;
+                top: 0;
+                z-index: 5;
+            }
+
             .rm-table tbody td {
-                padding: 15px 12px;
+                padding: 12px 10px;
                 vertical-align: middle;
-                border-color: #f1f5f9;
+                border-top: 1px solid #f3f4f6;
+                font-size: 13px;
             }
+
             .rm-table tbody tr:hover {
-                background-color: #f8fbff;
-            }
-            .rm-table tbody tr.appointment-expired:hover {
-                background-color: #f1f3f4;
+                background-color: #f9fafb;
             }
 
             /* Action buttons */
             .btn-action {
-                padding: 6px 10px;
-                margin: 2px;
-                border-radius: 4px;
-                font-size: 12px;
-                transition: all 0.2s;
-            }
-            .btn-action:hover {
-                transform: translateY(-1px);
-            }
-            .btn-action:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-                transform: none;
+                padding: 6px 9px;
+                margin: 1px;
+                border-radius: 7px;
+                font-size: 11px;
+                border: none;
             }
 
-            /* Stats cards */
-            .stat-card {
-                transition: all 0.3s ease;
-                cursor: pointer;
+            .btn-action i {
+                font-size: 12px;
             }
-            .stat-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 35px -10px rgba(0,0,0,.15);
+
+            /* Search bar */
+            .rm-search {
+                border-radius: 999px;
+                background: #f3f4f6;
+                padding: 4px 12px;
+                display: flex;
+                align-items: center;
+                gap: 6px;
             }
-            .stat-card.active {
-                border: 2px solid #1089ff;
+
+            .rm-search input {
+                border: none;
+                background: transparent;
+                font-size: 13px;
+                width: 170px;
+            }
+
+            .rm-search input:focus {
+                outline: none;
+                box-shadow: none;
+            }
+
+            .rm-pill {
+                border-radius: 999px;
+                padding: 4px 10px;
+                background: #eff6ff;
+                color: #1d4ed8;
+                font-size: 11px;
             }
 
             /* Loading overlay */
             .loading-overlay {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
+                inset: 0;
+                background: rgba(15, 23, 42, 0.55);
                 display: none;
                 justify-content: center;
                 align-items: center;
                 z-index: 9999;
             }
+
             .loading-spinner {
                 background: white;
-                padding: 2rem;
-                border-radius: 10px;
+                padding: 1.6rem 2rem;
+                border-radius: 12px;
                 text-align: center;
-            }
-
-            /* Warning badge for expired appointments */
-            .warning-badge {
-                background: #ffc107;
-                color: #856404;
-                padding: 4px 8px;
-                border-radius: 4px;
-                font-size: 11px;
-                font-weight: 600;
+                box-shadow: 0 20px 45px -20px rgba(15, 23, 42, .7);
             }
 
             /* Responsive */
@@ -264,35 +393,66 @@
                     transform: translateX(-100%);
                     transition: .3s;
                 }
+
                 .rm-sidebar.show {
                     transform: translateX(0);
                 }
+
                 .rm-content {
                     margin-left: 0;
                 }
+
+                .hero-wrap {
+                    height: auto;
+                    padding: 20px 0 10px;
+                }
             }
+
             @media (max-width: 768px) {
+                .appointments-wrapper {
+                    max-height: none;
+                    border: none;
+                }
+
                 .rm-table thead {
                     display: none;
                 }
+
                 .rm-table tbody tr {
                     display: block;
                     margin-bottom: 1rem;
-                    border: 1px solid #e9ecef;
-                    border-radius: 6px;
-                    padding: 1rem;
+                    border-radius: 10px;
+                    border: 1px solid #e5e7eb;
+                    padding: 0.5rem 0.75rem;
+                    background: #fff;
                 }
+
                 .rm-table tbody td {
-                    display: block;
-                    text-align: right;
-                    padding: 0.5rem;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                     border: none;
+                    padding: 0.35rem 0;
                 }
-                .rm-table tbody td:before {
+
+                .rm-table tbody td::before {
                     content: attr(data-label);
-                    float: left;
                     font-weight: 600;
-                    color: #1089ff;
+                    color: #6b7280;
+                    margin-right: 8px;
+                    font-size: 12px;
+                }
+
+                /* KPI row equal height */
+                .kpi-row .stat-card {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    height: 100%;
+                }
+
+                .kpi-row .stat-card small {
+                    margin-bottom: 4px;
                 }
             }
         </style>
@@ -305,7 +465,7 @@
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <p class="mt-2">Đang xử lý...</p>
+                <p class="mt-2 mb-0">Đang xử lý...</p>
             </div>
         </div>
 
@@ -326,11 +486,6 @@
                     </a>
                 </li>
                 <li>
-                    <a th:href="@{/doctor/appointments/confirmed}">
-                        <i class="fas fa-calendar-check"></i> Lịch hẹn Đã XN
-                    </a>
-                </li>
-                <li>
                     <a th:href="@{/doctor/appointments/history}">
                         <i class="fas fa-history"></i> Lịch sử Lịch hẹn
                     </a>
@@ -341,7 +496,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="@{/doctor/profile}">
+                    <a th:href="@{/doctor/profile}">
                         <i class="fas fa-user-md"></i> Hồ sơ bác sĩ
                     </a>
                 </li>
@@ -355,14 +510,50 @@
 
         <!-- Main content -->
         <main class="rm-content">
+
             <!-- Hero section -->
-            <div class="hero-wrap" style="background-image: url('../images/bg_1.jpg'); background-attachment: fixed; height: 200px;">
-                <div class="overlay"></div>
-                <div class="container h-100 d-flex align-items-end">
-                    <div class="row w-100 mb-4">
-                        <div class="col-md-8 ftco-animate text-white">
-                            <h2 class="mb-1">Quản lý Lịch hẹn</h2>
-                            <p class="mb-0">Quản lý và theo dõi tất cả lịch hẹn của bệnh nhân</p>
+            <div class="hero-wrap">
+                <div class="hero-overlay"></div>
+                <div class="container hero-content py-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-7 mb-3 mb-md-0">
+                            <h3 class="mb-1 text-white">
+                                <i class="fas fa-calendar-check mr-2"></i>
+                                Quản lý lịch hẹn
+                            </h3>
+
+                            <p class="mb-2 text-light small">
+                                Theo dõi, hủy và kết thúc lịch hẹn của bệnh nhân một cách tập trung.
+                            </p>
+                            <div class="hero-pills">
+                                <span>
+                                    <i class="fas fa-circle text-success mr-1" style="font-size: 7px;"></i>
+                                    Hôm nay:
+                                    <strong th:text="${todayAppointmentsCount}">0</strong>
+                                </span>
+                                <span>
+                                    Đã hoàn thành:
+                                    <strong th:text="${completedAppointmentsCount}">0</strong>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-md-right">
+                            <div class="d-inline-flex align-items-center rm-pill">
+                                <i class="fas fa-clock mr-2"></i>
+                                <span>
+                                    Đang hiển thị
+                                    <strong th:text="${totalFilteredCount}">0</strong> lịch hẹn
+                                    <span th:if="${listTruncated}" class="text-warning">
+                                        (đã rút gọn)
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="mt-2">
+                                <a th:href="@{/doctor/appointments/history}"
+                                   class="btn btn-sm btn-outline-light">
+                                    <i class="fas fa-list mr-1"></i> Xem lịch sử chi tiết
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -372,255 +563,265 @@
             <section class="ftco-section pt-4">
                 <div class="container">
 
-                    <!-- Stats cards -->
-                    <div class="row mb-4">
-                        <div class="col-md-2 mb-3">
-                            <div class="rm-card p-3 text-center stat-card" onclick="filterAppointments('all')">
-                                <div class="text-primary mb-2">
-                                    <i class="fas fa-calendar-alt fa-2x"></i>
+                    <!-- KPI row -->
+                    <div class="row mb-4 kpi-row">
+                        <!-- Tất cả -->
+                        <div class="col-sm-6 col-lg-2 mb-3 d-flex">
+                            <div class="rm-card stat-card flex-fill" onclick="filterAppointments('all')">
+                                <div class="stat-card-icon text-primary">
+                                    <i class="fas fa-calendar-alt"></i>
                                 </div>
-                                <h4 class="mb-1" th:text="${appointmentCounts.all}">0</h4>
-                                <p class="text-muted mb-0">Tất cả</p>
+                                <small>Tất cả</small>
+                                <h4 th:text="${appointmentCounts.all}">0</h4>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <div class="rm-card p-3 text-center stat-card" onclick="filterAppointments('today')">
-                                <div class="text-info mb-2">
-                                    <i class="fas fa-calendar-day fa-2x"></i>
+                        <!-- Hôm nay -->
+                        <div class="col-sm-6 col-lg-2 mb-3 d-flex">
+                            <div class="rm-card stat-card flex-fill" onclick="filterAppointments('today')">
+                                <div class="stat-card-icon text-info">
+                                    <i class="fas fa-calendar-day"></i>
                                 </div>
-                                <h4 class="mb-1" th:text="${appointmentCounts.today}">0</h4>
-                                <p class="text-muted mb-0">Hôm nay</p>
+                                <small>Hôm nay</small>
+                                <h4 th:text="${appointmentCounts.today}">0</h4>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <div class="rm-card p-3 text-center stat-card" onclick="filterAppointments('pending')">
-                                <div class="text-warning mb-2">
-                                    <i class="fas fa-clock fa-2x"></i>
+                        <!-- Đã xác nhận -->
+                        <div class="col-sm-6 col-lg-2 mb-3 d-flex">
+                            <div class="rm-card stat-card flex-fill" onclick="filterAppointments('confirmed')">
+                                <div class="stat-card-icon text-success">
+                                    <i class="fas fa-check-circle"></i>
                                 </div>
-                                <h4 class="mb-1" th:text="${appointmentCounts.pending}">0</h4>
-                                <p class="text-muted mb-0">Chờ xác nhận</p>
+                                <small>Đã xác nhận</small>
+                                <h4 th:text="${appointmentCounts.confirmed}">0</h4>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <div class="rm-card p-3 text-center stat-card" onclick="filterAppointments('confirmed')">
-                                <div class="text-success mb-2">
-                                    <i class="fas fa-check-circle fa-2x"></i>
+                        <!-- Đã hoàn thành -->
+                        <div class="col-sm-6 col-lg-2 mb-3 d-flex">
+                            <div class="rm-card stat-card flex-fill" onclick="filterAppointments('completed')">
+                                <div class="stat-card-icon text-primary">
+                                    <i class="fas fa-check-double"></i>
                                 </div>
-                                <h4 class="mb-1" th:text="${appointmentCounts.confirmed}">0</h4>
-                                <p class="text-muted mb-0">Đã xác nhận</p>
+                                <small>Đã hoàn thành</small>
+                                <h4 th:text="${appointmentCounts.completed}">0</h4>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <div class="rm-card p-3 text-center stat-card" onclick="filterAppointments('completed')">
-                                <div class="text-info mb-2">
-                                    <i class="fas fa-check-double fa-2x"></i>
+                        <!-- Đã hủy -->
+                        <div class="col-sm-6 col-lg-2 mb-3 d-flex">
+                            <div class="rm-card stat-card flex-fill" onclick="filterAppointments('cancelled')">
+                                <div class="stat-card-icon text-danger">
+                                    <i class="fas fa-ban"></i>
                                 </div>
-                                <h4 class="mb-1" th:text="${appointmentCounts.completed}">0</h4>
-                                <p class="text-muted mb-0">Đã hoàn thành</p>
+                                <small>Đã hủy</small>
+                                <h4 th:text="${appointmentCounts.cancelled}">0</h4>
                             </div>
                         </div>
-                        <div class="col-md-2 mb-3">
-                            <div class="rm-card p-3 text-center stat-card" onclick="filterAppointments('expired')">
-                                <div class="text-danger mb-2">
-                                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        <!-- Đã hết hạn -->
+                        <div class="col-sm-6 col-lg-2 mb-3 d-flex">
+                            <div class="rm-card stat-card flex-fill" onclick="filterAppointments('expired')">
+                                <div class="stat-card-icon text-danger">
+                                    <i class="fas fa-exclamation-triangle"></i>
                                 </div>
-                                <h4 class="mb-1" th:text="${appointmentCounts.expired}">0</h4>
-                                <p class="text-muted mb-0">Đã hết hạn</p>
+                                <small>Đã hết hạn</small>
+                                <h4 th:text="${appointmentCounts.expired}">0</h4>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Filter Tabs -->
+                    <!-- Main card: Filters + List -->
                     <div class="rm-card mb-4">
+                        <!-- Tabs + search -->
                         <div class="filter-tabs">
-                            <ul class="nav nav-tabs border-0">
-                                <li class="nav-item">
-                                    <a class="nav-link" th:classappend="${filter == 'all' or filter == null or filter == ''} ? 'active'" 
-                                       th:href="@{/doctor/appointments}">
-                                        Tất cả
-                                        <span class="badge bg-primary" th:text="${appointmentCounts.all}">0</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" th:classappend="${filter == 'today'} ? 'active'"
-                                       th:href="@{/doctor/appointments(filter='today')}">
-                                        Hôm nay
-                                        <span class="badge bg-info" th:text="${appointmentCounts.today}">0</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" th:classappend="${filter == 'pending'} ? 'active'"
-                                       th:href="@{/doctor/appointments(filter='pending')}">
-                                        Chờ xác nhận
-                                        <span class="badge bg-warning" th:text="${appointmentCounts.pending}">0</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" th:classappend="${filter == 'confirmed'} ? 'active'"
-                                       th:href="@{/doctor/appointments(filter='confirmed')}">
-                                        Đã xác nhận
-                                        <span class="badge bg-success" th:text="${appointmentCounts.confirmed}">0</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" th:classappend="${filter == 'completed'} ? 'active'"
-                                       th:href="@{/doctor/appointments(filter='completed')}">
-                                        Đã hoàn thành
-                                        <span class="badge bg-info" th:text="${appointmentCounts.completed}">0</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" th:classappend="${filter == 'expired'} ? 'active'"
-                                       th:href="@{/doctor/appointments(filter='expired')}">
-                                        Đã hết hạn
-                                        <span class="badge bg-danger" th:text="${appointmentCounts.expired}">0</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" th:classappend="${filter == 'cancelled'} ? 'active'"
-                                       th:href="@{/doctor/appointments(filter='cancelled')}">
-                                        Đã hủy
-                                        <span class="badge bg-secondary" th:text="${appointmentCounts.cancelled}">0</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                            <div class="d-flex justify-content-between align-items-center px-3">
+                                <ul class="nav nav-tabs border-0">
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           th:classappend="${filter == 'all' or filter == null or filter == ''} ? ' active'"
+                                           th:href="@{/doctor/appointments}">
+                                            Tất cả
+                                            <span class="badge bg-primary text-white"
+                                                  th:text="${appointmentCounts.all}">0</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           th:classappend="${filter == 'today'} ? ' active'"
+                                           th:href="@{/doctor/appointments(filter='today')}">
+                                            Hôm nay
+                                            <span class="badge bg-info text-white"
+                                                  th:text="${appointmentCounts.today}">0</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           th:classappend="${filter == 'confirmed'} ? ' active'"
+                                           th:href="@{/doctor/appointments(filter='confirmed')}">
+                                            Đã xác nhận
+                                            <span class="badge bg-success text-white"
+                                                  th:text="${appointmentCounts.confirmed}">0</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           th:classappend="${filter == 'completed'} ? ' active'"
+                                           th:href="@{/doctor/appointments(filter='completed')}">
+                                            Đã hoàn thành
+                                            <span class="badge bg-info text-white"
+                                                  th:text="${appointmentCounts.completed}">0</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           th:classappend="${filter == 'cancelled'} ? ' active'"
+                                           th:href="@{/doctor/appointments(filter='cancelled')}">
+                                            Đã hủy
+                                            <span class="badge bg-secondary text-white"
+                                                  th:text="${appointmentCounts.cancelled}">0</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           th:classappend="${filter == 'expired'} ? ' active'"
+                                           th:href="@{/doctor/appointments(filter='expired')}">
+                                            Đã hết hạn
+                                            <span class="badge bg-danger text-white"
+                                                  th:text="${appointmentCounts.expired}">0</span>
+                                        </a>
+                                    </li>
+                                </ul>
 
-                        <div class="p-4">
-                            <!-- Header với thông tin filter -->
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div>
-                                    <h4 class="mb-0">
-                                        <span th:if="${filter == 'all' or filter == ''}">Lịch hẹn</span>
-                                        <span th:if="${filter == 'today'}">Lịch hẹn Hôm nay</span>
-                                        <span th:if="${filter == 'pending'}">Lịch hẹn Chờ xác nhận</span>
-                                        <span th:if="${filter == 'confirmed'}">Lịch hẹn Đã xác nhận</span>
-                                        <span th:if="${filter == 'completed'}">Lịch hẹn Đã hoàn thành</span>
-                                        <span th:if="${filter == 'expired'}">Lịch hẹn Đã hết hạn</span>
-                                        <span th:if="${filter == 'cancelled'}">Lịch hẹn Đã hủy</span>
-                                    </h4>
-                                    <small class="text-muted" th:text="'Tổng số: ' + ${appointments.size()} + ' lịch hẹn'"></small>
-                                </div>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-outline-primary btn-sm" onclick="refreshAppointments()">
-                                        <i class="fas fa-sync-alt"></i> Làm mới
+                                <!-- Search + refresh -->
+                                <div class="d-flex align-items-center py-2">
+                                    <form th:action="@{/doctor/appointments}" method="get" class="mr-2 d-flex">
+                                        <!-- giữ filter hiện tại khi search -->
+                                        <input type="hidden" name="filter" th:value="${filter}">
+                                        <div class="rm-search">
+                                            <i class="fas fa-search text-gray-500"></i>
+                                            <input type="text"
+                                                   name="search"
+                                                   placeholder="Tìm theo tên, email, SĐT, ngày..."
+                                                   th:value="${search}">
+                                        </div>
+                                    </form>
+                                    <button class="btn btn-sm btn-outline-secondary"
+                                            type="button"
+                                            onclick="refreshAppointments()">
+                                        <i class="fas fa-sync-alt"></i>
                                     </button>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Appointments table -->
-                            <div th:if="${#lists.isEmpty(appointments)}" class="text-center py-5">
-                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                                <h5 class="text-muted">Không có lịch hẹn nào</h5>
-                                <p class="text-muted" th:text="${filter == 'today' ? 'Không có lịch hẹn nào cho hôm nay' : 
-                                   filter == 'pending' ? 'Không có lịch hẹn nào chờ xác nhận' :
-                                   filter == 'expired' ? 'Không có lịch hẹn nào đã hết hạn' :
-                                   'Tất cả lịch hẹn sẽ được hiển thị tại đây'}">
-                                </p>
+                        <!-- Header info -->
+                        <div class="px-3 pt-3 pb-2 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">
+                                    <span th:if="${filter == 'all' or filter == ''}">Tất cả lịch hẹn</span>
+                                    <span th:if="${filter == 'today'}">Lịch hẹn hôm nay</span>
+                                    <span th:if="${filter == 'confirmed'}">Lịch hẹn đã xác nhận</span>
+                                    <span th:if="${filter == 'completed'}">Lịch hẹn đã hoàn thành</span>
+                                    <span th:if="${filter == 'expired'}">Lịch hẹn đã hết hạn</span>
+                                    <span th:if="${filter == 'cancelled'}">Lịch hẹn đã hủy</span>
+                                </h6>
+                                <small class="text-muted">
+                                    <span th:text="'Tổng: ' + ${totalFilteredCount} + ' lịch hẹn đang hiển thị'"></span>
+                                    <span th:if="${search != null and !#strings.isEmpty(search)}">
+                                        &nbsp;• Kết quả cho từ khóa
+                                        "<strong th:text="${search}">abc</strong>"
+                                    </span>
+                                </small>
                             </div>
+                            <div>
+                                <a th:href="@{/doctor/appointments/history}"
+                                   class="btn btn-sm btn-light border">
+                                    <i class="fas fa-history mr-1"></i> Lịch sử 30 ngày
+                                </a>
+                            </div>
+                        </div>
 
-                            <div th:unless="${#lists.isEmpty(appointments)}">
+                        <!-- Empty state -->
+                        <div th:if="${#lists.isEmpty(appointments)}" class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted mb-2">Không có lịch hẹn phù hợp</h5>
+                            <p class="text-muted small mb-3">
+                                Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.
+                            </p>
+                            <a th:href="@{/doctor/appointments}" class="btn btn-outline-primary btn-sm">
+                                Xóa tất cả bộ lọc
+                            </a>
+                        </div>
+
+                        <!-- List -->
+                        <div th:unless="${#lists.isEmpty(appointments)}" class="px-3 pb-3">
+                            <div class="appointments-wrapper">
                                 <!-- Desktop table -->
                                 <div class="table-responsive d-none d-md-block">
                                     <table class="table rm-table">
                                         <thead>
                                             <tr>
                                                 <th>Bệnh nhân</th>
-                                                <th>Ngày & Giờ</th>
+                                                <th>Ngày & giờ</th>
                                                 <th>Trạng thái</th>
-                                                <th>Thao tác</th>
+                                                <th class="text-right">Thao tác</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr th:each="appointment : ${appointments}" 
-                                                th:classappend="${appointment.status == 'EXPIRED'} ? 'appointment-expired' : ''">
+                                            <tr th:each="appointment : ${appointments}"
+                                                th:classappend="${filter == 'expired'} ? ' appointment-expired' : ''">
                                                 <td data-label="Bệnh nhân">
                                                     <div>
                                                         <strong th:text="${appointment.patientName} ?: 'Bệnh nhân ẩn danh'"></strong>
-                                                        <div class="text-muted small" th:text="${appointment.patientEmail} ?: 'Không có email'"></div>
-                                                        <!-- Hiển thị cảnh báo nếu appointment đã expired nhưng chưa được đánh dấu -->
-                                                        <div th:if="${appointment.status == 'PENDING' and appointmentService.isAppointmentExpired(appointment)}" 
-                                                             class="warning-badge mt-1">
-                                                            <i class="fas fa-exclamation-triangle"></i> Đã quá hạn
-                                                        </div>
+                                                        <div class="text-muted small"
+                                                             th:text="${appointment.patientEmail} ?: 'Không có email'"></div>
                                                     </div>
                                                 </td>
-                                                <td data-label="Ngày & Giờ">
+                                                <td data-label="Ngày & giờ">
                                                     <div>
                                                         <span th:text="${appointment.appointmentDate} ?: 'N/A'"></span>
-                                                        <div class="text-muted small" th:text="${appointment.appointmentTime} ?: 'N/A'"></div>
-                                                        <!-- Hiển thị thời gian đã qua nếu expired -->
-                                                        <div th:if="${appointment.status == 'EXPIRED'}" class="text-danger small">
-                                                            <i class="fas fa-clock"></i> Đã quá thời gian hẹn
-                                                        </div>
+                                                        <div class="text-muted small"
+                                                             th:text="${appointment.appointmentTime} ?: 'N/A'"></div>
                                                     </div>
                                                 </td>
                                                 <td data-label="Trạng thái">
-                                                    <span class="status-badge" 
+                                                    <span class="status-badge"
                                                           th:classappend="' status-' + ${appointment.status}"
-                                                          th:text="${#strings.equals(appointment.status, 'PENDING') and appointmentService.isAppointmentExpired(appointment) ? 'EXPIRED' : appointment.status}">
+                                                          th:text="${appointment.status}">
                                                     </span>
-                                                    <!-- Hiển thị trạng thái thực tế nếu khác với status trong DB -->
-                                                    <div th:if="${#strings.equals(appointment.status, 'PENDING') and appointmentService.isAppointmentExpired(appointment)}" 
+                                                    <div th:if="${filter == 'expired'}"
                                                          class="text-danger small mt-1">
-                                                        <i class="fas fa-info-circle"></i> Tự động đánh dấu
+                                                        <i class="fas fa-info-circle"></i> Đã quá thời hạn hẹn
                                                     </div>
                                                 </td>
-                                                <td data-label="Thao tác">
-                                                    <div class="d-flex flex-wrap">
-                                                        <!-- Luôn hiển thị nút Xem chi tiết -->
-                                                        <a th:href="@{/doctor/appointments/{id}(id=${appointment.appointmentId})}" 
+                                                <td data-label="Thao tác" class="text-right">
+                                                    <div class="d-inline-flex flex-wrap justify-content-end">
+                                                        <!-- Xem chi tiết -->
+                                                        <a th:href="@{/doctor/appointments/{id}(id=${appointment.appointmentId})}"
                                                            class="btn btn-info btn-action" title="Xem chi tiết">
                                                             <i class="fas fa-eye"></i>
                                                         </a>
 
-                                                        <!-- Các action khác theo status với validation -->
-
-                                                        <!-- Nút Xác nhận - chỉ hiển thị cho PENDING chưa expired -->
-                                                        <button th:if="${appointment.status == 'PENDING' and !appointmentService.isAppointmentExpired(appointment)}" 
-                                                                class="btn btn-success btn-action" 
-                                                                th:onclick="'confirmAppointment(' + ${appointment.appointmentId} + ')'"
-                                                                title="Xác nhận lịch hẹn">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-
-                                                        <!-- Nút Xác nhận bị disabled cho PENDING đã expired -->
-                                                        <button th:if="${appointment.status == 'PENDING' and appointmentService.isAppointmentExpired(appointment)}" 
-                                                                class="btn btn-success btn-action" 
-                                                                disabled
-                                                                title="Không thể xác nhận lịch hẹn đã quá hạn">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-
-                                                        <!-- Nút Hủy - hiển thị cho PENDING và CONFIRMED chưa expired -->
-                                                        <button th:if="${(appointment.status == 'PENDING' or appointment.status == 'CONFIRMED') and !appointmentService.isAppointmentExpired(appointment)}" 
-                                                                class="btn btn-danger btn-action" 
-                                                                th:onclick="'cancelAppointment(' + ${appointment.appointmentId} + ')'"
-                                                                title="Hủy lịch hẹn">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-
-                                                        <!-- Nút Hoàn thành - chỉ hiển thị cho CONFIRMED -->
-                                                        <button th:if="${appointment.status == 'CONFIRMED'}" 
-                                                                class="btn btn-primary btn-action" 
-                                                                th:onclick="'completeAppointment(' + ${appointment.appointmentId} + ')'"
-                                                                title="Hoàn thành lịch hẹn (đã khám xong)">
+                                                        <!-- Hoàn thành (CONFIRMED) -->
+                                                        <button th:if="${appointment.status == 'CONFIRMED'}"
+                                                                type="button"
+                                                                class="btn btn-primary btn-action"
+                                                                th:onclick="'completeAppointment(' + ${appointment.appointmentId} + ')'">
                                                             <i class="fas fa-check-circle"></i>
                                                         </button>
 
-                                                        <!-- Nút Tạo hồ sơ bệnh án - hiển thị cho COMPLETED hoặc CONFIRMED đã khám -->
-                                                        <a th:if="${appointment.status == 'COMPLETED' or appointment.status == 'CONFIRMED'}" 
+                                                        <!-- Hủy (CONFIRMED, không phải expired) -->
+                                                        <button th:if="${appointment.status == 'CONFIRMED' and filter != 'expired'}"
+                                                                type="button"
+                                                                class="btn btn-danger btn-action"
+                                                                th:onclick="'cancelAppointment(' + ${appointment.appointmentId} + ')'">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+
+                                                        <!-- Tạo HSBA (CONFIRMED hoặc COMPLETED) -->
+                                                        <a th:if="${appointment.status == 'COMPLETED' or appointment.status == 'CONFIRMED'}"
                                                            th:href="@{/doctor/medical-record/create(appointmentId=${appointment.appointmentId})}"
-                                                           class="btn btn-warning btn-action" 
+                                                           class="btn btn-warning btn-action"
                                                            title="Tạo hồ sơ bệnh án">
                                                             <i class="fas fa-file-medical"></i>
                                                         </a>
-
-                                                        <!-- Thông báo cho expired appointments -->
-                                                        <span th:if="${appointment.status == 'EXPIRED'}" 
-                                                              class="text-muted small ms-2 d-flex align-items-center">
-                                                            <i class="fas fa-info-circle me-1"></i> Đã hết hạn
-                                                        </span>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -630,84 +831,81 @@
 
                                 <!-- Mobile cards -->
                                 <div class="d-md-none">
-                                    <div th:each="appointment : ${appointments}" 
-                                         th:classappend="'rm-card mb-3 p-3' + (${appointment.status == 'EXPIRED'} ? ' appointment-expired' : '')">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h6 class="mb-1" th:text="${appointment.patientName} ?: 'Bệnh nhân ẩn danh'"></h6>
-                                                <small class="text-muted" th:text="${appointment.patientEmail} ?: 'Không có email'"></small>
-                                                <!-- Cảnh báo expired trên mobile -->
-                                                <div th:if="${appointment.status == 'PENDING' and appointmentService.isAppointmentExpired(appointment)}" 
-                                                     class="warning-badge mt-1">
-                                                    <i class="fas fa-exclamation-triangle"></i> Đã quá hạn
-                                                </div>
-                                            </div>
-                                            <span class="status-badge" 
-                                                  th:classappend="' status-' + ${appointment.status}"
-                                                  th:text="${#strings.equals(appointment.status, 'PENDING') and appointmentService.isAppointmentExpired(appointment) ? 'EXPIRED' : appointment.status}">
-                                            </span>
-                                        </div>
+                                    <div th:each="appointment : ${appointments}"
+                                         th:classappend="' mb-3' + (${filter == 'expired'} ? ' appointment-expired' : '')">
+                                        <table class="table rm-table">
+                                            <tbody>
+                                                <tr>
+                                                    <td data-label="Bệnh nhân">
+                                                        <div>
+                                                            <strong th:text="${appointment.patientName} ?: 'Bệnh nhân ẩn danh'"></strong>
+                                                            <div class="text-muted small"
+                                                                 th:text="${appointment.patientEmail} ?: 'Không có email'"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Ngày & giờ">
+                                                        <div>
+                                                            <span th:text="${appointment.appointmentDate} ?: 'N/A'"></span>
+                                                            <div class="text-muted small"
+                                                                 th:text="${appointment.appointmentTime} ?: 'N/A'"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Trạng thái">
+                                                        <span class="status-badge"
+                                                              th:classappend="' status-' + ${appointment.status}"
+                                                              th:text="${appointment.status}">
+                                                        </span>
+                                                        <div th:if="${filter == 'expired'}"
+                                                             class="text-danger small mt-1">
+                                                            <i class="fas fa-info-circle"></i> Đã quá thời hạn hẹn
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td data-label="Thao tác">
+                                                        <div class="d-flex flex-wrap">
+                                                            <a th:href="@{/doctor/appointments/{id}(id=${appointment.appointmentId})}"
+                                                               class="btn btn-info btn-sm mr-1 mb-1">
+                                                                <i class="fas fa-eye mr-1"></i> Chi tiết
+                                                            </a>
 
-                                        <div class="mb-2">
-                                            <small class="text-muted">Ngày & Giờ:</small>
-                                            <div th:text="${appointment.appointmentDate} + ' ' + ${appointment.appointmentTime}"></div>
-                                            <!-- Thông báo expired trên mobile -->
-                                            <div th:if="${appointment.status == 'EXPIRED'}" class="text-danger small">
-                                                <i class="fas fa-clock"></i> Đã quá thời gian hẹn
-                                            </div>
-                                        </div>
+                                                            <button th:if="${appointment.status == 'CONFIRMED'}"
+                                                                    type="button"
+                                                                    class="btn btn-primary btn-sm mr-1 mb-1"
+                                                                    th:onclick="'completeAppointment(' + ${appointment.appointmentId} + ')'">
+                                                                <i class="fas fa-check-circle"></i>
+                                                            </button>
 
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <a th:href="@{/doctor/appointments/{id}(id=${appointment.appointmentId})}" 
-                                               class="btn btn-info btn-sm">
-                                                <i class="fas fa-eye"></i> Chi tiết
-                                            </a>
-                                            <div class="d-flex gap-1">
-                                                <!-- Xác nhận cho PENDING chưa expired -->
-                                                <button th:if="${appointment.status == 'PENDING' and !appointmentService.isAppointmentExpired(appointment)}" 
-                                                        class="btn btn-success btn-sm" 
-                                                        th:onclick="'confirmAppointment(' + ${appointment.appointmentId} + ')'">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
+                                                            <button th:if="${appointment.status == 'CONFIRMED' and filter != 'expired'}"
+                                                                    type="button"
+                                                                    class="btn btn-danger btn-sm mr-1 mb-1"
+                                                                    th:onclick="'cancelAppointment(' + ${appointment.appointmentId} + ')'">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
 
-                                                <!-- Xác nhận disabled cho PENDING đã expired -->
-                                                <button th:if="${appointment.status == 'PENDING' and appointmentService.isAppointmentExpired(appointment)}" 
-                                                        class="btn btn-success btn-sm" 
-                                                        disabled>
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-
-                                                <!-- Hủy cho PENDING và CONFIRMED chưa expired -->
-                                                <button th:if="${(appointment.status == 'PENDING' or appointment.status == 'CONFIRMED') and !appointmentService.isAppointmentExpired(appointment)}" 
-                                                        class="btn btn-danger btn-sm" 
-                                                        th:onclick="'cancelAppointment(' + ${appointment.appointmentId} + ')'">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-
-                                                <!-- Hoàn thành cho CONFIRMED -->
-                                                <button th:if="${appointment.status == 'CONFIRMED'}" 
-                                                        class="btn btn-primary btn-sm" 
-                                                        th:onclick="'completeAppointment(' + ${appointment.appointmentId} + ')'">
-                                                    <i class="fas fa-check-circle"></i>
-                                                </button>
-
-                                                <!-- Tạo hồ sơ bệnh án -->
-                                                <a th:if="${appointment.status == 'COMPLETED' or appointment.status == 'CONFIRMED'}" 
-                                                   th:href="@{/doctor/medical-record/create(appointmentId=${appointment.appointmentId})}"
-                                                   class="btn btn-warning btn-sm">
-                                                    <i class="fas fa-file-medical"></i>
-                                                </a>
-                                            </div>
-                                        </div>
+                                                            <a th:if="${appointment.status == 'COMPLETED' or appointment.status == 'CONFIRMED'}"
+                                                               th:href="@{/doctor/medical-record/create(appointmentId=${appointment.appointmentId})}"
+                                                               class="btn btn-warning btn-sm mb-1">
+                                                                <i class="fas fa-file-medical"></i> HSBA
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
 
                 </div>
             </section>
-
         </main>
 
         <!-- JS -->
@@ -715,139 +913,106 @@
         <script src="../js/bootstrap.min.js"></script>
 
         <script>
-                                        // Hiển thị loading
-                                        function showLoading() {
-                                            document.getElementById('loadingOverlay').style.display = 'flex';
-                                        }
-
-                                        // Ẩn loading
-                                        function hideLoading() {
-                                            document.getElementById('loadingOverlay').style.display = 'none';
-                                        }
-
-                                        // Filter appointments
-                                        function filterAppointments(filter) {
-                                            if (filter === 'all') {
-                                                window.location.href = '/doctor/appointments';
-                                            } else {
-                                                window.location.href = `/doctor/appointments?filter=${filter}`;
-                                            }
-                                        }
-
-                                        // Xác nhận lịch hẹn
-                                        function confirmAppointment(appointmentId) {
-                                            if (confirm('Bạn có chắc muốn xác nhận lịch hẹn này?')) {
-                                                showLoading();
-                                                updateAppointmentStatus(appointmentId, 'confirm');
-                                            }
-                                        }
-
-                                        // Hủy lịch hẹn
-                                        function cancelAppointment(appointmentId) {
-                                            if (confirm('Bạn có chắc muốn hủy lịch hẹn này?')) {
-                                                showLoading();
-                                                updateAppointmentStatus(appointmentId, 'cancel');
-                                            }
-                                        }
-
-                                        // Hoàn thành lịch hẹn
-                                        function completeAppointment(appointmentId) {
-                                            if (confirm('Bạn có chắc muốn đánh dấu lịch hẹn đã hoàn thành?\nSau khi hoàn thành, bạn có thể tạo hồ sơ bệnh án cho bệnh nhân.')) {
-                                                showLoading();
-                                                updateAppointmentStatus(appointmentId, 'complete');
-                                            }
-                                        }
-
-                                        // Cập nhật trạng thái lịch hẹn
-                                        function updateAppointmentStatus(appointmentId, action) {
-                                            const url = `/doctor/appointments/${appointmentId}/${action}`;
-
-                                            fetch(url, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json',
+                                                function showLoading() {
+                                                    document.getElementById('loadingOverlay').style.display = 'flex';
                                                 }
-                                            })
-                                                    .then(response => {
-                                                        if (!response.ok) {
-                                                            throw new Error('Network response was not ok');
-                                                        }
-                                                        return response.json();
-                                                    })
-                                                    .then(data => {
-                                                        hideLoading();
-                                                        if (data.status === 'SUCCESS') {
-                                                            showNotification('success', data.message || 'Thao tác thành công!');
-                                                            setTimeout(() => {
-                                                                location.reload();
-                                                            }, 1000);
-                                                        } else {
-                                                            showNotification('error', data.message || 'Không thể thực hiện thao tác');
-                                                        }
-                                                    })
-                                                    .catch(error => {
-                                                        hideLoading();
-                                                        showNotification('error', 'Lỗi kết nối: ' + error);
-                                                        console.error('Error:', error);
-                                                    });
-                                        }
 
-                                        // Hiển thị thông báo
-                                        function showNotification(type, message) {
-                                            // Tạo toast notification
-                                            const toast = document.createElement('div');
-                                            toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
-                                            toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-                                            toast.innerHTML = `
+                                                function hideLoading() {
+                                                    document.getElementById('loadingOverlay').style.display = 'none';
+                                                }
+
+                                                function filterAppointments(filter) {
+                                                    if (filter === 'all') {
+                                                        window.location.href = '/doctor/appointments';
+                                                    } else {
+                                                        window.location.href = '/doctor/appointments?filter=' + filter;
+                                                    }
+                                                }
+
+                                                function cancelAppointment(appointmentId) {
+                                                    if (confirm('Bạn có chắc muốn hủy lịch hẹn này?')) {
+                                                        showLoading();
+                                                        updateAppointmentStatus(appointmentId, 'cancel');
+                                                    }
+                                                }
+
+                                                function completeAppointment(appointmentId) {
+                                                    if (confirm('Bạn có chắc muốn đánh dấu lịch hẹn đã hoàn thành?\nSau khi hoàn thành, bạn có thể tạo hồ sơ bệnh án cho bệnh nhân.')) {
+                                                        showLoading();
+                                                        updateAppointmentStatus(appointmentId, 'complete');
+                                                    }
+                                                }
+
+                                                function updateAppointmentStatus(appointmentId, action) {
+                                                    const url = `/doctor/appointments/${appointmentId}/${action}`;
+
+                                                    fetch(url, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'Content-Type': 'application/json',
+                                                        }
+                                                    })
+                                                            .then(response => {
+                                                                if (!response.ok) {
+                                                                    throw new Error('Network response was not ok');
+                                                                }
+                                                                return response.json();
+                                                            })
+                                                            .then(data => {
+                                                                hideLoading();
+                                                                if (data.status === 'SUCCESS') {
+                                                                    showNotification('success', data.message || 'Thao tác thành công!');
+                                                                    setTimeout(() => {
+                                                                        location.reload();
+                                                                    }, 900);
+                                                                } else {
+                                                                    showNotification('error', data.message || 'Không thể thực hiện thao tác');
+                                                                }
+                                                            })
+                                                            .catch(error => {
+                                                                hideLoading();
+                                                                showNotification('error', 'Lỗi kết nối: ' + error);
+                                                                console.error('Error:', error);
+                                                            });
+                                                }
+
+                                                function showNotification(type, message) {
+                                                    const toast = document.createElement('div');
+                                                    toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+                                                    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                                                    toast.innerHTML = `
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 `;
-                                            document.body.appendChild(toast);
+                                                    document.body.appendChild(toast);
 
-                                            // Tự động xóa sau 5 giây
-                                            setTimeout(() => {
-                                                if (toast.parentNode) {
-                                                    toast.parentNode.removeChild(toast);
+                                                    setTimeout(() => {
+                                                        if (toast.parentNode) {
+                                                            toast.parentNode.removeChild(toast);
+                                                        }
+                                                    }, 5000);
                                                 }
-                                            }, 5000);
-                                        }
 
-                                        // Làm mới danh sách
-                                        function refreshAppointments() {
-                                            showLoading();
-                                            setTimeout(() => {
-                                                location.reload();
-                                            }, 500);
-                                        }
+                                                function refreshAppointments() {
+                                                    showLoading();
+                                                    const url = new URL(window.location.href);
+                                                    url.searchParams.delete('search'); // bỏ search để load lại sạch
+                                                    window.location.href = url.toString();
+                                                }
 
-                                        // Highlight stat card based on current filter
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            const urlParams = new URLSearchParams(window.location.search);
-                                            const filter = urlParams.get('filter') || 'all';
+                                                document.addEventListener('DOMContentLoaded', function () {
+                                                    const urlParams = new URLSearchParams(window.location.search);
+                                                    const filter = urlParams.get('filter') || 'all';
 
-                                            // Remove active class from all stat cards
-                                            document.querySelectorAll('.stat-card').forEach(card => {
-                                                card.classList.remove('active');
-                                            });
+                                                    document.querySelectorAll('.stat-card').forEach(card => {
+                                                        card.classList.remove('active');
+                                                    });
 
-                                            // Add active class to current filter card
-                                            const activeCard = document.querySelector(`.stat-card[onclick*="${filter}"]`);
-                                            if (activeCard) {
-                                                activeCard.classList.add('active');
-                                            }
-
-                                            // Kiểm tra và hiển thị cảnh báo cho các appointment sắp hết hạn
-                                            checkExpiringAppointments();
-                                        });
-
-                                        // Kiểm tra appointments sắp hết hạn
-                                        function checkExpiringAppointments() {
-                                            // Có thể thêm logic để highlight các appointment sắp hết hạn
-                                            const pendingAppointments = document.querySelectorAll('.status-PENDING');
-                                            pendingAppointments.forEach(apt => {
-                                                // Có thể thêm logic kiểm tra thời gian ở đây
-                                            });
-                                        }
+                                                    const activeCard = document.querySelector(`.stat-card[onclick*="${filter}"]`);
+                                                    if (activeCard) {
+                                                        activeCard.classList.add('active');
+                                                    }
+                                                });
         </script>
     </body>
 </html>

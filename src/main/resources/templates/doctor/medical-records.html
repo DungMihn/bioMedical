@@ -22,7 +22,7 @@
             }
 
             body {
-                background-color: #f8fbff;
+                background-color: #f5f7fb;
                 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             }
 
@@ -90,6 +90,7 @@
                 padding: 12px 18px;
                 transition: .2s;
                 border-left: 4px solid transparent;
+                font-size: 0.95rem;
             }
 
             .rm-sidebar .menu li a:hover,
@@ -97,6 +98,11 @@
                 background: rgba(255,255,255,.12);
                 border-left-color: #fff;
                 color: #fff;
+            }
+
+            .rm-sidebar .rm-badge {
+                background: rgba(255,255,255,.15);
+                margin-left: auto;
             }
 
             /* Content Area */
@@ -109,31 +115,47 @@
             .rm-header {
                 background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
                 color: white;
-                padding: 2rem 0;
-                margin-bottom: 2rem;
+                padding: 1.75rem 0 1.5rem;
+                margin-bottom: 1.5rem;
                 box-shadow: 0 4px 12px rgba(0,0,0,.1);
+            }
+
+            .rm-header-subtitle {
+                opacity: .85;
+                font-size: .95rem;
+            }
+
+            .rm-breadcrumb {
+                font-size: 0.85rem;
+                opacity: .9;
             }
 
             /* Card Styles */
             .rm-card {
                 background: #fff;
-                border-radius: 8px;
+                border-radius: 10px;
                 border: none;
-                box-shadow: 0 10px 30px -10px rgba(0,0,0,.1);
+                box-shadow: 0 12px 30px -14px rgba(0,0,0,.15);
                 transition: transform .2s, box-shadow .2s;
-                margin-bottom: 1.5rem;
+                margin-bottom: 1.25rem;
             }
 
             .rm-card:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 14px 36px -12px rgba(0,0,0,.12);
+                box-shadow: 0 16px 40px -18px rgba(0,0,0,.18);
             }
 
             .rm-card .card-header {
                 background: #fff;
-                border-bottom: 1px solid rgba(0,0,0,.05);
-                padding: 1.25rem;
+                border-bottom: 1px solid rgba(0,0,0,.04);
+                padding: 1rem 1.25rem;
                 font-weight: 600;
+            }
+
+            .rm-card .card-header small {
+                font-weight: 400;
+                color: #6c757d;
+                margin-left: .5rem;
             }
 
             /* Button Styles */
@@ -143,6 +165,14 @@
                 transition: all 0.2s;
             }
 
+            .rm-btn i {
+                font-size: 0.9em;
+            }
+
+            .rm-btn:focus {
+                box-shadow: 0 0 0 0.18rem rgba(16,137,255,0.25);
+            }
+
             /* Table Styles */
             .rm-table {
                 width: 100%;
@@ -150,17 +180,19 @@
             }
 
             .rm-table th {
-                background-color: #f8f9fa;
+                background-color: #f8f9fb;
                 font-weight: 600;
                 color: #495057;
-                padding: 1rem;
+                padding: 0.85rem 1rem;
                 border-bottom: 2px solid #e9ecef;
+                font-size: 0.9rem;
             }
 
             .rm-table td {
-                padding: 1rem;
-                border-bottom: 1px solid #e9ecef;
+                padding: 0.85rem 1rem;
+                border-bottom: 1px solid #edf0f5;
                 vertical-align: top;
+                font-size: 0.9rem;
             }
 
             .rm-table tbody tr:hover {
@@ -169,36 +201,84 @@
 
             /* Badge Styles */
             .rm-badge {
-                font-size: 0.75rem;
-                padding: 0.35em 0.65em;
+                font-size: 0.7rem;
+                padding: 0.25em 0.6em;
                 border-radius: 999px;
                 font-weight: 600;
+            }
+
+            .badge-soft-success {
+                background-color: rgba(25,135,84,.1);
+                color: #198754;
+            }
+
+            .badge-soft-warning {
+                background-color: rgba(255,193,7,.1);
+                color: #9f7010;
+            }
+
+            .badge-soft-secondary {
+                background-color: rgba(108,117,125,.08);
+                color: #495057;
             }
 
             /* Search Box */
             .rm-search-box {
                 border-radius: 8px;
-                border: 1px solid #e9ecef;
-                padding: 0.75rem 1rem;
+                border: 1px solid #e3e7ed;
+                padding: 0.7rem 1rem;
                 transition: all 0.2s;
+                font-size: 0.92rem;
             }
 
             .rm-search-box:focus {
                 border-color: var(--primary-color);
-                box-shadow: 0 0 0 0.2rem rgba(16, 137, 255, 0.25);
+                box-shadow: 0 0 0 0.16rem rgba(16, 137, 255, 0.22);
+            }
+
+            /* Filter pills */
+            .filter-pill {
+                border-radius: 999px;
+                padding: 0.25rem 0.85rem;
+                font-size: 0.8rem;
+                border: 1px solid #dee2e6;
+                background-color: #fff;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+
+            .filter-pill:hover {
+                background-color: #f8f9fa;
+            }
+
+            .filter-pill.active {
+                border-color: var(--primary-color);
+                background-color: rgba(16,137,255,0.06);
+                color: var(--primary-color);
             }
 
             /* Patient Info */
             .patient-avatar {
-                width: 50px;
-                height: 50px;
-                background: var(--primary-color);
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
                 border-radius: 50%;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 color: white;
                 font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .patient-name {
+                font-size: 0.95rem;
+            }
+
+            .patient-phone {
+                font-size: 0.8rem;
             }
 
             /* Empty State */
@@ -222,10 +302,10 @@
                 right: 0;
                 background: white;
                 border: 1px solid #dee2e6;
-                border-radius: 0 0 8px 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,.1);
+                border-radius: 0 0 10px 10px;
+                box-shadow: 0 10px 24px rgba(0,0,0,.12);
                 z-index: 1000;
-                max-height: 300px;
+                max-height: 320px;
                 overflow-y: auto;
                 display: none;
             }
@@ -235,10 +315,11 @@
             }
 
             .suggestion-item {
-                padding: 12px 16px;
-                border-bottom: 1px solid #f8f9fa;
+                padding: 10px 14px;
+                border-bottom: 1px solid #f1f3f6;
                 cursor: pointer;
-                transition: background-color 0.2s;
+                transition: background-color 0.15s;
+                font-size: 0.9rem;
             }
 
             .suggestion-item:hover,
@@ -254,6 +335,24 @@
                 padding: 12px 16px;
                 color: #6c757d;
                 text-align: center;
+                font-size: 0.88rem;
+            }
+
+            /* Quick stats */
+            .stat-card-icon {
+                font-size: 1.6rem;
+                margin-bottom: .25rem;
+                opacity: .85;
+            }
+
+            .stat-card-label {
+                font-size: .82rem;
+                color: #6c757d;
+            }
+
+            .stat-card-value {
+                font-size: 1.25rem;
+                font-weight: 600;
             }
 
             /* Responsive */
@@ -268,6 +367,9 @@
                 .rm-content {
                     margin-left: 0;
                 }
+                .rm-header {
+                    padding: 1.25rem 0 1.25rem;
+                }
             }
         </style>
     </head>
@@ -279,22 +381,15 @@
             </div>
             <ul class="menu">
                 <li>
-                    <a th:href="@{/doctor/index}" class="active">
+                    <a th:href="@{/doctor/index}">
                         <i class="fas fa-home"></i> Dashboard
                     </a>
                 </li>
                 <li>
                     <a th:href="@{/doctor/appointments}">
                         <i class="fas fa-calendar"></i> Quản lý Lịch hẹn
-                        <span th:if="${pendingAppointmentsCount > 0}" class="rm-badge" 
+                        <span th:if="${pendingAppointmentsCount > 0}" class="rm-badge"
                               th:text="${pendingAppointmentsCount}">0</span>
-                    </a>
-                </li>
-                <li>
-                    <a th:href="@{/doctor/appointments/confirmed}">
-                        <i class="fas fa-calendar-check"></i> Lịch hẹn Đã XN
-                        <span th:if="${confirmedAppointmentsCount > 0}" class="rm-badge" 
-                              th:text="${confirmedAppointmentsCount}">0</span>
                     </a>
                 </li>
                 <li>
@@ -303,7 +398,7 @@
                     </a>
                 </li>
                 <li>
-                    <a th:href="@{/doctor/medical-records}">
+                    <a th:href="@{/doctor/medical-records}" class="active">
                         <i class="fas fa-file-medical"></i> Hồ sơ bệnh án
                     </a>
                 </li>
@@ -325,14 +420,19 @@
             <!-- Header -->
             <div class="rm-header">
                 <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1 class="display-6 fw-bold">
+                    <div class="row align-items-center gy-3">
+                        <div class="col-lg-8 col-md-7">
+                            <div class="rm-breadcrumb mb-1">
+                                <i class="fas fa-house-chimney"></i> / Bác sĩ / Hồ sơ bệnh án
+                            </div>
+                            <h1 class="h3 fw-bold mb-1">
                                 <i class="fas fa-file-medical me-2"></i> Hồ sơ Bệnh án
                             </h1>
-                            <p class="lead mb-0">Quản lý và theo dõi hồ sơ bệnh án của bệnh nhân</p>
+                            <p class="rm-header-subtitle mb-0">
+                                Quản lý và theo dõi hồ sơ bệnh án, chẩn đoán và đơn thuốc của bệnh nhân.
+                            </p>
                         </div>
-                        <div class="col-md-4 text-end">
+                        <div class="col-lg-4 col-md-5 text-md-end">
                             <a th:href="@{/doctor/medical-record/create}" class="btn btn-light rm-btn">
                                 <i class="fas fa-plus-circle me-1"></i> Tạo hồ sơ mới
                             </a>
@@ -341,30 +441,95 @@
                 </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="container">
+            <!-- Main Content Body -->
+            <div class="container mb-4">
+
+                <!-- Quick Stats -->
+                <div class="row mt-3 g-3">
+                    <div class="col-md-3 col-6">
+                        <div class="rm-card text-center p-3">
+                            <div class="stat-card-icon text-primary">
+                                <i class="fas fa-file-medical"></i>
+                            </div>
+                            <div class="stat-card-value"
+                                 th:text="${records != null ? #lists.size(records) : 0}">0</div>
+                            <div class="stat-card-label">Tổng số hồ sơ</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="rm-card text-center p-3">
+                            <div class="stat-card-icon text-success">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="stat-card-value"
+                                 th:text="${records != null ? records.?[diagnosis != null and !diagnosis.empty].size() : 0}">0</div>
+                            <div class="stat-card-label">Đã chẩn đoán</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="rm-card text-center p-3">
+                            <div class="stat-card-icon text-warning">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <div class="stat-card-value"
+                                 th:text="${records != null ? records.?[!prescriptions.empty].size() : 0}">0</div>
+                            <div class="stat-card-label">Có kê đơn</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="rm-card text-center p-3">
+                            <div class="stat-card-icon text-info">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="stat-card-value"
+                                 th:text="${records != null ? records.?[#dates.format(createdAt, 'dd/MM/yyyy') == #dates.format(#dates.createNow(), 'dd/MM/yyyy')].size() : 0}">0</div>
+                            <div class="stat-card-label">Hồ sơ hôm nay</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Search Card -->
                 <div class="rm-card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-search me-2"></i> Tìm kiếm Hồ sơ
-                        </h5>
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="card-title mb-0">
+                                <i class="fas fa-search me-2"></i> Tìm kiếm Hồ sơ
+                            </span>
+                            <small class="d-block d-sm-inline ms-sm-2">Theo tên, số điện thoại, chẩn đoán...</small>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="text-muted small">Lọc nhanh:</span>
+                            <button type="button" class="filter-pill" onclick="applyFilter('today')" id="filterToday">
+                                <i class="fas fa-calendar-day"></i> Hôm nay
+                            </button>
+                            <button type="button" class="filter-pill" onclick="applyFilter('diagnosed')" id="filterDiagnosed">
+                                <i class="fas fa-user-check"></i> Đã chẩn đoán
+                            </button>
+                            <button type="button" class="filter-pill" onclick="applyFilter('prescribed')" id="filterPrescribed">
+                                <i class="fas fa-pills"></i> Có kê đơn
+                            </button>
+                            <button type="button" class="filter-pill" onclick="clearFilters()" id="filterClear">
+                                <i class="fas fa-times"></i> Xóa lọc
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <form th:action="@{/doctor/medical-records}" method="get" id="searchForm">
                             <div class="row g-3 align-items-end">
                                 <div class="col-md-8">
-                                    <label class="form-label fw-semibold">Tìm kiếm theo tên, số điện thoại hoặc chẩn đoán</label>
+                                    <label class="form-label fw-semibold">
+                                        Tìm kiếm theo tên, số điện thoại hoặc chẩn đoán
+                                    </label>
                                     <div class="position-relative">
-                                        <input type="text" 
-                                               class="form-control rm-search-box" 
+                                        <input type="text"
+                                               class="form-control rm-search-box"
                                                id="searchInput"
-                                               name="search" 
+                                               name="search"
                                                th:value="${search}"
                                                placeholder="Nhập tên bệnh nhân, số điện thoại hoặc chẩn đoán..."
                                                autocomplete="off">
                                         <!-- Loading spinner -->
-                                        <div class="position-absolute top-50 end-0 translate-middle-y me-3" 
+                                        <div class="position-absolute top-50 end-0 translate-middle-y me-3"
                                              id="searchLoading" style="display: none;">
                                             <div class="spinner-border spinner-border-sm text-primary" role="status">
                                                 <span class="visually-hidden">Loading...</span>
@@ -378,11 +543,11 @@
                                         </div>
                                     </div>
                                     <div class="form-text">
-                                        Tìm kiếm theo: tên bệnh nhân, số điện thoại, chẩn đoán, triệu chứng
+                                        Có thể nhập: tên bệnh nhân, số điện thoại, chẩn đoán, triệu chứng...
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="d-grid gap-2 d-md-flex">
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button type="submit" class="btn btn-primary rm-btn flex-fill">
                                             <i class="fas fa-search me-1"></i> Tìm kiếm
                                         </button>
@@ -393,105 +558,123 @@
                                 </div>
                             </div>
 
-                            <!-- ĐÃ BỎ QUICK SEARCH SECTION -->
-
-                            <!-- Search filters -->
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <label class="form-label fw-semibold">Lọc nhanh:</label>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <button type="button" class="btn btn-outline-primary btn-sm rm-btn" onclick="applyFilter('today')">
-                                            <i class="fas fa-calendar-day me-1"></i> Hôm nay
-                                        </button>
-                                        <button type="button" class="btn btn-outline-success btn-sm rm-btn" onclick="applyFilter('diagnosed')">
-                                            <i class="fas fa-user-check me-1"></i> Đã chẩn đoán
-                                        </button>
-                                        <button type="button" class="btn btn-outline-warning btn-sm rm-btn" onclick="applyFilter('prescribed')">
-                                            <i class="fas fa-pills me-1"></i> Có kê đơn
-                                        </button>
-                                        <button type="button" class="btn btn-outline-info btn-sm rm-btn" onclick="clearFilters()">
-                                            <i class="fas fa-times me-1"></i> Xóa lọc
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- Giữ nguyên cơ chế filter bằng search value (today/diagnosed/prescribed) -->
                         </form>
                     </div>
                 </div>
 
+
+
                 <!-- Records Card -->
                 <div class="rm-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-list me-2"></i> Danh sách Hồ sơ Bệnh án
-                        </h5>
+                    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
-                            <span class="text-muted me-3" th:if="${records}">
-                                Tổng số: <strong th:text="${#lists.size(records)}">0</strong> hồ sơ
+                            <span class="card-title mb-0">
+                                <i class="fas fa-list me-2"></i> Danh sách Hồ sơ Bệnh án
+                            </span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <span class="text-muted small" th:if="${records}">
+                                Tổng số:
+                                <strong th:text="${records != null ? #lists.size(records) : 0}">0</strong> hồ sơ
                             </span>
                             <span th:if="${search}" class="badge bg-primary">
-                                <i class="fas fa-filter me-1"></i> Đang lọc: <span th:text="${search}"></span>
+                                <i class="fas fa-filter me-1"></i> Đang lọc:
+                                <span th:text="${search}"></span>
                             </span>
                         </div>
                     </div>
                     <div class="card-body p-0">
-                        <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+                        <div th:if="${records == null or #lists.isEmpty(records)}" class="empty-state">
                             <i class="fas fa-file-medical"></i>
-                            <h5 class="text-muted" th:if="${search}">Không tìm thấy hồ sơ phù hợp với "<span th:text="${search}"></span>"</h5>
-                            <h5 class="text-muted" th:unless="${search}">Chưa có hồ sơ bệnh án nào</h5>
-                            <p class="text-muted mb-3" th:unless="${search}">Bắt đầu bằng cách tạo hồ sơ bệnh án mới</p>
+                            <h5 class="text-muted" th:if="${search}">
+                                Không tìm thấy hồ sơ phù hợp với "<span th:text="${search}"></span>"
+                            </h5>
+                            <h5 class="text-muted" th:unless="${search}">
+                                Chưa có hồ sơ bệnh án nào
+                            </h5>
+                            <p class="text-muted mb-3" th:unless="${search}">
+                                Bắt đầu bằng cách tạo hồ sơ bệnh án mới cho bệnh nhân của bạn.
+                            </p>
                             <a th:href="@{/doctor/medical-record/create}" class="btn btn-primary rm-btn">
                                 <i class="fas fa-plus-circle me-1"></i> Tạo hồ sơ đầu tiên
                             </a>
                         </div>
 
-                        <div th:unless="${#lists.isEmpty(records)}">
+                        <div th:unless="${records == null or #lists.isEmpty(records)}">
                             <div class="table-responsive">
                                 <table class="rm-table">
                                     <thead>
                                         <tr>
-                                            <th style="width: 25%">Bệnh nhân</th>
+                                            <th style="width: 28%">Bệnh nhân</th>
                                             <th style="width: 15%">Ngày khám</th>
-                                            <th style="width: 25%">Chẩn đoán</th>
+                                            <th style="width: 27%">Chẩn đoán</th>
                                             <th style="width: 20%">Thuốc kê đơn</th>
-                                            <th style="width: 15%">Thao tác</th>
+                                            <th style="width: 10%" class="text-end">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr th:each="record : ${records}">
+                                            <!-- Patient -->
                                             <td>
                                                 <div class="d-flex align-items-center">
                                                     <div class="patient-avatar me-3">
                                                         <i class="fas fa-user"></i>
                                                     </div>
                                                     <div>
-                                                        <strong class="d-block" th:text="${record.patient.fullName}"></strong>
-                                                        <small class="text-muted" th:text="${record.patient.phone}"></small>
+                                                        <strong class="patient-name d-block"
+                                                                th:text="${record.patient != null ? record.patient.fullName : 'Không rõ'}"></strong>
+                                                        <small class="text-muted patient-phone d-block"
+                                                               th:text="${record.patient != null ? record.patient.phone : ''}"></small>
+
+                                                        <!-- CHỈ GIỮ LẠI ĐOẠN NÀY, KHÔNG DÙNG appointmentCode NỮA -->
+                                                        <span class="badge badge-soft-secondary mt-1"
+                                                              th:if="${record.appointment != null}">
+                                                            <i class="fas fa-calendar-check me-1"></i> Có lịch hẹn
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </td>
+
+                                            <!-- Date -->
                                             <td>
-                                                <span class="fw-semibold" th:text="${#dates.format(record.createdAt, 'dd/MM/yyyy')}"></span>
-                                                <br>
-                                                <small class="text-muted" th:text="${#dates.format(record.createdAt, 'HH:mm')}"></small>
+                                                <span class="fw-semibold d-block"
+                                                      th:text="${#dates.format(record.createdAt, 'dd/MM/yyyy')}"></span>
+                                                <small class="text-muted d-block"
+                                                       th:text="${#dates.format(record.createdAt, 'HH:mm')}"></small>
                                             </td>
+
+                                            <!-- Diagnosis -->
                                             <td>
                                                 <div th:if="${record.diagnosis}">
-                                                    <span class="d-inline-block text-truncate" style="max-width: 200px;" 
-                                                          th:text="${record.diagnosis}" th:attr="title=${record.diagnosis}"></span>
+                                                    <span class="badge badge-soft-success mb-1">
+                                                        <i class="fas fa-user-check me-1"></i> Đã chẩn đoán
+                                                    </span>
+                                                    <div class="small text-muted">Chẩn đoán:</div>
+                                                    <span class="d-inline-block text-truncate"
+                                                          style="max-width: 260px;"
+                                                          th:text="${record.diagnosis}"
+                                                          th:attr="title=${record.diagnosis}"></span>
                                                 </div>
-                                                <span th:unless="${record.diagnosis}" class="text-muted">
-                                                    <i class="fas fa-minus me-1"></i> Chưa có chẩn đoán
-                                                </span>
+                                                <div th:unless="${record.diagnosis}">
+                                                    <span class="badge badge-soft-warning mb-1">
+                                                        <i class="fas fa-exclamation-circle me-1"></i> Chưa chẩn đoán
+                                                    </span>
+                                                    <div class="small text-muted">Nhấn "Chỉnh sửa" để cập nhật.</div>
+                                                </div>
                                             </td>
+
+                                            <!-- Prescription -->
                                             <td>
                                                 <div th:if="${#lists.isEmpty(record.prescriptions)}">
-                                                    <span class="text-muted">
+                                                    <span class="badge badge-soft-secondary mb-1">
                                                         <i class="fas fa-minus me-1"></i> Không có thuốc
                                                     </span>
+                                                    <div class="small text-muted">Chưa kê đơn cho hồ sơ này.</div>
                                                 </div>
                                                 <div th:unless="${#lists.isEmpty(record.prescriptions)}">
-                                                    <div class="mb-1" th:each="med, stat : ${record.prescriptions}" 
+                                                    <div class="mb-1"
+                                                         th:each="med, stat : ${record.prescriptions}"
                                                          th:if="${stat.index < 2}">
                                                         <span class="rm-badge bg-light text-dark border">
                                                             <i class="fas fa-pills me-1"></i>
@@ -505,14 +688,16 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
+
+                                            <!-- Actions -->
+                                            <td class="text-end">
                                                 <div class="btn-group btn-group-sm" role="group">
-                                                    <a th:href="@{/doctor/medical-record/{id}(id=${record.recordId})}" 
-                                                       class="btn btn-outline-primary rm-btn" 
+                                                    <a th:href="@{/doctor/medical-record/{id}(id=${record.recordId})}"
+                                                       class="btn btn-outline-primary rm-btn"
                                                        title="Xem chi tiết">
                                                         <i class="fas fa-eye"></i>
                                                     </a>
-                                                    <a th:href="@{/doctor/medical-record/edit/{id}(id=${record.recordId})}" 
+                                                    <a th:href="@{/doctor/medical-record/edit/{id}(id=${record.recordId})}"
                                                        class="btn btn-outline-warning rm-btn"
                                                        title="Chỉnh sửa">
                                                         <i class="fas fa-edit"></i>
@@ -524,48 +709,12 @@
                                 </table>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
-                <!-- Quick Stats -->
-                <div class="row mt-4">
-                    <div class="col-md-3">
-                        <div class="rm-card text-center p-3">
-                            <div class="text-primary mb-2">
-                                <i class="fas fa-file-medical fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1" th:text="${#lists.size(records)}">0</h4>
-                            <p class="text-muted mb-0">Tổng số hồ sơ</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="rm-card text-center p-3">
-                            <div class="text-success mb-2">
-                                <i class="fas fa-user-check fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1" th:text="${records.?[diagnosis != null and !diagnosis.empty].size()}">0</h4>
-                            <p class="text-muted mb-0">Đã chẩn đoán</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="rm-card text-center p-3">
-                            <div class="text-warning mb-2">
-                                <i class="fas fa-pills fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1" th:text="${records.?[!prescriptions.empty].size()}">0</h4>
-                            <p class="text-muted mb-0">Có kê đơn</p>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="rm-card text-center p-3">
-                            <div class="text-info mb-2">
-                                <i class="fas fa-calendar-day fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1" th:text="${records.?[#dates.format(createdAt, 'dd/MM/yyyy') == #dates.format(#dates.createNow(), 'dd/MM/yyyy')].size()}">0</h4>
-                            <p class="text-muted mb-0">Hôm nay</p>
-                        </div>
-                    </div>
-                </div>
+
+
             </div>
         </div>
 
@@ -573,211 +722,213 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
         <script>
-                                            // Mobile sidebar toggle
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                // Add mobile menu toggle functionality if needed
-                                                const sidebar = document.querySelector('.rm-sidebar');
+                                // Mobile sidebar toggle placeholder (nếu sau này có nút toggle thì gắn ở đây)
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const sidebar = document.querySelector('.rm-sidebar');
 
-                                                // Example: Close sidebar when clicking outside on mobile
-                                                document.addEventListener('click', function (event) {
-                                                    if (window.innerWidth < 992) {
-                                                        if (!sidebar.contains(event.target) && !event.target.closest('.navbar-toggler')) {
-                                                            sidebar.classList.remove('show');
-                                                        }
-                                                    }
-                                                });
-
-                                                // Enhance table row click for better UX
-                                                const tableRows = document.querySelectorAll('.rm-table tbody tr');
-                                                tableRows.forEach(row => {
-                                                    row.addEventListener('click', function (e) {
-                                                        // Don't trigger if user clicked on a button
-                                                        if (!e.target.closest('a') && !e.target.closest('button')) {
-                                                            const viewLink = this.querySelector('a[title="Xem chi tiết"]');
-                                                            if (viewLink) {
-                                                                viewLink.click();
-                                                            }
-                                                        }
-                                                    });
-
-                                                    // Add hover effect
-                                                    row.style.cursor = 'pointer';
-                                                });
-                                            });
-
-                                            // Search functionality
-                                            let searchTimeout;
-                                            const searchInput = document.getElementById('searchInput');
-                                            const suggestionsDropdown = document.getElementById('suggestionsDropdown');
-                                            const suggestionsList = document.getElementById('suggestionsList');
-                                            const searchLoading = document.getElementById('searchLoading');
-
-                                            searchInput.addEventListener('input', function (e) {
-                                                const query = e.target.value.trim();
-
-                                                // Clear previous timeout
-                                                clearTimeout(searchTimeout);
-
-                                                // Hide dropdown if query is empty
-                                                if (query.length === 0) {
-                                                    hideSuggestions();
-                                                    return;
-                                                }
-
-                                                // Show loading
-                                                searchLoading.style.display = 'block';
-
-                                                // Debounce search - wait 500ms after user stops typing
-                                                searchTimeout = setTimeout(() => {
-                                                    fetchSuggestions(query);
-                                                }, 500);
-                                            });
-
-                                            searchInput.addEventListener('focus', function () {
-                                                const query = this.value.trim();
-                                                if (query.length > 0) {
-                                                    fetchSuggestions(query);
-                                                }
-                                            });
-
-                                            searchInput.addEventListener('keydown', function (e) {
-                                                if (e.key === 'Enter') {
-                                                    e.preventDefault();
-                                                    hideSuggestions();
-                                                    performSearch();
-                                                }
-                                            });
-
-// Hide suggestions when clicking outside
-                                            document.addEventListener('click', function (e) {
-                                                if (!searchInput.contains(e.target) && !suggestionsDropdown.contains(e.target)) {
-                                                    hideSuggestions();
-                                                }
-                                            });
-
-                                            function fetchSuggestions(query) {
-                                                if (query.length < 1) {
-                                                    hideSuggestions();
-                                                    return;
-                                                }
-
-                                                // Gọi API thực tế để lấy suggestions
-                                                fetch(`/doctor/medical-records/search-suggestions?query=${encodeURIComponent(query)}&limit=5`)
-                                                        .then(response => {
-                                                            if (!response.ok)
-                                                                throw new Error('Network error');
-                                                            return response.json();
-                                                        })
-                                                        .then(suggestions => {
-                                                            displaySuggestions(suggestions, query);
-                                                            searchLoading.style.display = 'none';
-                                                        })
-                                                        .catch(error => {
-                                                            console.error('Error fetching suggestions:', error);
-                                                            // Fallback: hiển thị empty state
-                                                            displaySuggestions([], query);
-                                                            searchLoading.style.display = 'none';
-                                                        });
+                                    document.addEventListener('click', function (event) {
+                                        if (window.innerWidth < 992) {
+                                            if (!sidebar.contains(event.target) && !event.target.closest('.navbar-toggler')) {
+                                                sidebar.classList.remove('show');
                                             }
+                                        }
+                                    });
 
-                                            function displaySuggestions(suggestions, query) {
-                                                if (suggestions.length === 0) {
-                                                    suggestionsList.innerHTML = `
-            <div class="suggestion-empty">
-                <i class="fas fa-search me-2"></i>
-                Không tìm thấy kết quả phù hợp
-            </div>
-        `;
-                                                } else {
-                                                    suggestionsList.innerHTML = suggestions.map(item => `
-            <div class="suggestion-item cursor-pointer" 
-                 onclick="selectSuggestion('${item.value.replace(/'/g, "\\'")}')">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>${item.name}</strong>
-                        <div class="text-muted small">
-                            ${item.phone ? `<i class="fas fa-phone me-1"></i>${item.phone}` : ''}
-                            ${item.type ? `<span class="badge bg-secondary ms-2">${item.type}</span>` : ''}
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right text-muted"></i>
-                </div>
-            </div>
-        `).join('');
+                                    // Enhance table row click for better UX
+                                    const tableRows = document.querySelectorAll('.rm-table tbody tr');
+                                    tableRows.forEach(row => {
+                                        row.addEventListener('click', function (e) {
+                                            if (!e.target.closest('a') && !e.target.closest('button')) {
+                                                const viewLink = this.querySelector('a[title="Xem chi tiết"]');
+                                                if (viewLink) {
+                                                    viewLink.click();
                                                 }
-
-                                                suggestionsDropdown.classList.add('show');
                                             }
+                                        });
+                                        row.style.cursor = 'pointer';
+                                    });
+                                });
 
-                                            function hideSuggestions() {
-                                                suggestionsDropdown.classList.remove('show');
+                                // Search functionality + suggestions
+                                let searchTimeout;
+                                const searchInput = document.getElementById('searchInput');
+                                const suggestionsDropdown = document.getElementById('suggestionsDropdown');
+                                const suggestionsList = document.getElementById('suggestionsList');
+                                const searchLoading = document.getElementById('searchLoading');
+
+                                let activeSuggestionIndex = -1;
+
+                                if (searchInput) {
+                                    searchInput.addEventListener('input', function (e) {
+                                        const query = e.target.value.trim();
+                                        activeSuggestionIndex = -1;
+
+                                        clearTimeout(searchTimeout);
+
+                                        if (query.length === 0) {
+                                            hideSuggestions();
+                                            return;
+                                        }
+
+                                        searchLoading.style.display = 'block';
+
+                                        searchTimeout = setTimeout(() => {
+                                            fetchSuggestions(query);
+                                        }, 500);
+                                    });
+
+                                    searchInput.addEventListener('focus', function () {
+                                        const query = this.value.trim();
+                                        if (query.length > 0) {
+                                            fetchSuggestions(query);
+                                        }
+                                    });
+
+                                    searchInput.addEventListener('keydown', function (e) {
+                                        const suggestions = document.querySelectorAll('.suggestion-item');
+
+                                        if (e.key === 'ArrowDown') {
+                                            e.preventDefault();
+                                            if (suggestions.length === 0)
+                                                return;
+                                            activeSuggestionIndex = Math.min(activeSuggestionIndex + 1, suggestions.length - 1);
+                                            updateActiveSuggestion(suggestions);
+                                        } else if (e.key === 'ArrowUp') {
+                                            e.preventDefault();
+                                            if (suggestions.length === 0)
+                                                return;
+                                            activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, 0);
+                                            updateActiveSuggestion(suggestions);
+                                        } else if (e.key === 'Enter') {
+                                            if (activeSuggestionIndex >= 0 && suggestions[activeSuggestionIndex]) {
+                                                e.preventDefault();
+                                                suggestions[activeSuggestionIndex].click();
+                                            } else {
+                                                // submit form bình thường
+                                            }
+                                        } else if (e.key === 'Escape') {
+                                            hideSuggestions();
+                                            activeSuggestionIndex = -1;
+                                        }
+                                    });
+                                }
+
+                                // Hide suggestions when clicking outside
+                                document.addEventListener('click', function (e) {
+                                    if (!searchInput.contains(e.target) && !suggestionsDropdown.contains(e.target)) {
+                                        hideSuggestions();
+                                    }
+                                });
+
+                                function fetchSuggestions(query) {
+                                    if (!query || query.length < 1) {
+                                        hideSuggestions();
+                                        return;
+                                    }
+
+                                    fetch(`/doctor/medical-records/search-suggestions?query=${encodeURIComponent(query)}&limit=5`)
+                                            .then(response => {
+                                                if (!response.ok)
+                                                    throw new Error('Network error');
+                                                return response.json();
+                                            })
+                                            .then(suggestions => {
+                                                displaySuggestions(suggestions, query);
                                                 searchLoading.style.display = 'none';
-                                            }
-
-                                            function selectSuggestion(value) {
-                                                searchInput.value = value;
-                                                hideSuggestions();
-                                                performSearch();
-                                            }
-
-                                            function performSearch() {
-                                                document.getElementById('searchForm').submit();
-                                            }
-
-                                            function applyFilter(filterType) {
-                                                let searchValue = '';
-                                                switch (filterType) {
-                                                    case 'today':
-                                                        searchValue = 'today';
-                                                        break;
-                                                    case 'diagnosed':
-                                                        searchValue = 'diagnosed';
-                                                        break;
-                                                    case 'prescribed':
-                                                        searchValue = 'prescribed';
-                                                        break;
-                                                }
-                                                searchInput.value = searchValue;
-                                                performSearch();
-                                            }
-
-                                            function clearFilters() {
-                                                searchInput.value = '';
-                                                performSearch();
-                                            }
-
-                                            // Keyboard navigation for suggestions
-                                            let activeSuggestionIndex = -1;
-
-                                            searchInput.addEventListener('keydown', function (e) {
-                                                const suggestions = document.querySelectorAll('.suggestion-item');
-
-                                                if (e.key === 'ArrowDown') {
-                                                    e.preventDefault();
-                                                    activeSuggestionIndex = Math.min(activeSuggestionIndex + 1, suggestions.length - 1);
-                                                    updateActiveSuggestion(suggestions);
-                                                } else if (e.key === 'ArrowUp') {
-                                                    e.preventDefault();
-                                                    activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, -1);
-                                                    updateActiveSuggestion(suggestions);
-                                                } else if (e.key === 'Enter' && activeSuggestionIndex >= 0) {
-                                                    e.preventDefault();
-                                                    suggestions[activeSuggestionIndex].click();
-                                                } else if (e.key === 'Escape') {
-                                                    hideSuggestions();
-                                                    activeSuggestionIndex = -1;
-                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error fetching suggestions:', error);
+                                                displaySuggestions([], query);
+                                                searchLoading.style.display = 'none';
                                             });
+                                }
 
-                                            function updateActiveSuggestion(suggestions) {
-                                                suggestions.forEach((suggestion, index) => {
-                                                    suggestion.classList.toggle('active', index === activeSuggestionIndex);
-                                                });
+                                function displaySuggestions(suggestions, query) {
+                                    if (!suggestions || suggestions.length === 0) {
+                                        suggestionsList.innerHTML = `
+                        <div class="suggestion-empty">
+                            <i class="fas fa-search me-2"></i>
+                            Không tìm thấy kết quả phù hợp
+                        </div>
+                    `;
+                                    } else {
+                                        suggestionsList.innerHTML = suggestions.map(item => `
+                        <div class="suggestion-item cursor-pointer"
+                             onclick="selectSuggestion('${(item.value || '').replace(/'/g, "\\'")}')">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${item.name || ''}</strong>
+                                    <div class="text-muted small mt-1">
+                                        ${item.phone ? `<i class="fas fa-phone me-1"></i>${item.phone}` : ''}
+                                        ${item.type ? `<span class="badge bg-secondary ms-2">${item.type}</span>` : ''}
+                                    </div>
+                                </div>
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                    `).join('');
+                                    }
 
-                                                if (activeSuggestionIndex >= 0 && suggestions[activeSuggestionIndex]) {
-                                                    suggestions[activeSuggestionIndex].scrollIntoView({block: 'nearest'});
-                                                }
-                                            }
+                                    suggestionsDropdown.classList.add('show');
+                                    activeSuggestionIndex = -1;
+                                }
+
+                                function hideSuggestions() {
+                                    suggestionsDropdown.classList.remove('show');
+                                    searchLoading.style.display = 'none';
+                                    activeSuggestionIndex = -1;
+                                }
+
+                                function selectSuggestion(value) {
+                                    if (searchInput) {
+                                        searchInput.value = value;
+                                    }
+                                    hideSuggestions();
+                                    performSearch();
+                                }
+
+                                function performSearch() {
+                                    const form = document.getElementById('searchForm');
+                                    if (form)
+                                        form.submit();
+                                }
+
+                                // Filter buttons (vẫn đang dùng cơ chế set search = 'today|diagnosed|prescribed')
+                                function applyFilter(filterType) {
+                                    if (!searchInput)
+                                        return;
+                                    let searchValue = '';
+                                    switch (filterType) {
+                                        case 'today':
+                                            searchValue = 'today';
+                                            break;
+                                        case 'diagnosed':
+                                            searchValue = 'diagnosed';
+                                            break;
+                                        case 'prescribed':
+                                            searchValue = 'prescribed';
+                                            break;
+                                    }
+                                    searchInput.value = searchValue;
+                                    performSearch();
+                                }
+
+                                function clearFilters() {
+                                    if (!searchInput)
+                                        return;
+                                    searchInput.value = '';
+                                    performSearch();
+                                }
+
+                                function updateActiveSuggestion(suggestions) {
+                                    suggestions.forEach((suggestion, index) => {
+                                        suggestion.classList.toggle('active', index === activeSuggestionIndex);
+                                    });
+                                    if (activeSuggestionIndex >= 0 && suggestions[activeSuggestionIndex]) {
+                                        suggestions[activeSuggestionIndex].scrollIntoView({block: 'nearest'});
+                                    }
+                                }
         </script>
+
     </body>
 </html>

@@ -43,4 +43,5 @@ public interface PrescriptionsRepository extends JpaRepository<Prescriptions, Lo
     @Transactional
     @Query("DELETE FROM Prescriptions p WHERE p.medicalRecord.recordId IN :recordIds")
     void deleteByRecordIds(@Param("recordIds") List<Long> recordIds);
+
 }
